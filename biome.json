@@ -21,7 +21,7 @@
         "noUnusedVariables": "error",
         "noUnusedImports": "error"
       },
-      "style":{
+      "style": {
         "useImportType": "off"
       }
     }
