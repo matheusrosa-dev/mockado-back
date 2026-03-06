@@ -84,7 +84,7 @@ export class Endpoint extends Entity {
   }
 
   changeDelay(delay?: number) {
-    this._delay = delay;
+    this._delay = delay ?? 0;
     this.validate(["delay"]);
   }
 

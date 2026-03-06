@@ -200,6 +200,18 @@ describe("Endpoint Entity - Unit Tests", () => {
       expect(spyValidate).toHaveBeenCalled();
       expect(endpoint.description).toBe("New Description");
     });
+
+    it("should reset description to empty string when called with undefined", () => {
+      const endpoint = EndpointFactory.fake()
+        .oneEndpoint()
+        .withDescription("Some description")
+        .build();
+
+      endpoint.changeDescription(undefined);
+
+      expect(endpoint.description).toBe("");
+      expect(endpoint.notification.hasErrors()).toBe(false);
+    });
   });
 
   describe("changeDelay", () => {
@@ -215,6 +227,18 @@ describe("Endpoint Entity - Unit Tests", () => {
 
       expect(spyValidate).toHaveBeenCalled();
       expect(endpoint.delay).toBe(5);
+    });
+
+    it("should reset delay to 0 when called with undefined", () => {
+      const endpoint = EndpointFactory.fake()
+        .oneEndpoint()
+        .withDelay(5)
+        .build();
+
+      endpoint.changeDelay(undefined);
+
+      expect(endpoint.delay).toBe(0);
+      expect(endpoint.notification.hasErrors()).toBe(false);
     });
   });
 
@@ -250,6 +274,21 @@ describe("Endpoint Entity - Unit Tests", () => {
       expect(endpoint.responseBodyType).toBeUndefined();
       expect(endpoint.responseJson).toBeUndefined();
       expect(endpoint.responseText).toBeUndefined();
+    });
+
+    it("should preserve response body fields when changing between body-compatible status codes", () => {
+      const endpoint = EndpointFactory.fake()
+        .oneEndpoint()
+        .withStatusCode(200)
+        .withResponseBodyType(ResponseBodyType.JSON)
+        .withResponseJson('{"key":"value"}')
+        .build();
+
+      endpoint.changeStatusCode(201);
+
+      expect(endpoint.statusCode).toBe(201);
+      expect(endpoint.responseBodyType).toBe(ResponseBodyType.JSON);
+      expect(endpoint.responseJson).toBe('{"key":"value"}');
     });
 
     it("should set response body type to empty when changing to a status code that allows body and had no body", () => {
@@ -388,6 +427,20 @@ describe("Endpoint Entity - Unit Tests", () => {
       );
       expect(endpoint.responseJson).toBeUndefined();
     });
+
+    it("should default responseJson to '{}' when called with undefined", () => {
+      const endpoint = EndpointFactory.fake()
+        .oneEndpoint()
+        .withStatusCode(200)
+        .withResponseBodyType(ResponseBodyType.JSON)
+        .withResponseJson('{"key":"value"}')
+        .build();
+
+      endpoint.changeResponseJson(undefined);
+
+      expect(endpoint.responseJson).toBe("{}");
+      expect(endpoint.notification.hasErrors()).toBe(false);
+    });
   });
 
   describe("changeResponseText", () => {
@@ -417,6 +470,20 @@ describe("Endpoint Entity - Unit Tests", () => {
         "Response body type must be TEXT to set responseText",
       );
       expect(endpoint.responseText).toBeUndefined();
+    });
+
+    it("should default responseText to empty string when called with undefined", () => {
+      const endpoint = EndpointFactory.fake()
+        .oneEndpoint()
+        .withStatusCode(200)
+        .withResponseBodyType(ResponseBodyType.TEXT)
+        .withResponseText("some text")
+        .build();
+
+      endpoint.changeResponseText(undefined);
+
+      expect(endpoint.responseText).toBe("");
+      expect(endpoint.notification.hasErrors()).toBe(false);
     });
   });
 
@@ -648,12 +715,13 @@ describe("Endpoint Entity - Unit Tests", () => {
       );
     });
 
-    it("should not add error when delay is undefined", () => {
+    it("should not add error when delay is undefined (defaults to 0)", () => {
       const endpoint = EndpointFactory.fake()
         .oneEndpoint()
         .withDelay(undefined)
         .build();
 
+      expect(endpoint.delay).toBe(0);
       expect(endpoint.notification.hasErrors()).toBe(false);
     });
 
