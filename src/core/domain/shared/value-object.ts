@@ -1,4 +1,4 @@
-import equal from "fast-deep-equal";
+import isEqual from "fast-deep-equal";
 
 export abstract class ValueObject {
   public equals(valueObject: this): boolean {
@@ -10,6 +10,6 @@ export abstract class ValueObject {
       return false;
     }
 
-    return equal(valueObject, this);
+    return isEqual(valueObject, this);
   }
 }

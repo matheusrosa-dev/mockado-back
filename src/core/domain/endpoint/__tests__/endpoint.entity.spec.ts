@@ -1,4 +1,4 @@
-import { Endpoint } from "../endpoint.entity";
+import { Endpoint, EndpointFactory } from "../endpoint.entity";
 import { HttpMethod, ResponseBodyType } from "../endpoint.types";
 import { Uuid } from "../../shared/value-objects/uuid.vo";
 
@@ -15,6 +15,20 @@ const STATUS_CODES_WITH_BODY = Array.from(
 ).filter((code) => !STATUS_CODES_WITHOUT_BODY.includes(code));
 
 describe("Endpoint Entity - Unit Tests", () => {
+  describe("statusCodeAllowsBody", () => {
+    it("should return false for status codes that do not allow body", () => {
+      STATUS_CODES_WITHOUT_BODY.forEach((statusCode) => {
+        expect(Endpoint.statusCodeAllowsBody(statusCode)).toBe(false);
+      });
+    });
+
+    it("should return true for status codes that allow body", () => {
+      STATUS_CODES_WITH_BODY.forEach((statusCode) => {
+        expect(Endpoint.statusCodeAllowsBody(statusCode)).toBe(true);
+      });
+    });
+  });
+
   describe("constructor", () => {
     it("should instance a GET endpoint", () => {
       const requiredProps = {
@@ -144,7 +158,7 @@ describe("Endpoint Entity - Unit Tests", () => {
         created_at: date,
       });
 
-      expect(endpoint.endpoint_id).toBe(id);
+      expect(endpoint.endpoint_id.equals(id)).toBeTruthy();
       expect(endpoint.created_at).toBe(date);
     });
 
@@ -173,70 +187,319 @@ describe("Endpoint Entity - Unit Tests", () => {
 
       expect(endpoint2.responseText).toBe("some text");
     });
-
-    describe("should instance all endpoints which allows body with a body", () => {
-      it.each(
-        STATUS_CODES_WITH_BODY,
-      )("should instance an endpoint with status code %i with body", (statusCode) => {
-        const endpointProps = {
-          method: HttpMethod.GET,
-          title: "My Endpoint",
-          statusCode,
-          responseBodyType: ResponseBodyType.JSON,
-          responseJson: '{"key":"value"}',
-        };
-
-        const endpoint = new Endpoint(endpointProps);
-
-        expect(endpoint.method).toBe(endpointProps.method);
-        expect(endpoint.title).toBe(endpointProps.title);
-        expect(endpoint.statusCode).toBe(endpointProps.statusCode);
-        expect(endpoint.responseBodyType).toBe(endpointProps.responseBodyType);
-        expect(endpoint.responseJson).toBe(endpointProps.responseJson);
-        expect(endpoint.responseText).toBeUndefined();
-      });
-    });
   });
 
   describe("entity_id", () => {
     it("should return endpoint_id", () => {
       const id = new Uuid();
-      const endpoint = new Endpoint({
-        endpoint_id: id,
-        method: HttpMethod.GET,
-        title: "My Endpoint",
-        statusCode: 100,
-      });
+      const endpoint = EndpointFactory.fake()
+        .oneEndpoint()
+        .withEndpointId(id)
+        .build();
 
       expect(endpoint.entity_id).toBe(id);
     });
   });
 
+  describe("changeMethod", () => {
+    it("should change the method and validate", () => {
+      const endpoint = EndpointFactory.fake()
+        .oneEndpoint()
+        .withMethod(HttpMethod.GET)
+        .build();
+
+      const spyValidate = jest.spyOn(endpoint, "validate");
+
+      endpoint.changeMethod(HttpMethod.POST);
+
+      expect(spyValidate).toHaveBeenCalled();
+      expect(endpoint.method).toBe(HttpMethod.POST);
+    });
+  });
+
+  describe("changeTitle", () => {
+    it("should change the title and validate", () => {
+      const endpoint = EndpointFactory.fake().oneEndpoint().build();
+
+      const spyValidate = jest.spyOn(endpoint, "validate");
+
+      endpoint.changeTitle("New Title");
+
+      expect(spyValidate).toHaveBeenCalled();
+      expect(endpoint.title).toBe("New Title");
+    });
+  });
+
+  describe("changeDescription", () => {
+    it("should change the description and validate", () => {
+      const endpoint = EndpointFactory.fake().oneEndpoint().build();
+
+      const spyValidate = jest.spyOn(endpoint, "validate");
+
+      endpoint.changeDescription("New Description");
+
+      expect(spyValidate).toHaveBeenCalled();
+      expect(endpoint.description).toBe("New Description");
+    });
+  });
+
+  describe("changeDelay", () => {
+    it("should change the delay and validate", () => {
+      const endpoint = EndpointFactory.fake()
+        .oneEndpoint()
+        .withDelay(1)
+        .build();
+
+      const spyValidate = jest.spyOn(endpoint, "validate");
+
+      endpoint.changeDelay(5);
+
+      expect(spyValidate).toHaveBeenCalled();
+      expect(endpoint.delay).toBe(5);
+    });
+  });
+
+  describe("changeStatusCode", () => {
+    it("should change the status code and validate", () => {
+      const endpoint = EndpointFactory.fake()
+        .oneEndpoint()
+        .withStatusCode(200)
+        .build();
+
+      const spyValidate = jest.spyOn(endpoint, "validate");
+
+      endpoint.changeStatusCode(404);
+
+      expect(spyValidate).toHaveBeenCalled();
+      expect(endpoint.statusCode).toBe(404);
+    });
+
+    it("should remove response body fields when changing to a status code that does not allow body", () => {
+      const endpoint = EndpointFactory.fake()
+        .oneEndpoint()
+        .withStatusCode(200)
+        .withResponseBodyType(ResponseBodyType.JSON)
+        .withResponseJson('{"key":"value"}')
+        .build();
+
+      const spyValidate = jest.spyOn(endpoint, "validate");
+
+      endpoint.changeStatusCode(204);
+
+      expect(spyValidate).toHaveBeenCalledTimes(2);
+      expect(endpoint.statusCode).toBe(204);
+      expect(endpoint.responseBodyType).toBeUndefined();
+      expect(endpoint.responseJson).toBeUndefined();
+      expect(endpoint.responseText).toBeUndefined();
+    });
+
+    it("should set response body type to empty when changing to a status code that allows body and had no body", () => {
+      const endpoint = EndpointFactory.fake()
+        .oneEndpoint()
+        .withStatusCode(204)
+        .build();
+
+      const spyValidate = jest.spyOn(endpoint, "validate");
+
+      endpoint.changeStatusCode(200);
+
+      expect(spyValidate).toHaveBeenCalledTimes(2);
+      expect(endpoint.statusCode).toBe(200);
+      expect(endpoint.responseBodyType).toBe(ResponseBodyType.EMPTY);
+      expect(endpoint.responseJson).toBeUndefined();
+      expect(endpoint.responseText).toBeUndefined();
+    });
+  });
+
+  describe("changeResponseBodyType", () => {
+    it("should change the response body type and validate", () => {
+      const endpoint = EndpointFactory.fake()
+        .oneEndpoint()
+        .withStatusCode(200)
+        .withResponseBodyType(ResponseBodyType.EMPTY)
+        .build();
+
+      const spyValidate = jest.spyOn(endpoint, "validate");
+
+      endpoint.changeResponseBodyType(ResponseBodyType.JSON);
+
+      expect(spyValidate).toHaveBeenCalled();
+      expect(endpoint.responseBodyType).toBe(ResponseBodyType.JSON);
+    });
+
+    it("should throw error when trying to set response body type for a status code that does not allow body", () => {
+      const endpoint = EndpointFactory.fake()
+        .oneEndpoint()
+        .withStatusCode(204)
+        .build();
+
+      expect(() =>
+        endpoint.changeResponseBodyType(ResponseBodyType.JSON),
+      ).toThrow(
+        "Status code does not allow body, cannot set response body type",
+      );
+      expect(endpoint.responseBodyType).toBeUndefined();
+    });
+
+    it("should set responseJson to default when changing to JSON type", () => {
+      const endpoint = EndpointFactory.fake()
+        .oneEndpoint()
+        .withStatusCode(200)
+        .withResponseBodyType(ResponseBodyType.EMPTY)
+        .build();
+
+      const spyValidate = jest.spyOn(endpoint, "validate");
+
+      endpoint.changeResponseBodyType(ResponseBodyType.JSON);
+
+      expect(spyValidate).toHaveBeenCalledTimes(2);
+      expect(endpoint.responseBodyType).toBe(ResponseBodyType.JSON);
+      expect(endpoint.responseJson).toBe("{}");
+      expect(endpoint.responseText).toBeUndefined();
+    });
+
+    it("should set responseText to default when changing to TEXT type", () => {
+      const endpoint = EndpointFactory.fake()
+        .oneEndpoint()
+        .withStatusCode(200)
+        .withResponseBodyType(ResponseBodyType.EMPTY)
+        .build();
+
+      const spyValidate = jest.spyOn(endpoint, "validate");
+
+      endpoint.changeResponseBodyType(ResponseBodyType.TEXT);
+
+      expect(spyValidate).toHaveBeenCalledTimes(2);
+      expect(endpoint.responseBodyType).toBe(ResponseBodyType.TEXT);
+      expect(endpoint.responseText).toBe("");
+      expect(endpoint.responseJson).toBeUndefined();
+    });
+
+    it("should unset responseJson and responseText when changing to NULL or EMPTY type", () => {
+      const endpoint = EndpointFactory.fake()
+        .oneEndpoint()
+        .withStatusCode(200)
+        .withResponseBodyType(ResponseBodyType.JSON)
+        .withResponseJson('{"key":"value"}')
+        .build();
+
+      const spyValidate = jest.spyOn(endpoint, "validate");
+
+      endpoint.changeResponseBodyType(ResponseBodyType.NULL);
+
+      expect(spyValidate).toHaveBeenCalledTimes(2);
+      expect(endpoint.responseBodyType).toBe(ResponseBodyType.NULL);
+      expect(endpoint.responseJson).toBeUndefined();
+      expect(endpoint.responseText).toBeUndefined();
+
+      endpoint.changeResponseBodyType(ResponseBodyType.EMPTY);
+
+      expect(spyValidate).toHaveBeenCalledTimes(4);
+      expect(endpoint.responseBodyType).toBe(ResponseBodyType.EMPTY);
+      expect(endpoint.responseJson).toBeUndefined();
+      expect(endpoint.responseText).toBeUndefined();
+    });
+  });
+
+  describe("changeResponseJson", () => {
+    it("should change the responseJson and validate", () => {
+      const endpoint = EndpointFactory.fake()
+        .oneEndpoint()
+        .withStatusCode(200)
+        .withResponseBodyType(ResponseBodyType.JSON)
+        .build();
+
+      const spyValidate = jest.spyOn(endpoint, "validate");
+
+      endpoint.changeResponseJson('{"key":"value"}');
+
+      expect(spyValidate).toHaveBeenCalled();
+      expect(endpoint.responseJson).toBe('{"key":"value"}');
+    });
+
+    it("should throw error when trying to set responseJson for an endpoint that does not have JSON body type", () => {
+      const endpoint = EndpointFactory.fake()
+        .oneEndpoint()
+        .withStatusCode(200)
+        .withResponseBodyType(ResponseBodyType.TEXT)
+        .build();
+
+      expect(() => endpoint.changeResponseJson('{"key":"value"}')).toThrow(
+        "Response body type must be JSON to set responseJson",
+      );
+      expect(endpoint.responseJson).toBeUndefined();
+    });
+  });
+
+  describe("changeResponseText", () => {
+    it("should change the responseText and validate", () => {
+      const endpoint = EndpointFactory.fake()
+        .oneEndpoint()
+        .withStatusCode(200)
+        .withResponseBodyType(ResponseBodyType.TEXT)
+        .build();
+
+      const spyValidate = jest.spyOn(endpoint, "validate");
+
+      endpoint.changeResponseText("Some text");
+
+      expect(spyValidate).toHaveBeenCalled();
+      expect(endpoint.responseText).toBe("Some text");
+    });
+
+    it("should throw error when trying to set responseText for an endpoint that does not have TEXT body type", () => {
+      const endpoint = EndpointFactory.fake()
+        .oneEndpoint()
+        .withStatusCode(200)
+        .withResponseBodyType(ResponseBodyType.JSON)
+        .build();
+
+      expect(() => endpoint.changeResponseText("Some text")).toThrow(
+        "Response body type must be TEXT to set responseText",
+      );
+      expect(endpoint.responseText).toBeUndefined();
+    });
+  });
+
   describe("toJSON", () => {
     it("should return a plain object with all fields", () => {
-      const endpoint1 = new Endpoint({
-        method: HttpMethod.GET,
-        title: "My Endpoint",
-        statusCode: 200,
-        responseBodyType: ResponseBodyType.JSON,
-        description: "desc",
-        delay: 2,
-        responseJson: '{"a":1}',
+      const endpointWithoutBody = EndpointFactory.fake()
+        .oneEndpoint()
+        .withMethod(HttpMethod.GET)
+        .withStatusCode(204)
+        .build();
+
+      expect(endpointWithoutBody.toJSON()).toEqual({
+        endpoint_id: endpointWithoutBody.endpoint_id.toString(),
+        title: endpointWithoutBody.title,
+        method: endpointWithoutBody.method,
+        description: endpointWithoutBody.description,
+        delay: endpointWithoutBody.delay,
+        statusCode: endpointWithoutBody.statusCode,
+        created_at: endpointWithoutBody.created_at,
       });
 
-      expect(endpoint1.toJSON()).toEqual({
-        endpoint_id: endpoint1.endpoint_id.toString(),
-        title: endpoint1.title,
-        method: endpoint1.method,
-        description: endpoint1.description,
-        delay: endpoint1.delay,
-        statusCode: endpoint1.statusCode,
-        responseBodyType: endpoint1.responseBodyType,
-        responseJson: endpoint1.responseJson,
-        created_at: endpoint1.created_at,
+      const endpointWithJson = EndpointFactory.fake()
+        .oneEndpoint()
+        .withMethod(HttpMethod.GET)
+        .withStatusCode(200)
+        .withResponseBodyType(ResponseBodyType.JSON)
+        .withResponseJson('{"a":1}')
+        .build();
+
+      expect(endpointWithJson.toJSON()).toEqual({
+        endpoint_id: endpointWithJson.endpoint_id.toString(),
+        title: endpointWithJson.title,
+        method: endpointWithJson.method,
+        description: endpointWithJson.description,
+        delay: endpointWithJson.delay,
+        statusCode: endpointWithJson.statusCode,
+        responseBodyType: endpointWithJson.responseBodyType,
+        responseJson: endpointWithJson.responseJson,
+        created_at: endpointWithJson.created_at,
       });
 
-      const endpoint2 = new Endpoint({
+      const endpointWithText = new Endpoint({
         endpoint_id: new Uuid(),
         method: HttpMethod.GET,
         title: "My Endpoint",
@@ -248,229 +511,234 @@ describe("Endpoint Entity - Unit Tests", () => {
         created_at: new Date("2024-01-01"),
       });
 
-      expect(endpoint2.toJSON()).toEqual({
-        endpoint_id: endpoint2.endpoint_id.toString(),
-        title: endpoint2.title,
-        method: endpoint2.method,
-        description: endpoint2.description,
-        delay: endpoint2.delay,
-        statusCode: endpoint2.statusCode,
-        responseBodyType: endpoint2.responseBodyType,
-        responseText: endpoint2.responseText,
-        created_at: endpoint2.created_at,
+      expect(endpointWithText.toJSON()).toEqual({
+        endpoint_id: endpointWithText.endpoint_id.toString(),
+        title: endpointWithText.title,
+        method: endpointWithText.method,
+        description: endpointWithText.description,
+        delay: endpointWithText.delay,
+        statusCode: endpointWithText.statusCode,
+        responseBodyType: endpointWithText.responseBodyType,
+        responseText: endpointWithText.responseText,
+        created_at: endpointWithText.created_at,
       });
     });
   });
 
   describe("validate", () => {
-    it("should have no errors for valid props", () => {
-      const endpoint = new Endpoint({
-        title: "Valid Endpoint",
-        method: HttpMethod.GET,
-        statusCode: 100,
-      });
+    it("should call validate on create with factory", () => {
+      const spyValidate = jest.spyOn(Endpoint.prototype, "validate");
 
-      endpoint.validate();
+      EndpointFactory.fake().oneEndpoint().build();
+
+      expect(spyValidate).toHaveBeenCalled();
+    });
+
+    it("should have no errors for valid props", () => {
+      const endpoint = EndpointFactory.fake().oneEndpoint().build();
 
       expect(endpoint.notification.hasErrors()).toBe(false);
     });
 
     it("should add error when title is empty", () => {
-      const endpoint = new Endpoint({
-        title: "",
-        method: HttpMethod.GET,
-        statusCode: 100,
-      });
-
-      endpoint.validate(["title"]);
+      const endpoint = EndpointFactory.fake()
+        .oneEndpoint()
+        .withTitle("")
+        .build();
 
       expect(endpoint.notification.hasErrors()).toBe(true);
+      expect(endpoint.notification.errors.size).toBe(1);
+      expect(endpoint.notification.errors.get("title")).toContain(
+        "title should not be empty",
+      );
     });
 
     it("should add error when title exceeds 50 characters", () => {
-      const endpoint = new Endpoint({
-        title: "a".repeat(51),
-        method: HttpMethod.GET,
-        statusCode: 100,
-      });
-
-      endpoint.validate(["title"]);
+      const endpoint = EndpointFactory.fake()
+        .oneEndpoint()
+        .withTitle("a".repeat(51))
+        .build();
 
       expect(endpoint.notification.hasErrors()).toBe(true);
+      expect(endpoint.notification.errors.size).toBe(1);
+      expect(endpoint.notification.errors.get("title")).toContain(
+        "title must be shorter than or equal to 50 characters",
+      );
     });
 
     it("should add error when method is invalid", () => {
-      const endpoint = new Endpoint({
-        title: "Endpoint",
-        method: "INVALID" as HttpMethod,
-        statusCode: 100,
-      });
-      endpoint.validate(["method"]);
+      const endpoint = EndpointFactory.fake()
+        .oneEndpoint()
+        .withMethod("INVALID" as HttpMethod)
+        .build();
 
       expect(endpoint.notification.hasErrors()).toBe(true);
+      expect(endpoint.notification.errors.size).toBe(1);
+      expect(endpoint.notification.errors.get("method")).toContain(
+        "method must be one of the following values: GET, POST, PUT, DELETE, PATCH",
+      );
     });
 
     it("should add error when description exceeds 200 characters", () => {
-      const endpoint = new Endpoint({
-        title: "Endpoint",
-        method: HttpMethod.GET,
-        statusCode: 100,
-        description: "a".repeat(201),
-      });
-      endpoint.validate(["description"]);
+      const endpoint = EndpointFactory.fake()
+        .oneEndpoint()
+        .withDescription("a".repeat(201))
+        .build();
 
       expect(endpoint.notification.hasErrors()).toBe(true);
+      expect(endpoint.notification.errors.size).toBe(1);
+      expect(endpoint.notification.errors.get("description")).toContain(
+        "description must be shorter than or equal to 200 characters",
+      );
     });
 
     it("should not add error when description is undefined", () => {
-      const endpoint = new Endpoint({
-        title: "Endpoint",
-        method: HttpMethod.GET,
-        statusCode: 100,
-        description: undefined,
-      });
-
-      endpoint.validate(["description"]);
+      const endpoint = EndpointFactory.fake()
+        .oneEndpoint()
+        .withDescription(undefined)
+        .build();
 
       expect(endpoint.notification.hasErrors()).toBe(false);
     });
 
     it("should add error when delay is below 0", () => {
-      const endpoint = new Endpoint({
-        title: "Endpoint",
-        method: HttpMethod.GET,
-        statusCode: 100,
-        delay: -1,
-      });
-      endpoint.validate(["delay"]);
+      const endpoint = EndpointFactory.fake()
+        .oneEndpoint()
+        .withDelay(-1)
+        .build();
 
       expect(endpoint.notification.hasErrors()).toBe(true);
+      expect(endpoint.notification.errors.size).toBe(1);
+      expect(endpoint.notification.errors.get("delay")).toContain(
+        "delay must not be less than 0",
+      );
     });
 
     it("should add error when delay exceeds 10", () => {
-      const endpoint = new Endpoint({
-        title: "Endpoint",
-        method: HttpMethod.GET,
-        statusCode: 100,
-        delay: 11,
-      });
-      endpoint.validate(["delay"]);
+      const endpoint = EndpointFactory.fake()
+        .oneEndpoint()
+        .withDelay(11)
+        .build();
 
       expect(endpoint.notification.hasErrors()).toBe(true);
+      expect(endpoint.notification.errors.size).toBe(1);
+      expect(endpoint.notification.errors.get("delay")).toContain(
+        "delay must not be greater than 10",
+      );
     });
 
     it("should add error when delay is not number", () => {
-      const endpoint = new Endpoint({
-        title: "Endpoint",
-        method: HttpMethod.GET,
-        statusCode: 100,
-        delay: "" as any,
-      });
-
-      endpoint.validate(["delay"]);
+      const endpoint = EndpointFactory.fake()
+        .oneEndpoint()
+        .withDelay("" as any)
+        .build();
 
       expect(endpoint.notification.hasErrors()).toBe(true);
+      expect(endpoint.notification.errors.size).toBe(1);
+      expect(endpoint.notification.errors.get("delay")).toContain(
+        "delay must be an integer number",
+      );
     });
 
     it("should add error when delay is not integer", () => {
-      const endpoint = new Endpoint({
-        title: "Endpoint",
-        method: HttpMethod.GET,
-        statusCode: 100,
-        delay: 1.1,
-      });
-
-      endpoint.validate(["delay"]);
+      const endpoint = EndpointFactory.fake()
+        .oneEndpoint()
+        .withDelay(1.1)
+        .build();
 
       expect(endpoint.notification.hasErrors()).toBe(true);
+      expect(endpoint.notification.errors.size).toBe(1);
+      expect(endpoint.notification.errors.get("delay")).toContain(
+        "delay must be an integer number",
+      );
     });
 
     it("should not add error when delay is undefined", () => {
-      const endpoint = new Endpoint({
-        title: "Endpoint",
-        method: HttpMethod.GET,
-        statusCode: 100,
-        delay: undefined,
-      });
-      endpoint.validate(["delay"]);
+      const endpoint = EndpointFactory.fake()
+        .oneEndpoint()
+        .withDelay(undefined)
+        .build();
 
       expect(endpoint.notification.hasErrors()).toBe(false);
     });
 
     it("should add error when statusCode is below 100", () => {
-      const endpoint = new Endpoint({
-        title: "Endpoint",
-        method: HttpMethod.GET,
-        statusCode: 99,
-      });
-
-      endpoint.validate(["statusCode"]);
+      const endpoint = EndpointFactory.fake()
+        .oneEndpoint()
+        .withStatusCode(99)
+        .build();
 
       expect(endpoint.notification.hasErrors()).toBe(true);
+      expect(endpoint.notification.errors.size).toBe(1);
+      expect(endpoint.notification.errors.get("statusCode")).toContain(
+        "statusCode must not be less than 100",
+      );
     });
 
     it("should add error when statusCode exceeds 511", () => {
-      const endpoint = new Endpoint({
-        title: "Endpoint",
-        method: HttpMethod.GET,
-        statusCode: 512,
-      });
-      endpoint.validate(["statusCode"]);
+      const endpoint = EndpointFactory.fake()
+        .oneEndpoint()
+        .withStatusCode(512)
+        .build();
 
       expect(endpoint.notification.hasErrors()).toBe(true);
+      expect(endpoint.notification.errors.size).toBe(1);
+      expect(endpoint.notification.errors.get("statusCode")).toContain(
+        "statusCode must not be greater than 511",
+      );
     });
 
     it("should add error when responseBodyType is invalid", () => {
-      const endpoint = new Endpoint({
-        title: "Endpoint",
-        method: HttpMethod.GET,
-        statusCode: 200,
-        responseBodyType: "invalid" as ResponseBodyType,
-      });
-
-      endpoint.validate(["responseBodyType"]);
+      const endpoint = EndpointFactory.fake()
+        .oneEndpoint()
+        .withStatusCode(200) // Status code that allows body
+        .withResponseBodyType("invalid" as ResponseBodyType)
+        .build();
 
       expect(endpoint.notification.hasErrors()).toBe(true);
+      expect(endpoint.notification.errors.size).toBe(1);
+      expect(endpoint.notification.errors.get("responseBodyType")).toContain(
+        "responseBodyType must be one of the following values: json, text, null, empty",
+      );
     });
 
     it("should add error when responseJson is not valid JSON", () => {
-      const endpoint = new Endpoint({
-        title: "Endpoint",
-        method: HttpMethod.GET,
-        statusCode: 200,
-        responseBodyType: ResponseBodyType.JSON,
-        responseJson: "not-json",
-      });
-
-      endpoint.validate(["responseJson"]);
+      const endpoint = EndpointFactory.fake()
+        .oneEndpoint()
+        .withStatusCode(200) // Status code that allows body
+        .withResponseBodyType(ResponseBodyType.JSON)
+        .withResponseJson("not-json")
+        .build();
 
       expect(endpoint.notification.hasErrors()).toBe(true);
+      expect(endpoint.notification.errors.size).toBe(1);
+      expect(endpoint.notification.errors.get("responseJson")).toContain(
+        "responseJson must be a json string",
+      );
     });
 
     it("should add error when responseText exceeds 1000 characters", () => {
-      const endpoint = new Endpoint({
-        title: "Endpoint",
-        method: HttpMethod.GET,
-        statusCode: 200,
-        responseBodyType: ResponseBodyType.TEXT,
-        responseText: "a".repeat(1001),
-      });
-
-      endpoint.validate(["responseText"]);
+      const endpoint = EndpointFactory.fake()
+        .oneEndpoint()
+        .withStatusCode(200)
+        .withResponseBodyType(ResponseBodyType.TEXT)
+        .withResponseText("a".repeat(1001))
+        .build();
 
       expect(endpoint.notification.hasErrors()).toBe(true);
+      expect(endpoint.notification.errors.size).toBe(1);
+      expect(endpoint.notification.errors.get("responseText")).toContain(
+        "responseText must be shorter than or equal to 1000 characters",
+      );
     });
 
     it("should not add error when responseText is undefined", () => {
-      const endpoint = new Endpoint({
-        title: "Endpoint",
-        method: HttpMethod.GET,
-        statusCode: 200,
-        responseBodyType: ResponseBodyType.TEXT,
-        responseText: undefined,
-      });
-
-      endpoint.validate(["responseText"]);
+      const endpoint = EndpointFactory.fake()
+        .oneEndpoint()
+        .withStatusCode(200)
+        .withResponseBodyType(ResponseBodyType.TEXT)
+        .withResponseText(undefined as any)
+        .build();
 
       expect(endpoint.notification.hasErrors()).toBe(false);
     });

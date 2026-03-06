@@ -9,8 +9,8 @@ export enum HttpMethod {
 export enum ResponseBodyType {
   JSON = "json",
   TEXT = "text",
-  HTML = "html",
-  XML = "xml",
+  // HTML = "html",
+  // XML = "xml",
   NULL = "null",
   EMPTY = "empty",
 }

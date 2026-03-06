@@ -1,0 +1,1 @@
+adicionar event emitter na entidade
