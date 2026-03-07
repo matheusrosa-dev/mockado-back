@@ -1,3 +1,4 @@
+/** biome-ignore-all lint/suspicious/noExplicitAny: <It has to allow any in tests> */
 import { Endpoint, EndpointFactory } from "../endpoint.entity";
 import { HttpMethod, ResponseBodyType } from "../endpoint.types";
 import { Uuid } from "../../shared/value-objects/uuid.vo";

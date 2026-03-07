@@ -1,3 +1,4 @@
+/** biome-ignore-all lint/suspicious/noExplicitAny: <It has to allow any in tests> */
 import { Either } from "../either";
 
 describe("Either - Unit Tests", () => {

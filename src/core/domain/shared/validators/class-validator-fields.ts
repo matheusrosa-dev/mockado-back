@@ -3,6 +3,7 @@ import { IValidatorFields } from "./class-validator-fields.interface";
 import { Notification } from "../notification";
 
 export abstract class ClassValidatorFields implements IValidatorFields {
+  // biome-ignore lint/suspicious/noExplicitAny: <The method needs to accept any type of data for validation>
   validate(notification: Notification, data: any, fields?: string[]): boolean {
     const errors = validateSync(data, {
       groups: fields as string[] | undefined,

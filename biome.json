@@ -22,7 +22,8 @@
         "noUnusedImports": "error"
       },
       "style": {
-        "useImportType": "off"
+        "useImportType": "off",
+        "noNonNullAssertion": "off"
       },
       "complexity": {
         "noStaticOnlyClass": "off"

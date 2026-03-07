@@ -1,3 +1,4 @@
+/** biome-ignore-all lint/suspicious/noExplicitAny: <It has to allow any in tests> */
 import { InvalidUuidError, Uuid } from "../uuid.vo";
 import { validate as validateUuid } from "uuid";
 

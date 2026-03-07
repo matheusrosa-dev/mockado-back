@@ -1,5 +1,5 @@
 import { Entity } from "../entity";
-import { ValueObject } from "../value-object";
+import { ValueObject } from "../value-objects/value-object";
 
 export interface IRepository<E extends Entity, EntityId extends ValueObject> {
   insert(entity: E): Promise<void>;
@@ -11,5 +11,6 @@ export interface IRepository<E extends Entity, EntityId extends ValueObject> {
   findAll(): Promise<E[]>;
   findByIds(ids: EntityId[]): Promise<E[]>;
 
+  // biome-ignore lint/suspicious/noExplicitAny: <It has to be any because we need to return the constructor of the entity>
   getEntity(): new (...args: any[]) => E;
 }

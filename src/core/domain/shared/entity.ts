@@ -1,6 +1,6 @@
 import { IDomainEvent } from "./events/domain-event.interface";
 import { Notification } from "./notification";
-import { ValueObject } from "./value-object";
+import { ValueObject } from "./value-objects/value-object";
 import EventEmitter2 from "eventemitter2";
 
 export abstract class Entity {

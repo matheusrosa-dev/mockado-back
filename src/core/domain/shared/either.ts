@@ -97,18 +97,28 @@ export class Either<Ok = unknown, ErrorType = Error>
       });
       const errors = result.filter((r) => r.isFail());
       if (errors.length > 0) {
-        return Either.fail(errors.map((e) => e.error)) as any;
+        return Either.fail(errors.map((e) => e.error)) as Either<
+          NewOk,
+          NewError
+        >;
       }
-      return Either.ok(result.map((r) => r.ok)) as any;
+      return Either.ok(result.map((r) => r.ok)) as Either<NewOk, NewError>;
     }
-    return Either.fail<ErrorType>(this.error) as any;
+    return Either.fail<ErrorType>(this.error) as unknown as Either<
+      NewOk,
+      NewError
+    >;
   }
 
   asArray(): [Ok, ErrorType] {
     return [this.ok, this.error];
   }
 
-  [Symbol.iterator](): Iterator<Value<Ok, ErrorType>, any, undefined> {
+  [Symbol.iterator](): Iterator<
+    Value<Ok, ErrorType>,
+    Value<Ok, ErrorType>,
+    undefined
+  > {
     return new EitherIterator<Ok, ErrorType>({
       ok: this.ok,
       error: this.error,

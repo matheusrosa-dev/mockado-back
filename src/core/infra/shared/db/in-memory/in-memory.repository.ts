@@ -1,6 +1,6 @@
-import { ValueObject } from "../../../../domain/shared/value-object";
+import { ValueObject } from "../../../../domain/shared/value-objects/value-object";
 import { Entity } from "../../../../domain/shared/entity";
-import { IRepository } from "../../../../domain/shared/repository/repository-interface";
+import { IRepository } from "../../../../domain/shared/repositories/repository-interface";
 import { NotFoundError } from "../../../../domain/shared/errors/not-found.error";
 
 export abstract class InMemoryRepository<
@@ -60,5 +60,6 @@ export abstract class InMemoryRepository<
     return this.items;
   }
 
+  // biome-ignore lint/suspicious/noExplicitAny: <It has to be any because we need to return the constructor of the entity>
   abstract getEntity(): new (...args: any[]) => E;
 }

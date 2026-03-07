@@ -1,6 +1,6 @@
 import { v4 as uuid, validate as validateUuid } from "uuid";
 
-import { ValueObject } from "../value-object";
+import { ValueObject } from "./value-object";
 
 export class InvalidUuidError extends Error {
   constructor(message?: string) {
