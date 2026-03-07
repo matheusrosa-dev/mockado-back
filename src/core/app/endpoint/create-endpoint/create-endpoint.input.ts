@@ -17,7 +17,7 @@ type ConstructorProps = {
   description?: string;
   delay?: number;
   statusCode: number;
-  responseBodyType?: string;
+  responseBodyType?: ResponseBodyType;
   responseJson?: string;
   responseText?: string;
 };

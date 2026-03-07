@@ -27,7 +27,7 @@ export class Endpoint extends Entity {
   private _method: HttpMethod;
   private _title: string;
   private _description: string;
-  private _delay?: number;
+  private _delay: number;
   private _statusCode: number;
   private _responseBodyType?: ResponseBodyType;
   private _responseJson?: string;

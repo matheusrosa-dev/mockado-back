@@ -1,13 +1,17 @@
 import { Endpoint } from "../../../domain/endpoint/endpoint.entity";
+import {
+  HttpMethod,
+  ResponseBodyType,
+} from "../../../domain/endpoint/endpoint.types";
 
 export type EndpointOutput = {
   id: string;
-  method: string;
+  method: HttpMethod;
   title: string;
   description: string;
-  delay?: number;
+  delay: number;
   statusCode: number;
-  responseBodyType?: string;
+  responseBodyType?: ResponseBodyType;
   responseJson?: string;
   responseText?: string;
   created_at: Date;
