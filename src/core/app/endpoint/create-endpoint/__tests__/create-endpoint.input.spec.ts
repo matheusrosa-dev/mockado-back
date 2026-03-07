@@ -17,7 +17,7 @@ function validate(props: object) {
   return validateSync(input);
 }
 
-describe("CreateEndpointInput - Unit Tests", () => {
+describe("Create Endpoint Input - Unit Tests", () => {
   describe("valid input", () => {
     it("should pass with only required fields", () => {
       const errors = validate(validProps);

@@ -15,11 +15,11 @@ export type EndpointOutput = {
 
 export class EndpointOutputMapper {
   static toOutput(entity: Endpoint): EndpointOutput {
-    const jsonEntity = entity.toJSON();
+    const { endpoint_id, ...rest } = entity.toJSON();
 
     return {
-      id: jsonEntity.endpoint_id,
-      ...jsonEntity,
+      id: endpoint_id,
+      ...rest,
     };
   }
 }
