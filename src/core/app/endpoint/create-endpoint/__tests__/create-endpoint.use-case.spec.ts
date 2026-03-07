@@ -37,10 +37,10 @@ describe("Create Endpoint Use Case - Unit Tests", () => {
       expect(output.responseBodyType).toBe(input.responseBodyType);
       expect(output.responseJson).toBe(input.responseJson);
       expect(output.responseText).toBeUndefined();
-      expect(output.created_at).toBeInstanceOf(Date);
+      expect(output.createdAt).toBeInstanceOf(Date);
     });
 
-    it("should create an endpoint with text body", async () => {
+    it("should create an endpoint with TEXT body", async () => {
       const input = {
         title: "My Endpoint",
         method: HttpMethod.GET,
@@ -60,7 +60,7 @@ describe("Create Endpoint Use Case - Unit Tests", () => {
       expect(output.responseBodyType).toBe(input.responseBodyType);
       expect(output.responseJson).toBeUndefined();
       expect(output.responseText).toBe(input.responseText);
-      expect(output.created_at).toBeInstanceOf(Date);
+      expect(output.createdAt).toBeInstanceOf(Date);
     });
 
     it("should create an endpoint without body", async () => {
@@ -81,7 +81,7 @@ describe("Create Endpoint Use Case - Unit Tests", () => {
       expect(output.responseBodyType).toBeUndefined();
       expect(output.responseJson).toBeUndefined();
       expect(output.responseText).toBeUndefined();
-      expect(output.created_at).toBeInstanceOf(Date);
+      expect(output.createdAt).toBeInstanceOf(Date);
     });
 
     it("should create an endpoint with description and delay", async () => {
@@ -104,7 +104,7 @@ describe("Create Endpoint Use Case - Unit Tests", () => {
       expect(output.responseBodyType).toBeUndefined();
       expect(output.responseJson).toBeUndefined();
       expect(output.responseText).toBeUndefined();
-      expect(output.created_at).toBeInstanceOf(Date);
+      expect(output.createdAt).toBeInstanceOf(Date);
     });
 
     it("should throw EntityValidationError when input is not valid", async () => {

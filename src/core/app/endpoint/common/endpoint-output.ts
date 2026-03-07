@@ -14,7 +14,7 @@ export type EndpointOutput = {
   responseBodyType?: ResponseBodyType;
   responseJson?: string;
   responseText?: string;
-  created_at: Date;
+  createdAt: Date;
 };
 
 export class EndpointOutputMapper {

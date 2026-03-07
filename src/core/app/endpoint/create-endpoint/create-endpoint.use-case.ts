@@ -14,14 +14,14 @@ export class CreateEndpointUseCase
   constructor(private readonly repository: IEndpointRepository) {}
 
   async execute(input: CreateEndpointInput): Promise<EndpointOutput> {
-    const entity = EndpointFactory.create(input);
+    const endpoint = EndpointFactory.create(input);
 
-    if (entity.notification.hasErrors()) {
-      throw new EntityValidationError(entity.notification.toJSON());
+    if (endpoint.notification.hasErrors()) {
+      throw new EntityValidationError(endpoint.notification.toJSON());
     }
 
-    await this.repository.insert(entity);
+    await this.repository.insert(endpoint);
 
-    return EndpointOutputMapper.toOutput(entity);
+    return EndpointOutputMapper.toOutput(endpoint);
   }
 }

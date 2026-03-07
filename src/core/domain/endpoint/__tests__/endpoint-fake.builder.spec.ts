@@ -11,7 +11,7 @@ describe("Endpoint Fake Builder - Unit Tests", () => {
       expect(fakeEndpoint.title).toBeDefined();
       expect(fakeEndpoint.method).toBeDefined();
       expect(fakeEndpoint.statusCode).toBeDefined();
-      expect(fakeEndpoint.created_at).toBeDefined();
+      expect(fakeEndpoint.createdAt).toBeDefined();
     });
 
     test("should instance a fake endpoint with custom values", () => {
@@ -35,7 +35,7 @@ describe("Endpoint Fake Builder - Unit Tests", () => {
       expect(fakeEndpoint.description).toBe("Custom Description");
       expect(fakeEndpoint.statusCode).toBe(204);
       expect(fakeEndpoint.delay).toBe(2);
-      expect(fakeEndpoint.created_at).toEqual(new Date("2024-01-01"));
+      expect(fakeEndpoint.createdAt).toEqual(new Date("2024-01-01"));
 
       // JSON response
       const fakeEndpointWithJson = EndpointFactory.fake()
@@ -100,7 +100,7 @@ describe("Endpoint Fake Builder - Unit Tests", () => {
         expect(endpoint.title).toBeDefined();
         expect(endpoint.method).toBeDefined();
         expect(endpoint.statusCode).toBeDefined();
-        expect(endpoint.created_at).toBeDefined();
+        expect(endpoint.createdAt).toBeDefined();
       });
     });
 
@@ -128,7 +128,7 @@ describe("Endpoint Fake Builder - Unit Tests", () => {
         expect(endpoint.description).toBe("Custom Description");
         expect(endpoint.statusCode).toBe(204);
         expect(endpoint.delay).toBe(2);
-        expect(endpoint.created_at).toEqual(new Date("2024-01-01"));
+        expect(endpoint.createdAt).toEqual(new Date("2024-01-01"));
       });
 
       // JSON response

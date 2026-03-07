@@ -19,7 +19,7 @@ type ConstructorProps = {
   responseBodyType?: ResponseBodyType;
   responseJson?: string;
   responseText?: string;
-  created_at?: Date;
+  createdAt?: Date;
 };
 
 export class Endpoint extends Entity {
@@ -32,7 +32,7 @@ export class Endpoint extends Entity {
   private _responseBodyType?: ResponseBodyType;
   private _responseJson?: string;
   private _responseText?: string;
-  private _created_at: Date;
+  private _createdAt: Date;
 
   constructor(props: ConstructorProps) {
     super();
@@ -51,7 +51,7 @@ export class Endpoint extends Entity {
     this._description = props.description ?? "";
     this._delay = props.delay ?? 0;
     this._statusCode = props.statusCode;
-    this._created_at = props.created_at ?? new Date();
+    this._createdAt = props.createdAt ?? new Date();
 
     const allowBody = Endpoint.statusCodeAllowsBody(props.statusCode);
 
@@ -231,8 +231,8 @@ export class Endpoint extends Entity {
     return this._responseText;
   }
 
-  get created_at() {
-    return this._created_at;
+  get createdAt() {
+    return this._createdAt;
   }
 
   toJSON() {
@@ -250,7 +250,7 @@ export class Endpoint extends Entity {
       ...(this._responseJson && { responseJson: this._responseJson }),
       ...(this._responseText && { responseText: this._responseText }),
 
-      created_at: this._created_at,
+      createdAt: this._createdAt,
     };
   }
 }

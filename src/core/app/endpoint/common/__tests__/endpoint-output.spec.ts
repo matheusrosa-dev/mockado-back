@@ -13,7 +13,7 @@ const baseProps = {
   statusCode: 200,
   description: "A description",
   delay: 100,
-  created_at: new Date("2024-01-01T00:00:00.000Z"),
+  createdAt: new Date("2024-01-01T00:00:00.000Z"),
 };
 
 describe("Endpoint Output Mapper - Unit Tests", () => {
@@ -34,7 +34,7 @@ describe("Endpoint Output Mapper - Unit Tests", () => {
       expect(output.description).toBe(baseProps.description);
       expect(output.statusCode).toBe(baseProps.statusCode);
       expect(output.delay).toBe(baseProps.delay);
-      expect(output.created_at).toEqual(baseProps.created_at);
+      expect(output.createdAt).toEqual(baseProps.createdAt);
     });
 
     it("should include responseBodyType when set", () => {

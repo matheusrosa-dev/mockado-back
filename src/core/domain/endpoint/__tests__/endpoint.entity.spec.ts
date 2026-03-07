@@ -94,7 +94,7 @@ describe("Endpoint Entity - Unit Tests", () => {
       expect(endpoint1.description).toBe("");
       expect(endpoint1.delay).toBe(0);
       expect(endpoint1.responseJson).toEqual("{}");
-      expect(endpoint1.created_at).toBeInstanceOf(Date);
+      expect(endpoint1.createdAt).toBeInstanceOf(Date);
 
       const endpoint2 = new Endpoint({
         method: HttpMethod.GET,
@@ -106,7 +106,7 @@ describe("Endpoint Entity - Unit Tests", () => {
       expect(endpoint2.responseText).toBe("");
     });
 
-    it("should set endpoint_id and created_at when provided", () => {
+    it("should set endpoint_id and createdAt when provided", () => {
       const id = new Uuid();
       const date = new Date("2024-01-01");
 
@@ -115,11 +115,11 @@ describe("Endpoint Entity - Unit Tests", () => {
         method: HttpMethod.GET,
         title: "My Endpoint",
         statusCode: 200,
-        created_at: date,
+        createdAt: date,
       });
 
       expect(endpoint.entity_id.equals(id)).toBeTruthy();
-      expect(endpoint.created_at).toBe(date);
+      expect(endpoint.createdAt).toBe(date);
     });
 
     it("should set optional props when provided", () => {
@@ -539,7 +539,7 @@ describe("Endpoint Entity - Unit Tests", () => {
         description: endpointWithoutBody.description,
         delay: endpointWithoutBody.delay,
         statusCode: endpointWithoutBody.statusCode,
-        created_at: endpointWithoutBody.created_at,
+        createdAt: endpointWithoutBody.createdAt,
       });
 
       const endpointWithJson = EndpointFactory.fake()
@@ -559,7 +559,7 @@ describe("Endpoint Entity - Unit Tests", () => {
         statusCode: endpointWithJson.statusCode,
         responseBodyType: endpointWithJson.responseBodyType,
         responseJson: endpointWithJson.responseJson,
-        created_at: endpointWithJson.created_at,
+        createdAt: endpointWithJson.createdAt,
       });
 
       const endpointWithText = new Endpoint({
@@ -571,7 +571,7 @@ describe("Endpoint Entity - Unit Tests", () => {
         description: "desc",
         delay: 2,
         responseText: "text",
-        created_at: new Date("2024-01-01"),
+        createdAt: new Date("2024-01-01"),
       });
 
       expect(endpointWithText.toJSON()).toEqual({
@@ -583,7 +583,7 @@ describe("Endpoint Entity - Unit Tests", () => {
         statusCode: endpointWithText.statusCode,
         responseBodyType: endpointWithText.responseBodyType,
         responseText: endpointWithText.responseText,
-        created_at: endpointWithText.created_at,
+        createdAt: endpointWithText.createdAt,
       });
     });
   });

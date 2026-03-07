@@ -36,7 +36,7 @@ export class EndpointFakeBuilder<TBuild = Endpoint | Endpoint[]> {
   private _responseJson: PropOrFactory<string> = () =>
     JSON.stringify({ message: this.chance.sentence() });
   private _responseText: PropOrFactory<string> = () => this.chance.sentence();
-  private _created_at?: PropOrFactory<Date>;
+  private _createdAt?: PropOrFactory<Date>;
 
   private amount: number;
   private chance: Chance.Chance;
@@ -100,7 +100,7 @@ export class EndpointFakeBuilder<TBuild = Endpoint | Endpoint[]> {
   }
 
   withCreatedAt(valueOrFactory: PropOrFactory<Date>) {
-    this._created_at = valueOrFactory;
+    this._createdAt = valueOrFactory;
     return this;
   }
 
@@ -120,8 +120,8 @@ export class EndpointFakeBuilder<TBuild = Endpoint | Endpoint[]> {
         delay: this.callFactory(this._delay),
         description: this.callFactory(this._description),
 
-        ...(this._created_at && {
-          created_at: this.callFactory(this._created_at),
+        ...(this._createdAt && {
+          createdAt: this.callFactory(this._createdAt),
         }),
       });
 
