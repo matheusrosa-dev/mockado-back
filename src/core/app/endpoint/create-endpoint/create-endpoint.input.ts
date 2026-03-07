@@ -54,6 +54,8 @@ export class CreateEndpointInput {
   responseText?: string;
 
   constructor(props: ConstructorProps) {
+    if (!props) return;
+
     Object.assign(this, props);
   }
 }

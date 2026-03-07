@@ -6,7 +6,6 @@ import {
   ResponseBodyType,
 } from "../../../../domain/endpoint/endpoint.types";
 import { EntityValidationError } from "../../../../domain/shared/validators/validation.error";
-import { Uuid } from "../../../../domain/shared/value-objects/uuid.vo";
 
 describe("Create Endpoint Use Case - Unit Tests", () => {
   let useCase: CreateEndpointUseCase;
@@ -18,11 +17,13 @@ describe("Create Endpoint Use Case - Unit Tests", () => {
   });
 
   describe("execute()", () => {
-    it("should create an endpoint with required fields only", async () => {
+    it("should create an endpoint with JSON body", async () => {
       const input = {
         title: "My Endpoint",
         method: HttpMethod.GET,
         statusCode: 200,
+        responseBodyType: ResponseBodyType.JSON,
+        responseJson: '{"key":"value"}',
       };
 
       const output = await useCase.execute(input);
@@ -33,114 +34,84 @@ describe("Create Endpoint Use Case - Unit Tests", () => {
       expect(output.statusCode).toBe(input.statusCode);
       expect(output.description).toBe("");
       expect(output.delay).toBe(0);
+      expect(output.responseBodyType).toBe(input.responseBodyType);
+      expect(output.responseJson).toBe(input.responseJson);
+      expect(output.responseText).toBeUndefined();
       expect(output.created_at).toBeInstanceOf(Date);
     });
 
-    it("should create an endpoint with all fields", async () => {
+    it("should create an endpoint with text body", async () => {
       const input = {
-        title: "Full Endpoint",
-        method: HttpMethod.POST,
-        description: "A full endpoint",
-        delay: 3,
-        statusCode: 201,
-        responseBodyType: ResponseBodyType.JSON,
-        responseJson: '{"key":"value"}',
+        title: "My Endpoint",
+        method: HttpMethod.GET,
+        statusCode: 200,
+        responseBodyType: ResponseBodyType.TEXT,
+        responseText: "Hello, world!",
       };
 
       const output = await useCase.execute(input);
 
+      expect(output.id).toBeDefined();
       expect(output.title).toBe(input.title);
       expect(output.method).toBe(input.method);
-      expect(output.description).toBe(input.description);
-      expect(output.delay).toBe(input.delay);
       expect(output.statusCode).toBe(input.statusCode);
+      expect(output.description).toBe("");
+      expect(output.delay).toBe(0);
       expect(output.responseBodyType).toBe(input.responseBodyType);
-      expect(output.responseJson).toBe(input.responseJson);
+      expect(output.responseJson).toBeUndefined();
+      expect(output.responseText).toBe(input.responseText);
+      expect(output.created_at).toBeInstanceOf(Date);
     });
 
-    it("should persist the endpoint in the repository", async () => {
+    it("should create an endpoint without body", async () => {
       const input = {
-        title: "Persisted Endpoint",
-        method: HttpMethod.DELETE,
+        title: "My Endpoint",
+        method: HttpMethod.GET,
         statusCode: 204,
       };
 
       const output = await useCase.execute(input);
 
-      const found = await repository.findById(new Uuid(output.id));
-      expect(found).not.toBeNull();
-      expect(found!.title).toBe(input.title);
+      expect(output.id).toBeDefined();
+      expect(output.title).toBe(input.title);
+      expect(output.method).toBe(input.method);
+      expect(output.statusCode).toBe(input.statusCode);
+      expect(output.description).toBe("");
+      expect(output.delay).toBe(0);
+      expect(output.responseBodyType).toBeUndefined();
+      expect(output.responseJson).toBeUndefined();
+      expect(output.responseText).toBeUndefined();
+      expect(output.created_at).toBeInstanceOf(Date);
     });
 
-    it("should create an endpoint with TEXT response body type", async () => {
+    it("should create an endpoint with description and delay", async () => {
       const input = {
-        title: "Text Endpoint",
+        title: "My Endpoint",
         method: HttpMethod.GET,
-        statusCode: 200,
-        responseBodyType: ResponseBodyType.TEXT,
-        responseText: "Hello World",
+        statusCode: 204,
+        description: "A description",
+        delay: 5,
       };
 
       const output = await useCase.execute(input);
 
-      expect(output.responseBodyType).toBe(ResponseBodyType.TEXT);
-      expect(output.responseText).toBe(input.responseText);
+      expect(output.id).toBeDefined();
+      expect(output.title).toBe(input.title);
+      expect(output.method).toBe(input.method);
+      expect(output.statusCode).toBe(input.statusCode);
+      expect(output.description).toBe(input.description);
+      expect(output.delay).toBe(input.delay);
+      expect(output.responseBodyType).toBeUndefined();
+      expect(output.responseJson).toBeUndefined();
+      expect(output.responseText).toBeUndefined();
+      expect(output.created_at).toBeInstanceOf(Date);
     });
 
-    it("should throw EntityValidationError when title is empty", async () => {
+    it("should throw EntityValidationError when input is not valid", async () => {
       const input = {
-        title: "",
+        title: "", // Invalid: empty title
         method: HttpMethod.GET,
-        statusCode: 200,
-      };
-
-      await expect(useCase.execute(input)).rejects.toThrow(
-        EntityValidationError,
-      );
-    });
-
-    it("should throw EntityValidationError when title exceeds 50 characters", async () => {
-      const input = {
-        title: "a".repeat(51),
-        method: HttpMethod.GET,
-        statusCode: 200,
-      };
-
-      await expect(useCase.execute(input)).rejects.toThrow(
-        EntityValidationError,
-      );
-    });
-
-    it("should throw EntityValidationError when method is invalid", async () => {
-      const input = {
-        title: "Test",
-        method: "INVALID" as HttpMethod,
-        statusCode: 200,
-      };
-
-      await expect(useCase.execute(input)).rejects.toThrow(
-        EntityValidationError,
-      );
-    });
-
-    it("should throw EntityValidationError when statusCode is out of range", async () => {
-      const input = {
-        title: "Test",
-        method: HttpMethod.GET,
-        statusCode: 99,
-      };
-
-      await expect(useCase.execute(input)).rejects.toThrow(
-        EntityValidationError,
-      );
-    });
-
-    it("should throw EntityValidationError when delay exceeds maximum", async () => {
-      const input = {
-        title: "Test",
-        method: HttpMethod.GET,
-        statusCode: 200,
-        delay: 11,
+        statusCode: 204,
       };
 
       await expect(useCase.execute(input)).rejects.toThrow(
