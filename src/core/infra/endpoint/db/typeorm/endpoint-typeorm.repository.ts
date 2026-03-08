@@ -6,16 +6,11 @@ import { EndpointModelMapper } from "./endpoint-model-mapper";
 import { Uuid } from "@domain/shared/value-objects/uuid.vo";
 import { NotFoundError } from "@domain/shared/errors/not-found.error";
 
-type ConstructorProps = {
-  dataSource: DataSource;
-  endpointModel: typeof EndpointModel;
-};
-
 export class EndpointTypeOrmRepository implements IEndpointRepository {
   private repository: Repository<EndpointModel>;
 
-  constructor(props: ConstructorProps) {
-    this.repository = props.dataSource.getRepository(props.endpointModel);
+  constructor(dataSource: DataSource) {
+    this.repository = dataSource.getRepository(EndpointModel);
   }
 
   async insert(entity: Endpoint): Promise<void> {
@@ -54,7 +49,9 @@ export class EndpointTypeOrmRepository implements IEndpointRepository {
   }
 
   async findAll(): Promise<Endpoint[]> {
-    const models = await this.repository.find();
+    const models = await this.repository.find({
+      order: { createdAt: "ASC" },
+    });
 
     return models.map((model) => EndpointModelMapper.toEntity(model));
   }

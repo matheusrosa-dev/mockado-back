@@ -93,7 +93,7 @@ describe("Endpoint Entity - Unit Tests", () => {
       expect(endpoint1.entity_id).toBeInstanceOf(Uuid);
       expect(endpoint1.description).toBe("");
       expect(endpoint1.delay).toBe(0);
-      expect(endpoint1.responseJson).toEqual("{}");
+      expect(endpoint1.responseJson).toBe("{}");
       expect(endpoint1.createdAt).toBeInstanceOf(Date);
 
       const endpoint2 = new Endpoint({

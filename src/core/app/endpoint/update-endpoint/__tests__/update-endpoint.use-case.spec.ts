@@ -1,7 +1,7 @@
 import { EndpointInMemoryRepository } from "@infra/endpoint/db/in-memory/endpoint-in-memory.repository";
 import { IEndpointRepository } from "@domain/endpoint/endpoint.repository";
 import { UpdateEndpointUseCase } from "../update-endpoint.use-case";
-import { EndpointFakeBuilder } from "@domain/endpoint/endpoint-fake.builder";
+import { EndpointFactory } from "@domain/endpoint/endpoint.entity";
 import { HttpMethod, ResponseBodyType } from "@domain/endpoint/endpoint.types";
 import { EntityValidationError } from "@domain/shared/validators/validation.error";
 import { NotFoundError } from "@domain/shared/errors/not-found.error";
@@ -18,7 +18,8 @@ describe("Update Endpoint Use Case - Unit Tests", () => {
 
   describe("execute()", () => {
     it("should update the title of an endpoint", async () => {
-      const endpoint = EndpointFakeBuilder.oneEndpoint()
+      const endpoint = EndpointFactory.fake()
+        .oneEndpoint()
         .withMethod(HttpMethod.GET)
         .withStatusCode(200)
         .build();
@@ -44,7 +45,8 @@ describe("Update Endpoint Use Case - Unit Tests", () => {
     });
 
     it("should update the method of an endpoint", async () => {
-      const endpoint = EndpointFakeBuilder.oneEndpoint()
+      const endpoint = EndpointFactory.fake()
+        .oneEndpoint()
         .withMethod(HttpMethod.GET)
         .withStatusCode(200)
         .build();
@@ -70,7 +72,8 @@ describe("Update Endpoint Use Case - Unit Tests", () => {
     });
 
     it("should update the statusCode of an endpoint", async () => {
-      const endpoint = EndpointFakeBuilder.oneEndpoint()
+      const endpoint = EndpointFactory.fake()
+        .oneEndpoint()
         .withMethod(HttpMethod.GET)
         .withStatusCode(200)
         .build();
@@ -96,7 +99,7 @@ describe("Update Endpoint Use Case - Unit Tests", () => {
     });
 
     it("should update the description of an endpoint", async () => {
-      const endpoint = EndpointFakeBuilder.oneEndpoint().build();
+      const endpoint = EndpointFactory.fake().oneEndpoint().build();
 
       const inMemoryRepository = repository as EndpointInMemoryRepository;
       inMemoryRepository.items = [endpoint];
@@ -119,7 +122,7 @@ describe("Update Endpoint Use Case - Unit Tests", () => {
     });
 
     it("should update the delay of an endpoint", async () => {
-      const endpoint = EndpointFakeBuilder.oneEndpoint().build();
+      const endpoint = EndpointFactory.fake().oneEndpoint().build();
 
       const inMemoryRepository = repository as EndpointInMemoryRepository;
       inMemoryRepository.items = [endpoint];
@@ -142,7 +145,8 @@ describe("Update Endpoint Use Case - Unit Tests", () => {
     });
 
     it("should update the responseBodyType to JSON and set responseJson", async () => {
-      const endpoint = EndpointFakeBuilder.oneEndpoint()
+      const endpoint = EndpointFactory.fake()
+        .oneEndpoint()
         .withStatusCode(200)
         .withResponseBodyType(ResponseBodyType.TEXT)
         .build();
@@ -169,7 +173,8 @@ describe("Update Endpoint Use Case - Unit Tests", () => {
     });
 
     it("should update the responseBodyType to TEXT and set responseText", async () => {
-      const endpoint = EndpointFakeBuilder.oneEndpoint()
+      const endpoint = EndpointFactory.fake()
+        .oneEndpoint()
         .withStatusCode(200)
         .withResponseBodyType(ResponseBodyType.JSON)
         .build();
@@ -196,7 +201,8 @@ describe("Update Endpoint Use Case - Unit Tests", () => {
     });
 
     it("should update multiple fields at once", async () => {
-      const endpoint = EndpointFakeBuilder.oneEndpoint()
+      const endpoint = EndpointFactory.fake()
+        .oneEndpoint()
         .withMethod(HttpMethod.GET)
         .withStatusCode(200)
         .build();
@@ -221,7 +227,8 @@ describe("Update Endpoint Use Case - Unit Tests", () => {
     });
 
     it("should persist the updated endpoint in the repository", async () => {
-      const endpoint = EndpointFakeBuilder.oneEndpoint()
+      const endpoint = EndpointFactory.fake()
+        .oneEndpoint()
         .withMethod(HttpMethod.GET)
         .withStatusCode(200)
         .build();
@@ -248,7 +255,8 @@ describe("Update Endpoint Use Case - Unit Tests", () => {
     });
 
     it("should throw EntityValidationError when update produces an invalid entity", async () => {
-      const endpoint = EndpointFakeBuilder.oneEndpoint()
+      const endpoint = EndpointFactory.fake()
+        .oneEndpoint()
         .withMethod(HttpMethod.GET)
         .withStatusCode(200)
         .build();

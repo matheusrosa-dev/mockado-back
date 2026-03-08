@@ -3,12 +3,12 @@ import { setupTypeOrm } from "../../../../shared/testing/helpers";
 import { EndpointModel } from "../endpoint-typeorm.model";
 
 describe("Endpoint Model - Integration Tests", () => {
-  const { typeorm } = setupTypeOrm({
+  const { dataSource } = setupTypeOrm({
     entities: [EndpointModel],
   });
 
   test("mapping props", () => {
-    const metadata = typeorm.getMetadata(EndpointModel);
+    const metadata = dataSource.getMetadata(EndpointModel);
     const columns = metadata.columns;
 
     const columnNames = columns.map((c) => c.propertyName);

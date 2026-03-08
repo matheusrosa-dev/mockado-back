@@ -1,9 +1,11 @@
 import { DataSource, DataSourceOptions } from "typeorm";
 
-type SetupTypeOrmOptions = Partial<DataSourceOptions>;
+type MakeRequired<T, K extends keyof T> = T & Required<Pick<T, K>>;
 
-export function setupTypeOrm(options: SetupTypeOrmOptions = {}) {
-  const typeorm = new DataSource({
+type SetupTypeOrmOptions = MakeRequired<Partial<DataSourceOptions>, "entities">;
+
+export function setupTypeOrm(options: SetupTypeOrmOptions) {
+  const dataSource = new DataSource({
     type: "sqlite",
     database: ":memory:",
     dropSchema: true,
@@ -13,14 +15,14 @@ export function setupTypeOrm(options: SetupTypeOrmOptions = {}) {
   });
 
   beforeEach(async () => {
-    await typeorm.initialize();
+    await dataSource.initialize();
   });
 
   afterEach(async () => {
-    if (typeorm.isInitialized) {
-      await typeorm.destroy();
+    if (dataSource.isInitialized) {
+      await dataSource.destroy();
     }
   });
 
-  return { typeorm };
+  return { dataSource };
 }

@@ -10,6 +10,7 @@ import {
 import { HttpMethod, ResponseBodyType } from "@domain/endpoint/endpoint.types";
 
 type ConstructorProps = {
+  id: string;
   title?: string;
   method?: HttpMethod;
   description?: string;

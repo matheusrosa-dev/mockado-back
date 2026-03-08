@@ -7,15 +7,12 @@ import { EndpointModel } from "../endpoint-typeorm.model";
 import { EndpointTypeOrmRepository } from "../endpoint-typeorm.repository";
 
 describe("EndpointTypeOrmRepository - Integration Tests", () => {
-  const { typeorm } = setupTypeOrm({ entities: [EndpointModel] });
+  const { dataSource } = setupTypeOrm({ entities: [EndpointModel] });
 
   let repository: EndpointTypeOrmRepository;
 
   beforeEach(() => {
-    repository = new EndpointTypeOrmRepository({
-      dataSource: typeorm,
-      endpointModel: EndpointModel,
-    });
+    repository = new EndpointTypeOrmRepository(dataSource);
   });
 
   describe("insert()", () => {
