@@ -4,7 +4,7 @@ import { HttpMethod, ResponseBodyType } from "../endpoint.types";
 
 describe("Endpoint Fake Builder - Unit Tests", () => {
   describe("one endpoint", () => {
-    test("should instance a fake endpoint with default values", () => {
+    it("should instance a fake endpoint with default values", () => {
       const fakeEndpoint = EndpointFactory.fake().oneEndpoint().build();
 
       expect(fakeEndpoint.entity_id.id).toBeDefined();
@@ -14,7 +14,7 @@ describe("Endpoint Fake Builder - Unit Tests", () => {
       expect(fakeEndpoint.createdAt).toBeDefined();
     });
 
-    test("should instance a fake endpoint with custom values", () => {
+    it("should instance a fake endpoint with custom values", () => {
       const id = new Uuid();
 
       // Custom values
@@ -88,7 +88,7 @@ describe("Endpoint Fake Builder - Unit Tests", () => {
   });
 
   describe("many endpoints", () => {
-    test("should instance an array of fake endpoints with default values", () => {
+    it("should instance an array of fake endpoints with default values", () => {
       const amount = 5;
       const fakeEndpoints = EndpointFactory.fake()
         .manyEndpoints(amount)
@@ -104,7 +104,7 @@ describe("Endpoint Fake Builder - Unit Tests", () => {
       });
     });
 
-    test("should instance an array of fake endpoints with custom values", () => {
+    it("should instance an array of fake endpoints with custom values", () => {
       const id = new Uuid();
       const amount = 3;
 

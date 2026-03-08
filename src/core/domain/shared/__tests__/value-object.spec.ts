@@ -16,7 +16,7 @@ class ComplexValueObject extends ValueObject {
 }
 
 describe("ValueObject - Unit Tests", () => {
-  test("should be equal", () => {
+  it("should be equal", () => {
     const valueObject = new StringValueObject("test");
     const valueObject2 = new StringValueObject("test");
     expect(valueObject.equals(valueObject2)).toBe(true);
@@ -26,7 +26,7 @@ describe("ValueObject - Unit Tests", () => {
     expect(complexValueObject.equals(complexValueObject2)).toBe(true);
   });
 
-  test("should not be equal", () => {
+  it("should not be equal", () => {
     const valueObject = new StringValueObject("test");
     const valueObject2 = new StringValueObject("test2");
     expect(valueObject.equals(valueObject2)).toBe(false);

@@ -22,13 +22,13 @@ describe("Delete Endpoint Use Case - Unit Tests", () => {
 
       inMemoryRepository.items = [endpoint];
 
-      expect(inMemoryRepository.items.length).toBe(1);
+      expect(inMemoryRepository.items).toHaveLength(1);
 
       await useCase.execute({
         id: endpoint.entity_id.id,
       });
 
-      expect(inMemoryRepository.items.length).toBe(0);
+      expect(inMemoryRepository.items).toHaveLength(0);
     });
 
     it("should throw an error if endpoint not found", async () => {
