@@ -6,6 +6,7 @@ import { NotFoundError } from "@domain/shared/errors/not-found.error";
 import { setupTypeOrm } from "@infra/shared/testing/helpers";
 import { EndpointModel } from "@infra/endpoint/db/typeorm/endpoint-typeorm.model";
 import { EndpointTypeOrmRepository } from "@infra/endpoint/db/typeorm/endpoint-typeorm.repository";
+import { EndpointOutputMapper } from "@app/endpoint/common/endpoint-output";
 
 describe("Find Endpoint Use Case - Integration Tests", () => {
   let useCase: FindEndpointUseCase;
@@ -52,6 +53,24 @@ describe("Find Endpoint Use Case - Integration Tests", () => {
           id: id.id,
         }),
       ).rejects.toThrow(NotFoundError);
+    });
+
+    it("should return formatted output", async () => {
+      const endpoint = EndpointFactory.fake().oneEndpoint().build();
+
+      await repository.insert(endpoint);
+
+      const output = await useCase.execute({
+        id: endpoint.entity_id.id,
+      });
+
+      const outputMapped = EndpointOutputMapper.toOutput(endpoint);
+
+      expect(output).toStrictEqual({
+        ...outputMapped,
+        id: output.id,
+        createdAt: output.createdAt,
+      });
     });
   });
 });

@@ -4,6 +4,7 @@ import { FindEndpointUseCase } from "../find-endpoint.use-case";
 import { EndpointFactory } from "@domain/endpoint/endpoint.entity";
 import { Uuid } from "@domain/shared/value-objects/uuid.vo";
 import { NotFoundError } from "@domain/shared/errors/not-found.error";
+import { EndpointOutputMapper } from "@app/endpoint/common/endpoint-output";
 
 describe("Find Endpoint Use Case - Unit Tests", () => {
   let useCase: FindEndpointUseCase;
@@ -48,6 +49,26 @@ describe("Find Endpoint Use Case - Unit Tests", () => {
           id: id.id,
         }),
       ).rejects.toThrow(NotFoundError);
+    });
+
+    it("should return formatted output", async () => {
+      const endpoint = EndpointFactory.fake().oneEndpoint().build();
+
+      const inMemoryRepository = repository as EndpointInMemoryRepository;
+
+      inMemoryRepository.items = [endpoint];
+
+      const output = await useCase.execute({
+        id: endpoint.entity_id.id,
+      });
+
+      const outputMapped = EndpointOutputMapper.toOutput(endpoint);
+
+      expect(output).toStrictEqual({
+        ...outputMapped,
+        id: output.id,
+        createdAt: output.createdAt,
+      });
     });
   });
 });

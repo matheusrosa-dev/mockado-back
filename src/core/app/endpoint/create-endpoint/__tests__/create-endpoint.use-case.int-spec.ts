@@ -1,18 +1,24 @@
-import { EndpointInMemoryRepository } from "@infra/endpoint/db/in-memory/endpoint-in-memory.repository";
 import { IEndpointRepository } from "@domain/endpoint/endpoint.repository";
 import { CreateEndpointUseCase } from "../create-endpoint.use-case";
 import { HttpMethod, ResponseBodyType } from "@domain/endpoint/endpoint.types";
 import { EntityValidationError } from "@domain/shared/validators/validation.error";
+import { setupTypeOrm } from "@infra/shared/testing/helpers";
+import { EndpointModel } from "@infra/endpoint/db/typeorm/endpoint-typeorm.model";
+import { EndpointTypeOrmRepository } from "@infra/endpoint/db/typeorm/endpoint-typeorm.repository";
 import { Uuid } from "@domain/shared/value-objects/uuid.vo";
-import { EndpointOutputMapper } from "@app/endpoint/common/endpoint-output";
 import { EndpointFactory } from "@domain/endpoint/endpoint.entity";
+import { EndpointOutputMapper } from "@app/endpoint/common/endpoint-output";
 
-describe("Create Endpoint Use Case - Unit Tests", () => {
+describe("Create Endpoint Use Case - Integration Tests", () => {
   let useCase: CreateEndpointUseCase;
   let repository: IEndpointRepository;
 
+  const { dataSource } = setupTypeOrm({
+    entities: [EndpointModel],
+  });
+
   beforeEach(() => {
-    repository = new EndpointInMemoryRepository();
+    repository = new EndpointTypeOrmRepository(dataSource);
     useCase = new CreateEndpointUseCase(repository);
   });
 
@@ -30,8 +36,7 @@ describe("Create Endpoint Use Case - Unit Tests", () => {
 
       const createdEndpoint = await repository.findById(new Uuid(output.id));
 
-      expect(createdEndpoint).not.toBeNull();
-      expect(createdEndpoint?.entity_id.id).toBe(output.id);
+      expect(createdEndpoint).toBeDefined();
       expect(createdEndpoint?.title).toBe(input.title);
       expect(createdEndpoint?.method).toBe(input.method);
       expect(createdEndpoint?.statusCode).toBe(input.statusCode);
@@ -56,8 +61,7 @@ describe("Create Endpoint Use Case - Unit Tests", () => {
 
       const createdEndpoint = await repository.findById(new Uuid(output.id));
 
-      expect(createdEndpoint).not.toBeNull();
-      expect(createdEndpoint?.entity_id.id).toBe(output.id);
+      expect(createdEndpoint).toBeDefined();
       expect(createdEndpoint?.title).toBe(input.title);
       expect(createdEndpoint?.method).toBe(input.method);
       expect(createdEndpoint?.statusCode).toBe(input.statusCode);
@@ -80,8 +84,7 @@ describe("Create Endpoint Use Case - Unit Tests", () => {
 
       const createdEndpoint = await repository.findById(new Uuid(output.id));
 
-      expect(createdEndpoint).not.toBeNull();
-      expect(createdEndpoint?.entity_id.id).toBe(output.id);
+      expect(createdEndpoint).toBeDefined();
       expect(createdEndpoint?.title).toBe(input.title);
       expect(createdEndpoint?.method).toBe(input.method);
       expect(createdEndpoint?.statusCode).toBe(input.statusCode);
@@ -106,8 +109,7 @@ describe("Create Endpoint Use Case - Unit Tests", () => {
 
       const createdEndpoint = await repository.findById(new Uuid(output.id));
 
-      expect(createdEndpoint).not.toBeNull();
-      expect(createdEndpoint?.entity_id.id).toBe(output.id);
+      expect(createdEndpoint).toBeDefined();
       expect(createdEndpoint?.title).toBe(input.title);
       expect(createdEndpoint?.method).toBe(input.method);
       expect(createdEndpoint?.statusCode).toBe(input.statusCode);

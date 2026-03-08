@@ -6,6 +6,7 @@ import { HttpMethod, ResponseBodyType } from "@domain/endpoint/endpoint.types";
 import { EntityValidationError } from "@domain/shared/validators/validation.error";
 import { NotFoundError } from "@domain/shared/errors/not-found.error";
 import { Uuid } from "@domain/shared/value-objects/uuid.vo";
+import { EndpointOutputMapper } from "@app/endpoint/common/endpoint-output";
 
 describe("Update Endpoint Use Case - Unit Tests", () => {
   let useCase: UpdateEndpointUseCase;
@@ -270,6 +271,30 @@ describe("Update Endpoint Use Case - Unit Tests", () => {
           delay: 11, // Invalid: @Max(10) - triggers entity validation error
         }),
       ).rejects.toThrow(EntityValidationError);
+    });
+
+    it("should return formatted output", async () => {
+      const endpoint = EndpointFactory.fake().oneEndpoint().build();
+
+      const inMemoryRepository = repository as EndpointInMemoryRepository;
+
+      inMemoryRepository.items = [endpoint];
+
+      const output = await useCase.execute({
+        id: endpoint.entity_id.id,
+        delay: 3,
+        description: "Updated description",
+      });
+
+      const outputMapped = EndpointOutputMapper.toOutput(endpoint);
+
+      expect(output).toStrictEqual({
+        ...outputMapped,
+        id: output.id,
+        createdAt: output.createdAt,
+        delay: 3,
+        description: "Updated description",
+      });
     });
   });
 });

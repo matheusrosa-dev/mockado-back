@@ -4,6 +4,7 @@ import { EndpointFactory } from "@domain/endpoint/endpoint.entity";
 import { setupTypeOrm } from "@infra/shared/testing/helpers";
 import { EndpointTypeOrmRepository } from "@infra/endpoint/db/typeorm/endpoint-typeorm.repository";
 import { EndpointModel } from "@infra/endpoint/db/typeorm/endpoint-typeorm.model";
+import { EndpointOutputMapper } from "@app/endpoint/common/endpoint-output";
 
 describe("List Endpoints Use Case - Integration Tests", () => {
   let useCase: ListEndpointsUseCase;
@@ -47,6 +48,24 @@ describe("List Endpoints Use Case - Integration Tests", () => {
     it("should return an empty array if no endpoints found", async () => {
       const endpointsList = await useCase.execute();
       expect(endpointsList).toEqual([]);
+    });
+
+    it("should return formatted output", async () => {
+      const endpoint = EndpointFactory.fake().oneEndpoint().build();
+
+      await repository.insert(endpoint);
+
+      const output = await useCase.execute();
+
+      const outputMapped = EndpointOutputMapper.toOutput(endpoint);
+
+      expect(output).toStrictEqual([
+        {
+          ...outputMapped,
+          id: output[0].id,
+          createdAt: output[0].createdAt,
+        },
+      ]);
     });
   });
 });
