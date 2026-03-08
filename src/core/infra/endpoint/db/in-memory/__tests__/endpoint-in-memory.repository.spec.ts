@@ -50,10 +50,7 @@ describe("Endpoint In Memory Repository - Unit Tests", () => {
 
   describe("findAll()", () => {
     it("should return all endpoints", async () => {
-      const endpoints = [
-        EndpointFactory.fake().oneEndpoint().build(),
-        EndpointFactory.fake().oneEndpoint().build(),
-      ];
+      const endpoints = EndpointFactory.fake().manyEndpoints(2).build();
 
       await Promise.all(
         endpoints.map((endpoint) => repository.insert(endpoint)),
@@ -67,41 +64,6 @@ describe("Endpoint In Memory Repository - Unit Tests", () => {
     it("should return empty array when there are no endpoints", async () => {
       const result = await repository.findAll();
       expect(result).toHaveLength(0);
-    });
-  });
-
-  describe("findByIds()", () => {
-    it("should return endpoints matching the given ids", async () => {
-      const endpoints = [
-        EndpointFactory.fake().oneEndpoint().build(),
-        EndpointFactory.fake().oneEndpoint().build(),
-        EndpointFactory.fake().oneEndpoint().build(),
-      ];
-
-      await Promise.all(
-        endpoints.map((endpoint) => repository.insert(endpoint)),
-      );
-
-      const result = await repository.findByIds([
-        endpoints[0].entity_id as Uuid,
-        endpoints[2].entity_id as Uuid,
-      ]);
-      expect(result).toHaveLength(2);
-      expect(result).toContain(endpoints[0]);
-      expect(result).toContain(endpoints[2]);
-    });
-
-    it("should ignore ids that do not exist", async () => {
-      const endpoint = EndpointFactory.fake().oneEndpoint().build();
-
-      await repository.insert(endpoint);
-
-      const result = await repository.findByIds([
-        endpoint.entity_id as Uuid,
-        new Uuid(),
-      ]);
-      expect(result).toHaveLength(1);
-      expect(result[0]).toBe(endpoint);
     });
   });
 
@@ -180,8 +142,10 @@ describe("Endpoint In Memory Repository - Unit Tests", () => {
       const methods = Object.values(HttpMethod);
 
       const endpoints = methods.map((method) => {
-        const endpoint = EndpointFactory.fake().oneEndpoint().build();
-        endpoint.changeMethod(method);
+        const endpoint = EndpointFactory.fake()
+          .oneEndpoint()
+          .withMethod(method)
+          .build();
         return endpoint;
       });
 

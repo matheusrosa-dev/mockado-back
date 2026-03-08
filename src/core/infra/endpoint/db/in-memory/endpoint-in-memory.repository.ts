@@ -7,7 +7,7 @@ export class EndpointInMemoryRepository
   extends InMemoryRepository<Endpoint, Uuid>
   implements IEndpointRepository
 {
-  getEntity(): new (...args: any[]) => Endpoint {
+  getEntity() {
     return Endpoint;
   }
 }

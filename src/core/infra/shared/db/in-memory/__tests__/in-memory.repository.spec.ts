@@ -121,31 +121,4 @@ describe("In Memory Repository - Unit Tests", () => {
     const found = await repository.findById(new Uuid());
     expect(found).toBeNull();
   });
-
-  it("should return entities by ids", async () => {
-    const entities = [
-      new StubEntity({ name: "First", price: 10 }),
-      new StubEntity({ name: "Second", price: 20 }),
-      new StubEntity({ name: "Third", price: 30 }),
-    ];
-
-    await Promise.all(entities.map((entity) => repository.insert(entity)));
-
-    const found = await repository.findByIds([
-      entities[0].entity_id,
-      entities[2].entity_id,
-    ]);
-    expect(found).toHaveLength(2);
-    expect(found).toContain(entities[0]);
-    expect(found).toContain(entities[2]);
-  });
-
-  it("should return only existing entities when some ids are not found", async () => {
-    const entity = new StubEntity({ name: "name value", price: 5 });
-    await repository.insert(entity);
-
-    const found = await repository.findByIds([entity.entity_id, new Uuid()]);
-    expect(found).toHaveLength(1);
-    expect(found[0]).toBe(entity);
-  });
 });

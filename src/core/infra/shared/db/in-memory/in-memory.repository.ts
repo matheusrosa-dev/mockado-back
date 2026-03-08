@@ -46,12 +46,6 @@ export abstract class InMemoryRepository<
     return item;
   }
 
-  async findByIds(ids: EntityId[]): Promise<E[]> {
-    return this.items.filter((entity) => {
-      return ids.some((id) => entity.entity_id.equals(id));
-    });
-  }
-
   async findAll(): Promise<E[]> {
     return this.items;
   }
