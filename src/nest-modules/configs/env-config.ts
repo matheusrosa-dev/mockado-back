@@ -1,19 +1,10 @@
 import { registerAs } from "@nestjs/config";
-import * as Joi from "joi";
+import { IApiConfig, IDatabaseConfig } from "./configs.interface";
 
+import * as Joi from "joi";
 import "dotenv/config";
 
-export interface IDatabaseConfig {
-  type: "sqlite" | "postgres";
-  host?: string;
-  port?: number;
-  username?: string;
-  password?: string;
-  migrationsRun?: boolean;
-  database: string;
-}
-
-export const apiConfig = registerAs("api", () => ({
+export const apiConfig = registerAs<IApiConfig>("api", () => ({
   port: Number(process.env.API_PORT),
 }));
 

@@ -1,6 +1,6 @@
 import { NestFactory } from "@nestjs/core";
 import { AppModule } from "./nest-modules/app.module";
-import { applyGlobalConfig } from "./nest-modules/config/global-config";
+import { applyGlobalConfig } from "./nest-modules/configs/global-config";
 import { ConfigService } from "@nestjs/config";
 
 async function bootstrap() {

@@ -1,11 +1,11 @@
 import { Module } from "@nestjs/common";
-import { ConfigModule as NestjsConfigModule } from "@nestjs/config";
-import { apiConfig, databaseConfig, validationSchema } from "./config";
+import { ConfigModule } from "@nestjs/config";
+import { apiConfig, databaseConfig, validationSchema } from "./env-config";
 import { join } from "node:path";
 
 @Module({
   imports: [
-    NestjsConfigModule.forRoot({
+    ConfigModule.forRoot({
       load: [apiConfig, databaseConfig],
       isGlobal: true,
       envFilePath: [join(process.cwd(), "envs", `.env`)],
@@ -13,4 +13,4 @@ import { join } from "node:path";
     }),
   ],
 })
-export class ConfigModule {}
+export class ConfigsModule {}
