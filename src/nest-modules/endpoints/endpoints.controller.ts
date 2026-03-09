@@ -3,16 +3,10 @@ import { UpdateEndpointUseCase } from "@app/endpoint/update-endpoint/update-endp
 import { FindEndpointUseCase } from "@app/endpoint/find-endpoint/find-endpoint.use-case";
 import { DeleteEndpointUseCase } from "@app/endpoint/delete-endpoint/delete-endpoint.use-case";
 import { ListEndpointsUseCase } from "@app/endpoint/list-endpoints/list-endpoints.use-case";
-import {
-  Body,
-  Controller,
-  Delete,
-  Get,
-  Param,
-  ParseUUIDPipe,
-  Post,
-} from "@nestjs/common";
+import { Body, Controller, Delete, Get, Param, Post } from "@nestjs/common";
 import { CreateEndpointDto } from "./dtos/create-endpoint.dto";
+import { DeleteEndpointDto } from "./dtos/delete-endpoint.dto";
+import { FindEndpointDto } from "./dtos/find-endpoint.dto";
 
 @Controller("endpoints")
 export class EndpointsController {
@@ -36,17 +30,19 @@ export class EndpointsController {
 
   @Get(":endpointId")
   async findEndpointById(
-    @Param("endpointId", new ParseUUIDPipe({ errorHttpStatusCode: 422 }))
-    endpointId: string,
+    @Param()
+    params: FindEndpointDto,
   ) {
-    return this.findEndpointUseCase.execute({ endpointId });
+    return this.findEndpointUseCase.execute({ endpointId: params.endpointId });
   }
 
   @Delete(":endpointId")
   async deleteEndpoint(
-    @Param("endpointId", new ParseUUIDPipe({ errorHttpStatusCode: 422 }))
-    endpointId: string,
+    @Param()
+    params: DeleteEndpointDto,
   ) {
-    return this.deleteEndpointUseCase.execute({ endpointId });
+    return this.deleteEndpointUseCase.execute({
+      endpointId: params.endpointId,
+    });
   }
 }
