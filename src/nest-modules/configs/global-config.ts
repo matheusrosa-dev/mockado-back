@@ -1,6 +1,7 @@
 import { INestApplication, ValidationPipe } from "@nestjs/common";
 import { WrapperDataInterceptor } from "../shared/interceptors/wrapper-data/wrapper-data.interceptor";
 import { NotFoundErrorFilter } from "../shared/filters/not-found-error.filter";
+import { EntityValidationErrorFilter } from "../shared/filters/entity-validation-error.filter";
 
 export function applyGlobalConfig(app: INestApplication) {
   app.useGlobalPipes(
@@ -12,5 +13,8 @@ export function applyGlobalConfig(app: INestApplication) {
 
   app.useGlobalInterceptors(new WrapperDataInterceptor());
 
-  app.useGlobalFilters(new NotFoundErrorFilter());
+  app.useGlobalFilters(
+    new EntityValidationErrorFilter(),
+    new NotFoundErrorFilter(),
+  );
 }
