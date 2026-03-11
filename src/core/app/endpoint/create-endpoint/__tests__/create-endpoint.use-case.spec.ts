@@ -4,7 +4,7 @@ import { CreateEndpointUseCase } from "../create-endpoint.use-case";
 import { HttpMethod, ResponseBodyType } from "@domain/endpoint/endpoint.types";
 import { EntityValidationError } from "@domain/shared/validators/validation.error";
 import { Uuid } from "@domain/shared/value-objects/uuid.vo";
-import { EndpointOutputMapper } from "@app/endpoint/common/endpoint-output";
+import { EndpointOutputMapper } from "@app/endpoint/common/endpoint.output";
 import { EndpointFactory } from "@domain/endpoint/endpoint.entity";
 import { StatusCode } from "@domain/endpoint/value-objects/status-code.vo";
 

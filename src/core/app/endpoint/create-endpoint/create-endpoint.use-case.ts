@@ -4,7 +4,7 @@ import { IUseCase } from "../../shared/use-case.interface";
 import {
   EndpointOutput,
   EndpointOutputMapper,
-} from "../common/endpoint-output";
+} from "../common/endpoint.output";
 import { CreateEndpointInput } from "./create-endpoint.input";
 import { IEndpointRepository } from "@domain/endpoint/endpoint.repository";
 import { StatusCode } from "@domain/endpoint/value-objects/status-code.vo";

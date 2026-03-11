@@ -4,7 +4,7 @@ import { IUseCase } from "../../shared/use-case.interface";
 import {
   EndpointOutput,
   EndpointOutputMapper,
-} from "../common/endpoint-output";
+} from "../common/endpoint.output";
 import { UpdateEndpointInput } from "./update-endpoint.input";
 import { IEndpointRepository } from "@domain/endpoint/endpoint.repository";
 import { Uuid } from "@domain/shared/value-objects/uuid.vo";

@@ -5,7 +5,7 @@ import { Uuid } from "@domain/shared/value-objects/uuid.vo";
 import {
   EndpointOutput,
   EndpointOutputMapper,
-} from "../common/endpoint-output";
+} from "../common/endpoint.output";
 import { NotFoundError } from "@domain/shared/errors/not-found.error";
 import { Endpoint } from "@domain/endpoint/endpoint.entity";
 

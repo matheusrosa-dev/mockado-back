@@ -1,6 +1,5 @@
 import { Entity } from "@domain/shared/entity";
 import { Uuid } from "@domain/shared/value-objects/uuid.vo";
-import bcrypt from "bcrypt";
 import {
   RefreshTokenValidationGroup,
   RefreshTokenValidator,
@@ -27,14 +26,6 @@ export class RefreshToken extends Entity {
     this._userId = props.userId;
     this._refreshTokenHash = props.refreshTokenHash;
     this._createdAt = props.createdAt ?? new Date();
-  }
-
-  static hashRefreshToken(refreshToken: string) {
-    return bcrypt.hash(refreshToken, 10);
-  }
-
-  static compareHash(refreshToken: string, hash: string) {
-    return bcrypt.compare(refreshToken, hash);
   }
 
   validate(fields?: RefreshTokenValidationGroup[]) {
@@ -80,10 +71,7 @@ type CreateCommandProps = {
 
 export class RefreshTokenFactory {
   static async create(props: CreateCommandProps) {
-    const refreshToken = new RefreshToken({
-      userId: props.userId,
-      refreshTokenHash: props.refreshTokenHash,
-    });
+    const refreshToken = new RefreshToken(props);
 
     refreshToken.validate();
 

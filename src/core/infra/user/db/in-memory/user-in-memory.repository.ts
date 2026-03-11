@@ -6,6 +6,16 @@ export class UserInMemoryRepository
   extends InMemoryRepository<User>
   implements IUserRepository
 {
+  findByGoogleId(googleId: string): Promise<User | null> {
+    const user = this.items.find((user) => user.googleId === googleId);
+
+    if (!user) {
+      return Promise.resolve(null);
+    }
+
+    return Promise.resolve(user);
+  }
+
   getEntity() {
     return User;
   }

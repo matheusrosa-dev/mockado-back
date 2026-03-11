@@ -55,39 +55,6 @@ describe("Refresh Token Entity - Unit Tests", () => {
     });
   });
 
-  describe("hashRefreshToken()", () => {
-    it("should hash the refresh token", async () => {
-      const refreshToken = "my-refresh-token";
-      const hash = await RefreshToken.hashRefreshToken(refreshToken);
-
-      expect(hash).not.toBe(refreshToken);
-      expect(hash).toBeDefined();
-    });
-  });
-
-  describe("compareHash()", () => {
-    it("should return true for matching refresh token and hash", async () => {
-      const refreshToken = "my-refresh-token";
-      const hash = await RefreshToken.hashRefreshToken(refreshToken);
-
-      const result = await RefreshToken.compareHash(refreshToken, hash);
-
-      expect(result).toBe(true);
-    });
-
-    it("should return false for non-matching refresh token and hash", async () => {
-      const refreshToken = "my-refresh-token";
-      const hash = await RefreshToken.hashRefreshToken(refreshToken);
-
-      const result = await RefreshToken.compareHash(
-        "different-refresh-token",
-        hash,
-      );
-
-      expect(result).toBe(false);
-    });
-  });
-
   describe("toJSON()", () => {
     it("should return a plain object with all fields", () => {
       const refreshToken = RefreshTokenFactory.fake().oneRefreshToken().build();

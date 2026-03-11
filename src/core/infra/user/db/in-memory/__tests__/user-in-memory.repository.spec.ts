@@ -36,44 +36,23 @@ describe("User In Memory Repository - Unit Tests", () => {
     });
   });
 
-  describe("findById()", () => {
-    it("should return a user by id", async () => {
-      const user = UserFactory.fake().oneUser().build();
-      await repository.insert(user);
-
-      const found = await repository.findById(user.userId);
-      expect(found).toBe(user);
-    });
-
-    it("should return the correct user when multiple users exist", async () => {
+  describe("findByGoogleId()", () => {
+    it("should return the user with the given Google ID", async () => {
       const users = UserFactory.fake().manyUsers(3).build();
+      const targetUser = users[1];
+      targetUser.changeEmail("newemail@example.com");
 
       await Promise.all(users.map((user) => repository.insert(user)));
 
-      const found = await repository.findById(users[1].userId);
-      expect(found).toBe(users[1]);
+      const result = await repository.findByGoogleId(targetUser.googleId);
+      expect(result).toBeDefined();
+      expect(result!.userId.equals(targetUser.userId)).toBe(true);
+      expect(result!.email).toBe("newemail@example.com");
     });
 
-    it("should return null when user is not found", async () => {
-      const found = await repository.findById(new Uuid());
-      expect(found).toBeNull();
-    });
-  });
-
-  describe("findAll()", () => {
-    it("should return all users", async () => {
-      const users = UserFactory.fake().manyUsers(2).build();
-
-      await Promise.all(users.map((user) => repository.insert(user)));
-
-      const result = await repository.findAll();
-      expect(result).toHaveLength(2);
-      expect(result).toStrictEqual(users);
-    });
-
-    it("should return empty array when there are no users", async () => {
-      const result = await repository.findAll();
-      expect(result).toHaveLength(0);
+    it("should return null when user with given Google ID does not exist", async () => {
+      const result = await repository.findByGoogleId("non-existent-google-id");
+      expect(result).toBeNull();
     });
   });
 

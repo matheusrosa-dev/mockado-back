@@ -6,7 +6,7 @@ import { HttpMethod, ResponseBodyType } from "@domain/endpoint/endpoint.types";
 import { EntityValidationError } from "@domain/shared/validators/validation.error";
 import { NotFoundError } from "@domain/shared/errors/not-found.error";
 import { Uuid } from "@domain/shared/value-objects/uuid.vo";
-import { EndpointOutputMapper } from "@app/endpoint/common/endpoint-output";
+import { EndpointOutputMapper } from "@app/endpoint/common/endpoint.output";
 import { StatusCode } from "@domain/endpoint/value-objects/status-code.vo";
 
 describe("Update Endpoint Use Case - Unit Tests", () => {

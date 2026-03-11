@@ -1,7 +1,7 @@
 import { Endpoint } from "@domain/endpoint/endpoint.entity";
 import { HttpMethod, ResponseBodyType } from "@domain/endpoint/endpoint.types";
 import { Uuid } from "@domain/shared/value-objects/uuid.vo";
-import { EndpointOutputMapper } from "../endpoint-output";
+import { EndpointOutputMapper } from "../endpoint.output";
 import { StatusCode } from "@domain/endpoint/value-objects/status-code.vo";
 
 const baseProps = {
