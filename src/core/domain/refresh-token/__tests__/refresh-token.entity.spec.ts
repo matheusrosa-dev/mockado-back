@@ -1,5 +1,5 @@
 /** biome-ignore-all lint/suspicious/noExplicitAny: <It has to allow any in tests> */
-import { Uuid } from "../../../shared/value-objects/uuid.vo";
+import { Uuid } from "../../shared/value-objects/uuid.vo";
 import { RefreshTokenFactory, RefreshToken } from "../refresh-token.entity";
 
 describe("Refresh Token Entity - Unit Tests", () => {

@@ -1,5 +1,5 @@
 import { Chance } from "chance";
-import { Uuid } from "../../shared/value-objects/uuid.vo";
+import { Uuid } from "../shared/value-objects/uuid.vo";
 import { RefreshToken } from "./refresh-token.entity";
 
 type PropOrFactory<T> = T | (() => T);

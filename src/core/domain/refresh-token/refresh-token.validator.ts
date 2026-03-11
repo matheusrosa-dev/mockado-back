@@ -1,6 +1,6 @@
 import { IsNotEmpty, IsString } from "class-validator";
-import { ClassValidatorFields } from "../../shared/validators/class-validator-fields";
-import { Notification } from "../../shared/notification";
+import { ClassValidatorFields } from "../shared/validators/class-validator-fields";
+import { Notification } from "../shared/notification";
 import { RefreshToken } from "./refresh-token.entity";
 
 const refreshTokenValidationGroups = ["refreshTokenHash"] as const;

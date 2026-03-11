@@ -1,4 +1,4 @@
-import { Uuid } from "../../../shared/value-objects/uuid.vo";
+import { Uuid } from "../../shared/value-objects/uuid.vo";
 import { RefreshTokenFactory } from "../refresh-token.entity";
 
 describe("Refresh Token Fake Builder - Unit Tests", () => {
