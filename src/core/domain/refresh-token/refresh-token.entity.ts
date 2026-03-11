@@ -70,7 +70,7 @@ type CreateCommandProps = {
 };
 
 export class RefreshTokenFactory {
-  static async create(props: CreateCommandProps) {
+  static create(props: CreateCommandProps) {
     const refreshToken = new RefreshToken(props);
 
     refreshToken.validate();
