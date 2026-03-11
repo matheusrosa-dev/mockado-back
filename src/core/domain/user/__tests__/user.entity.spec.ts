@@ -51,7 +51,7 @@ describe("User Entity - Unit Tests", () => {
     });
   });
 
-  describe("changeName", () => {
+  describe("changeName()", () => {
     it("should change the name and validate", () => {
       const user = UserFactory.fake().oneUser().build();
       const spyValidate = jest.spyOn(user, "validate");
@@ -74,7 +74,7 @@ describe("User Entity - Unit Tests", () => {
     });
   });
 
-  describe("changeEmail", () => {
+  describe("changeEmail()", () => {
     it("should change the email and validate", () => {
       const user = UserFactory.fake().oneUser().build();
       const spyValidate = jest.spyOn(user, "validate");
@@ -108,7 +108,7 @@ describe("User Entity - Unit Tests", () => {
     });
   });
 
-  describe("changePicture", () => {
+  describe("changePicture()", () => {
     it("should change the picture and validate", () => {
       const user = UserFactory.fake().oneUser().build();
       const spyValidate = jest.spyOn(user, "validate");
@@ -131,7 +131,7 @@ describe("User Entity - Unit Tests", () => {
     });
   });
 
-  describe("toJSON", () => {
+  describe("toJSON()", () => {
     it("should return a plain object with all fields", () => {
       const user = UserFactory.fake().oneUser().build();
 
@@ -146,7 +146,7 @@ describe("User Entity - Unit Tests", () => {
     });
   });
 
-  describe("validate", () => {
+  describe("validate()", () => {
     it("should call validate on create with factory", () => {
       const spyValidate = jest.spyOn(User.prototype, "validate");
 

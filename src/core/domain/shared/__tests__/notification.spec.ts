@@ -17,7 +17,7 @@ describe("Notification - Unit Tests", () => {
     });
   });
 
-  describe("addError", () => {
+  describe("addError()", () => {
     it("should add a global error (no field) using the error string as key", () => {
       notification.addError("some error");
       expect(notification.errors.get("some error")).toBe("some error");
@@ -49,7 +49,7 @@ describe("Notification - Unit Tests", () => {
     });
   });
 
-  describe("setError", () => {
+  describe("setError()", () => {
     it("should set a single string error for a field (overwrites)", () => {
       notification.setError("required", "email");
       expect(notification.errors.get("email")).toEqual(["required"]);
@@ -86,7 +86,7 @@ describe("Notification - Unit Tests", () => {
     });
   });
 
-  describe("toJSON", () => {
+  describe("toJSON()", () => {
     it("should return empty array when no errors", () => {
       expect(notification.toJSON()).toEqual([]);
     });

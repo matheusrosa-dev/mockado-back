@@ -136,7 +136,7 @@ describe("Endpoint Entity - Unit Tests", () => {
     });
   });
 
-  describe("changeMethod", () => {
+  describe("changeMethod()", () => {
     it("should change the method and validate", () => {
       const endpoint = EndpointFactory.fake()
         .oneEndpoint()
@@ -152,7 +152,7 @@ describe("Endpoint Entity - Unit Tests", () => {
     });
   });
 
-  describe("changeTitle", () => {
+  describe("changeTitle()", () => {
     it("should change the title and validate", () => {
       const endpoint = EndpointFactory.fake().oneEndpoint().build();
 
@@ -165,7 +165,7 @@ describe("Endpoint Entity - Unit Tests", () => {
     });
   });
 
-  describe("changeDescription", () => {
+  describe("changeDescription()", () => {
     it("should change the description and validate", () => {
       const endpoint = EndpointFactory.fake().oneEndpoint().build();
 
@@ -190,7 +190,7 @@ describe("Endpoint Entity - Unit Tests", () => {
     });
   });
 
-  describe("changeDelay", () => {
+  describe("changeDelay()", () => {
     it("should change the delay and validate", () => {
       const endpoint = EndpointFactory.fake()
         .oneEndpoint()
@@ -218,7 +218,7 @@ describe("Endpoint Entity - Unit Tests", () => {
     });
   });
 
-  describe("changeStatusCode", () => {
+  describe("changeStatusCode()", () => {
     it("should change the status code and validate", () => {
       const endpoint = EndpointFactory.fake()
         .oneEndpoint()
@@ -276,7 +276,7 @@ describe("Endpoint Entity - Unit Tests", () => {
     });
   });
 
-  describe("changeResponseBodyType", () => {
+  describe("changeResponseBodyType()", () => {
     it("should change the response body type and validate", () => {
       const endpoint = EndpointFactory.fake()
         .oneEndpoint()
@@ -366,7 +366,7 @@ describe("Endpoint Entity - Unit Tests", () => {
     });
   });
 
-  describe("changeResponseJson", () => {
+  describe("changeResponseJson()", () => {
     it("should change the responseJson and validate", () => {
       const endpoint = EndpointFactory.fake()
         .oneEndpoint()
@@ -410,7 +410,7 @@ describe("Endpoint Entity - Unit Tests", () => {
     });
   });
 
-  describe("changeResponseText", () => {
+  describe("changeResponseText()", () => {
     it("should change the responseText and validate", () => {
       const endpoint = EndpointFactory.fake()
         .oneEndpoint()
@@ -454,7 +454,7 @@ describe("Endpoint Entity - Unit Tests", () => {
     });
   });
 
-  describe("_onStatusCodeModified", () => {
+  describe("_onStatusCodeModified()", () => {
     it("should execute when status code is changed", () => {
       const endpoint = EndpointFactory.fake()
         .oneEndpoint()
@@ -472,7 +472,7 @@ describe("Endpoint Entity - Unit Tests", () => {
     });
   });
 
-  describe("_onResponseBodyTypeModified", () => {
+  describe("_onResponseBodyTypeModified()", () => {
     it("should execute when response body type is changed", () => {
       const endpoint = EndpointFactory.fake()
         .oneEndpoint()
@@ -490,7 +490,7 @@ describe("Endpoint Entity - Unit Tests", () => {
     });
   });
 
-  describe("toJSON", () => {
+  describe("toJSON()", () => {
     it("should return a plain object with all fields", () => {
       const endpointWithoutBody = EndpointFactory.fake()
         .oneEndpoint()
@@ -554,7 +554,7 @@ describe("Endpoint Entity - Unit Tests", () => {
     });
   });
 
-  describe("validate", () => {
+  describe("validate()", () => {
     it("should call validate on create with factory", () => {
       const spyValidate = jest.spyOn(Endpoint.prototype, "validate");
 
