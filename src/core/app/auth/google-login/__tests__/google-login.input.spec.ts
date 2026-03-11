@@ -33,20 +33,20 @@ describe("Google Login Input - Unit Tests", () => {
   describe("googleId", () => {
     it("should fail when googleId is empty", () => {
       const errors = validate({ ...validProps, googleId: "" });
-      const fields = errors.map((e) => e.property);
+      const fields = errors.map((error) => error.property);
       expect(fields).toContain("googleId");
     });
 
     it("should fail when googleId is missing", () => {
       const { googleId: _, ...rest } = validProps;
       const errors = validate(rest);
-      const fields = errors.map((e) => e.property);
+      const fields = errors.map((error) => error.property);
       expect(fields).toContain("googleId");
     });
 
     it("should fail when googleId is not a string", () => {
       const errors = validate({ ...validProps, googleId: 123 });
-      const fields = errors.map((e) => e.property);
+      const fields = errors.map((error) => error.property);
       expect(fields).toContain("googleId");
     });
   });
@@ -54,26 +54,26 @@ describe("Google Login Input - Unit Tests", () => {
   describe("email", () => {
     it("should fail when email is empty", () => {
       const errors = validate({ ...validProps, email: "" });
-      const fields = errors.map((e) => e.property);
+      const fields = errors.map((error) => error.property);
       expect(fields).toContain("email");
     });
 
     it("should fail when email is missing", () => {
       const { email: _, ...rest } = validProps;
       const errors = validate(rest);
-      const fields = errors.map((e) => e.property);
+      const fields = errors.map((error) => error.property);
       expect(fields).toContain("email");
     });
 
     it("should fail when email is not a valid email", () => {
       const errors = validate({ ...validProps, email: "not-an-email" });
-      const fields = errors.map((e) => e.property);
+      const fields = errors.map((error) => error.property);
       expect(fields).toContain("email");
     });
 
     it("should fail when email is not a string", () => {
       const errors = validate({ ...validProps, email: 123 });
-      const fields = errors.map((e) => e.property);
+      const fields = errors.map((error) => error.property);
       expect(fields).toContain("email");
     });
   });
@@ -81,20 +81,20 @@ describe("Google Login Input - Unit Tests", () => {
   describe("name", () => {
     it("should fail when name is empty", () => {
       const errors = validate({ ...validProps, name: "" });
-      const fields = errors.map((e) => e.property);
+      const fields = errors.map((error) => error.property);
       expect(fields).toContain("name");
     });
 
     it("should fail when name is missing", () => {
       const { name: _, ...rest } = validProps;
       const errors = validate(rest);
-      const fields = errors.map((e) => e.property);
+      const fields = errors.map((error) => error.property);
       expect(fields).toContain("name");
     });
 
     it("should fail when name is not a string", () => {
       const errors = validate({ ...validProps, name: 123 });
-      const fields = errors.map((e) => e.property);
+      const fields = errors.map((error) => error.property);
       expect(fields).toContain("name");
     });
   });
@@ -102,20 +102,20 @@ describe("Google Login Input - Unit Tests", () => {
   describe("refreshToken", () => {
     it("should fail when refreshToken is empty", () => {
       const errors = validate({ ...validProps, refreshToken: "" });
-      const fields = errors.map((e) => e.property);
+      const fields = errors.map((error) => error.property);
       expect(fields).toContain("refreshToken");
     });
 
     it("should fail when refreshToken is missing", () => {
       const { refreshToken: _, ...rest } = validProps;
       const errors = validate(rest);
-      const fields = errors.map((e) => e.property);
+      const fields = errors.map((error) => error.property);
       expect(fields).toContain("refreshToken");
     });
 
     it("should fail when refreshToken is not a string", () => {
       const errors = validate({ ...validProps, refreshToken: 123 });
-      const fields = errors.map((e) => e.property);
+      const fields = errors.map((error) => error.property);
       expect(fields).toContain("refreshToken");
     });
   });
@@ -128,7 +128,7 @@ describe("Google Login Input - Unit Tests", () => {
 
     it("should fail when picture is not a string", () => {
       const errors = validate({ ...validProps, picture: 123 });
-      const fields = errors.map((e) => e.property);
+      const fields = errors.map((error) => error.property);
       expect(fields).toContain("picture");
     });
   });

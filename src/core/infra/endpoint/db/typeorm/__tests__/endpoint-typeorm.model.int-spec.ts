@@ -11,7 +11,7 @@ describe("Endpoint Model - Integration Tests", () => {
     const metadata = dataSource.getMetadata(EndpointModel);
     const columns = metadata.columns;
 
-    const columnNames = columns.map((c) => c.propertyName);
+    const columnNames = columns.map((column) => column.propertyName);
     expect(columnNames).toStrictEqual([
       "endpointId",
       "title",
@@ -26,7 +26,7 @@ describe("Endpoint Model - Integration Tests", () => {
     ]);
 
     const endpointIdColumn = columns.find(
-      (c) => c.propertyName === "endpointId",
+      (column) => column.propertyName === "endpointId",
     );
     expect(endpointIdColumn).toMatchObject({
       isPrimary: true,
@@ -34,14 +34,18 @@ describe("Endpoint Model - Integration Tests", () => {
       isNullable: false,
     });
 
-    const titleColumn = columns.find((c) => c.propertyName === "title");
+    const titleColumn = columns.find(
+      (column) => column.propertyName === "title",
+    );
     expect(titleColumn).toMatchObject({
       type: "varchar",
       length: "50",
       isNullable: false,
     });
 
-    const methodColumn = columns.find((c) => c.propertyName === "method");
+    const methodColumn = columns.find(
+      (column) => column.propertyName === "method",
+    );
     expect(methodColumn).toMatchObject({
       type: "simple-enum",
       isNullable: false,
@@ -49,7 +53,7 @@ describe("Endpoint Model - Integration Tests", () => {
     });
 
     const descriptionColumn = columns.find(
-      (c) => c.propertyName === "description",
+      (column) => column.propertyName === "description",
     );
     expect(descriptionColumn).toMatchObject({
       type: "varchar",
@@ -57,14 +61,16 @@ describe("Endpoint Model - Integration Tests", () => {
       isNullable: false,
     });
 
-    const delayColumn = columns.find((c) => c.propertyName === "delay");
+    const delayColumn = columns.find(
+      (column) => column.propertyName === "delay",
+    );
     expect(delayColumn).toMatchObject({
       type: "int",
       isNullable: false,
     });
 
     const statusCodeColumn = columns.find(
-      (c) => c.propertyName === "statusCode",
+      (column) => column.propertyName === "statusCode",
     );
     expect(statusCodeColumn).toMatchObject({
       type: "int",
@@ -72,7 +78,7 @@ describe("Endpoint Model - Integration Tests", () => {
     });
 
     const responseBodyTypeColumn = columns.find(
-      (c) => c.propertyName === "responseBodyType",
+      (column) => column.propertyName === "responseBodyType",
     );
     expect(responseBodyTypeColumn).toMatchObject({
       type: "simple-enum",
@@ -81,7 +87,7 @@ describe("Endpoint Model - Integration Tests", () => {
     });
 
     const responseJsonColumn = columns.find(
-      (c) => c.propertyName === "responseJson",
+      (column) => column.propertyName === "responseJson",
     );
     expect(responseJsonColumn).toMatchObject({
       type: "text",
@@ -89,14 +95,16 @@ describe("Endpoint Model - Integration Tests", () => {
     });
 
     const responseTextColumn = columns.find(
-      (c) => c.propertyName === "responseText",
+      (column) => column.propertyName === "responseText",
     );
     expect(responseTextColumn).toMatchObject({
       type: "text",
       isNullable: true,
     });
 
-    const createdAtColumn = columns.find((c) => c.propertyName === "createdAt");
+    const createdAtColumn = columns.find(
+      (column) => column.propertyName === "createdAt",
+    );
     expect(createdAtColumn).toMatchObject({
       isCreateDate: true,
     });

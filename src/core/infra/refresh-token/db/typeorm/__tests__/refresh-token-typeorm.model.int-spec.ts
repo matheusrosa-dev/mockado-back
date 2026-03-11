@@ -11,7 +11,7 @@ describe("Refresh Token Model - Integration Tests", () => {
     const metadata = dataSource.getMetadata(RefreshTokenModel);
     const columns = metadata.columns;
 
-    const columnNames = columns.map((c) => c.propertyName);
+    const columnNames = columns.map((column) => column.propertyName);
     expect(columnNames).toStrictEqual([
       "refreshTokenId",
       "userId",
@@ -20,7 +20,7 @@ describe("Refresh Token Model - Integration Tests", () => {
     ]);
 
     const refreshTokenIdColumn = columns.find(
-      (c) => c.propertyName === "refreshTokenId",
+      (column) => column.propertyName === "refreshTokenId",
     );
     expect(refreshTokenIdColumn).toMatchObject({
       isPrimary: true,
@@ -28,14 +28,16 @@ describe("Refresh Token Model - Integration Tests", () => {
       isNullable: false,
     });
 
-    const userIdColumn = columns.find((c) => c.propertyName === "userId");
+    const userIdColumn = columns.find(
+      (column) => column.propertyName === "userId",
+    );
     expect(userIdColumn).toMatchObject({
       type: "uuid",
       isNullable: false,
     });
 
     const refreshTokenHashColumn = columns.find(
-      (c) => c.propertyName === "refreshTokenHash",
+      (column) => column.propertyName === "refreshTokenHash",
     );
     expect(refreshTokenHashColumn).toMatchObject({
       type: "varchar",
@@ -43,7 +45,9 @@ describe("Refresh Token Model - Integration Tests", () => {
       isNullable: false,
     });
 
-    const createdAtColumn = columns.find((c) => c.propertyName === "createdAt");
+    const createdAtColumn = columns.find(
+      (column) => column.propertyName === "createdAt",
+    );
     expect(createdAtColumn).toMatchObject({
       isCreateDate: true,
     });
@@ -55,7 +59,9 @@ describe("Refresh Token Model - Integration Tests", () => {
 
     expect(relations).toHaveLength(1);
 
-    const userRelation = relations.find((r) => r.propertyName === "user");
+    const userRelation = relations.find(
+      (relation) => relation.propertyName === "user",
+    );
     expect(userRelation).toMatchObject({
       relationType: "many-to-one",
       isNullable: false,

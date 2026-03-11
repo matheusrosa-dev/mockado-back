@@ -178,7 +178,7 @@ describe("Endpoint In Memory Repository - Unit Tests", () => {
       );
 
       const all = await repository.findAll();
-      const storedMethods = all.map((e) => e.method);
+      const storedMethods = all.map((endpoint) => endpoint.method);
       expect(storedMethods).toEqual(expect.arrayContaining(methods));
     });
   });

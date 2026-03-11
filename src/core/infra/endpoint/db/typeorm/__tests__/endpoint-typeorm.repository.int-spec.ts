@@ -113,7 +113,9 @@ describe("Endpoint TypeOrm Repository - Integration Tests", () => {
       const allEndpoints = await repository.findAll();
 
       expect(allEndpoints).toHaveLength(3);
-      const ids = allEndpoints.map((e) => e.endpointId.toString());
+      const ids = allEndpoints.map((endpoint) =>
+        endpoint.endpointId.toString(),
+      );
       expect(ids).toContain(endpoint1.endpointId.toString());
       expect(ids).toContain(endpoint2.endpointId.toString());
       expect(ids).toContain(endpoint3.endpointId.toString());

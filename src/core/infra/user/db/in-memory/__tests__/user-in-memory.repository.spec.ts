@@ -77,7 +77,7 @@ describe("User In Memory Repository - Unit Tests", () => {
     it("should only update the target user when multiple users exist", async () => {
       const users = UserFactory.fake().manyUsers(3).build();
 
-      await Promise.all(users.map((u) => repository.insert(u)));
+      await Promise.all(users.map((user) => repository.insert(user)));
 
       users[1].changeName("Updated Name");
       await repository.update(users[1]);
@@ -110,19 +110,19 @@ describe("User In Memory Repository - Unit Tests", () => {
     it("should only delete the target user when multiple users exist", async () => {
       const users = UserFactory.fake().manyUsers(3).build();
 
-      await Promise.all(users.map((u) => repository.insert(u)));
+      await Promise.all(users.map((user) => repository.insert(user)));
 
       await repository.delete(users[1].userId as Uuid);
 
       expect(repository.items).toHaveLength(2);
       expect(
-        repository.items.find((u) => u.userId.equals(users[0].userId)),
+        repository.items.find((user) => user.userId.equals(users[0].userId)),
       ).toBeDefined();
       expect(
-        repository.items.find((u) => u.userId.equals(users[1].userId)),
+        repository.items.find((user) => user.userId.equals(users[1].userId)),
       ).toBeUndefined();
       expect(
-        repository.items.find((u) => u.userId.equals(users[2].userId)),
+        repository.items.find((user) => user.userId.equals(users[2].userId)),
       ).toBeDefined();
     });
 

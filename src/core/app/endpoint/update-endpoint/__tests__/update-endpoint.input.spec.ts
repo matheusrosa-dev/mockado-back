@@ -54,19 +54,19 @@ describe("Update Endpoint Input - Unit Tests", () => {
   describe("id", () => {
     it("should fail when id is missing", () => {
       const errors = validate({});
-      const fields = errors.map((e) => e.property);
+      const fields = errors.map((error) => error.property);
       expect(fields).toContain("id");
     });
 
     it("should fail when id is not a valid UUID", () => {
       const errors = validate({ ...validProps, id: "not-a-uuid" });
-      const fields = errors.map((e) => e.property);
+      const fields = errors.map((error) => error.property);
       expect(fields).toContain("id");
     });
 
     it("should fail when id is an empty string", () => {
       const errors = validate({ ...validProps, id: "" });
-      const fields = errors.map((e) => e.property);
+      const fields = errors.map((error) => error.property);
       expect(fields).toContain("id");
     });
   });
@@ -79,7 +79,7 @@ describe("Update Endpoint Input - Unit Tests", () => {
 
     it("should fail when title is not a string", () => {
       const errors = validate({ ...validProps, title: 123 });
-      const fields = errors.map((e) => e.property);
+      const fields = errors.map((error) => error.property);
       expect(fields).toContain("title");
     });
   });
@@ -92,7 +92,7 @@ describe("Update Endpoint Input - Unit Tests", () => {
 
     it("should fail when method is an invalid enum value", () => {
       const errors = validate({ ...validProps, method: "INVALID" });
-      const fields = errors.map((e) => e.property);
+      const fields = errors.map((error) => error.property);
       expect(fields).toContain("method");
     });
   });
@@ -105,25 +105,25 @@ describe("Update Endpoint Input - Unit Tests", () => {
 
     it("should fail when statusCode is not an integer", () => {
       const errors = validate({ ...validProps, statusCode: 200.5 });
-      const fields = errors.map((e) => e.property);
+      const fields = errors.map((error) => error.property);
       expect(fields).toContain("statusCode");
     });
 
     it("should fail when statusCode is less than 100", () => {
       const errors = validate({ ...validProps, statusCode: 99 });
-      const fields = errors.map((e) => e.property);
+      const fields = errors.map((error) => error.property);
       expect(fields).toContain("statusCode");
     });
 
     it("should fail when statusCode is greater than 511", () => {
       const errors = validate({ ...validProps, statusCode: 512 });
-      const fields = errors.map((e) => e.property);
+      const fields = errors.map((error) => error.property);
       expect(fields).toContain("statusCode");
     });
 
     it("should fail when statusCode is a string", () => {
       const errors = validate({ ...validProps, statusCode: "200" });
-      const fields = errors.map((e) => e.property);
+      const fields = errors.map((error) => error.property);
       expect(fields).toContain("statusCode");
     });
   });
@@ -136,13 +136,13 @@ describe("Update Endpoint Input - Unit Tests", () => {
 
     it("should fail when delay is not an integer", () => {
       const errors = validate({ ...validProps, delay: 1.5 });
-      const fields = errors.map((e) => e.property);
+      const fields = errors.map((error) => error.property);
       expect(fields).toContain("delay");
     });
 
     it("should fail when delay is a string", () => {
       const errors = validate({ ...validProps, delay: "500" });
-      const fields = errors.map((e) => e.property);
+      const fields = errors.map((error) => error.property);
       expect(fields).toContain("delay");
     });
   });
@@ -155,7 +155,7 @@ describe("Update Endpoint Input - Unit Tests", () => {
 
     it("should fail when responseBodyType is an invalid enum value", () => {
       const errors = validate({ ...validProps, responseBodyType: "xml" });
-      const fields = errors.map((e) => e.property);
+      const fields = errors.map((error) => error.property);
       expect(fields).toContain("responseBodyType");
     });
   });
@@ -168,7 +168,7 @@ describe("Update Endpoint Input - Unit Tests", () => {
 
     it("should fail when responseJson is not valid JSON", () => {
       const errors = validate({ ...validProps, responseJson: "not-json" });
-      const fields = errors.map((e) => e.property);
+      const fields = errors.map((error) => error.property);
       expect(fields).toContain("responseJson");
     });
 
@@ -186,7 +186,7 @@ describe("Update Endpoint Input - Unit Tests", () => {
 
     it("should fail when responseText is not a string", () => {
       const errors = validate({ ...validProps, responseText: 123 });
-      const fields = errors.map((e) => e.property);
+      const fields = errors.map((error) => error.property);
       expect(fields).toContain("responseText");
     });
   });
@@ -199,7 +199,7 @@ describe("Update Endpoint Input - Unit Tests", () => {
 
     it("should fail when description is not a string", () => {
       const errors = validate({ ...validProps, description: 42 });
-      const fields = errors.map((e) => e.property);
+      const fields = errors.map((error) => error.property);
       expect(fields).toContain("description");
     });
   });

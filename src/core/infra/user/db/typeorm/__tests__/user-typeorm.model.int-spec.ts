@@ -11,7 +11,7 @@ describe("User Model - Integration Tests", () => {
     const metadata = dataSource.getMetadata(UserModel);
     const columns = metadata.columns;
 
-    const columnNames = columns.map((c) => c.propertyName);
+    const columnNames = columns.map((column) => column.propertyName);
     expect(columnNames).toStrictEqual([
       "userId",
       "googleId",
@@ -22,54 +22,66 @@ describe("User Model - Integration Tests", () => {
       "createdAt",
     ]);
 
-    const userIdColumn = columns.find((c) => c.propertyName === "userId");
+    const userIdColumn = columns.find(
+      (column) => column.propertyName === "userId",
+    );
     expect(userIdColumn).toMatchObject({
       isPrimary: true,
       type: "uuid",
       isNullable: false,
     });
 
-    const googleIdColumn = columns.find((c) => c.propertyName === "googleId");
+    const googleIdColumn = columns.find(
+      (column) => column.propertyName === "googleId",
+    );
     expect(googleIdColumn).toMatchObject({
       type: "varchar",
       length: "255",
       isNullable: false,
     });
 
-    const emailColumn = columns.find((c) => c.propertyName === "email");
+    const emailColumn = columns.find(
+      (column) => column.propertyName === "email",
+    );
     expect(emailColumn).toMatchObject({
       type: "varchar",
       length: "255",
       isNullable: false,
     });
 
-    const uniqueColumnNames = metadata.uniques.flatMap((u) =>
-      u.columns.map((c) => c.propertyName),
+    const uniqueColumnNames = metadata.uniques.flatMap((uniqueConstraint) =>
+      uniqueConstraint.columns.map((column) => column.propertyName),
     );
     expect(uniqueColumnNames).toContain("googleId");
     expect(uniqueColumnNames).toContain("email");
 
-    const nameColumn = columns.find((c) => c.propertyName === "name");
+    const nameColumn = columns.find((column) => column.propertyName === "name");
     expect(nameColumn).toMatchObject({
       type: "varchar",
       length: "100",
       isNullable: false,
     });
 
-    const pictureColumn = columns.find((c) => c.propertyName === "picture");
+    const pictureColumn = columns.find(
+      (column) => column.propertyName === "picture",
+    );
     expect(pictureColumn).toMatchObject({
       type: "varchar",
       length: "500",
       isNullable: true,
     });
 
-    const isActiveColumn = columns.find((c) => c.propertyName === "isActive");
+    const isActiveColumn = columns.find(
+      (column) => column.propertyName === "isActive",
+    );
     expect(isActiveColumn).toMatchObject({
       type: "boolean",
       isNullable: false,
     });
 
-    const createdAtColumn = columns.find((c) => c.propertyName === "createdAt");
+    const createdAtColumn = columns.find(
+      (column) => column.propertyName === "createdAt",
+    );
     expect(createdAtColumn).toMatchObject({
       isCreateDate: true,
     });
@@ -82,7 +94,7 @@ describe("User Model - Integration Tests", () => {
     expect(relations).toHaveLength(1);
 
     const refreshTokensRelation = relations.find(
-      (r) => r.propertyName === "refreshTokens",
+      (relation) => relation.propertyName === "refreshTokens",
     );
     expect(refreshTokensRelation).toMatchObject({
       relationType: "one-to-many",

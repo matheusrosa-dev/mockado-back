@@ -18,13 +18,13 @@ describe("Delete Endpoint Input - Unit Tests", () => {
 
   it("should fail when id is empty", () => {
     const errors = validate({ endpointId: "" });
-    const fields = errors.map((e) => e.property);
+    const fields = errors.map((error) => error.property);
     expect(fields).toContain("endpointId");
   });
 
   it("should fail when id is invalid", () => {
     const errors = validate({ endpointId: "invalid-id" });
-    const fields = errors.map((e) => e.property);
+    const fields = errors.map((error) => error.property);
     expect(fields).toContain("endpointId");
   });
 });
