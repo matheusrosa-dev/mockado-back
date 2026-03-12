@@ -37,12 +37,9 @@ DELETE {{baseUrl}}/endpoints/{{endpointId}}
 
 
 ### Login google
-POST {{baseUrl}}/auth/google
+POST {{baseUrl}}/auth/google/login
 Content-Type: application/json
 
 {
-    "googleId": "123456789",
-    "email": "user@example.com",
-    "name": "John Doe",
     "googleToken": "google-token"
 }

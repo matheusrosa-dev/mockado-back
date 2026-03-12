@@ -43,6 +43,7 @@ describe("Google Login Use Case - Integration Tests", () => {
         email: user.email,
         name: user.name,
         isActive: user.isActive,
+        googleId: user.googleId,
       });
 
       const storedTokens = await refreshTokenRepository.findManyByUserId(
@@ -68,6 +69,7 @@ describe("Google Login Use Case - Integration Tests", () => {
         email: user.email,
         name: user.name,
         isActive: true,
+        googleId: user.googleId,
       });
 
       const storedTokens = await refreshTokenRepository.findManyByUserId(
@@ -99,6 +101,7 @@ describe("Google Login Use Case - Integration Tests", () => {
         email: "newemail@example.com",
         name: "New Name",
         isActive: user.isActive,
+        googleId: user.googleId,
       });
 
       const updatedUser = await userRepository.findByGoogleId(user.googleId);
@@ -130,6 +133,7 @@ describe("Google Login Use Case - Integration Tests", () => {
         email: "formatted@example.com",
         name: "Formatted User",
         isActive: true,
+        googleId: "1".repeat(21),
       });
     });
   });

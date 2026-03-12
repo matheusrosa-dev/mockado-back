@@ -35,6 +35,7 @@ describe("Google Login Use Case - Unit Tests", () => {
         email: user.email,
         name: user.name,
         isActive: user.isActive,
+        googleId: user.googleId,
       });
 
       const storedTokens = (
@@ -60,6 +61,7 @@ describe("Google Login Use Case - Unit Tests", () => {
         email: user.email,
         name: user.name,
         isActive: true,
+        googleId: user.googleId,
       });
 
       const storedTokens = (
@@ -90,6 +92,7 @@ describe("Google Login Use Case - Unit Tests", () => {
         email: "newemail@example.com",
         name: "New Name",
         isActive: user.isActive,
+        googleId: user.googleId,
       });
 
       const updatedUser = await userRepository.findByGoogleId(user.googleId);
@@ -121,6 +124,7 @@ describe("Google Login Use Case - Unit Tests", () => {
         email: "formatted@example.com",
         name: "Formatted User",
         isActive: true,
+        googleId: "1".repeat(21),
       });
     });
   });
