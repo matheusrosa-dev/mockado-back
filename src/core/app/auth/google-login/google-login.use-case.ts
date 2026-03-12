@@ -17,7 +17,6 @@ export class GoogleLoginUseCase
 
   async execute(input: GoogleLoginInput): Promise<LoginOutput> {
     let user = await this.userRepository.findByGoogleId(input.googleId);
-    const refreshTokenHash = await bcrypt.hash(input.refreshToken, 10);
 
     if (user) {
       if (user.name !== input.name) {
@@ -48,6 +47,8 @@ export class GoogleLoginUseCase
 
       await this.userRepository.insert(user);
     }
+
+    const refreshTokenHash = await bcrypt.hash(input.refreshToken, 10);
 
     const refreshToken = RefreshTokenFactory.create({
       refreshTokenHash,
