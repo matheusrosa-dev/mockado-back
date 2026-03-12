@@ -5,7 +5,7 @@ import { ENDPOINT_PROVIDERS } from "./endpoints.provider";
 @Module({
   controllers: [EndpointsController],
   providers: [
-    ENDPOINT_PROVIDERS.REPOSITORY,
+    ...Object.values(ENDPOINT_PROVIDERS.REPOSITORIES),
     ...Object.values(ENDPOINT_PROVIDERS.USE_CASES),
   ],
 })

@@ -8,29 +8,49 @@ import { FactoryProvider } from "@nestjs/common";
 import { DataSource } from "typeorm";
 import { ListEndpointsSummaryUseCase } from "@app/endpoint/list-endpoints-summary/list-endpoints-summary.use-case";
 
-const REPOSITORY = {
-  provide: EndpointTypeOrmRepository,
-  useFactory: (dataSource: DataSource) =>
-    new EndpointTypeOrmRepository(dataSource),
-  inject: [DataSource],
+const REPOSITORIES = {
+  ENDPOINT: {
+    provide: EndpointTypeOrmRepository,
+    useFactory: (dataSource: DataSource) =>
+      new EndpointTypeOrmRepository(dataSource),
+    inject: [DataSource],
+  } as FactoryProvider,
 };
 
-const useCases = [
-  CreateEndpointUseCase,
-  UpdateEndpointUseCase,
-  FindEndpointUseCase,
-  DeleteEndpointUseCase,
-  ListEndpointsSummaryUseCase,
-];
-
-const USE_CASES_PROVIDERS: FactoryProvider[] = useCases.map((useCase) => ({
-  provide: useCase,
-  useFactory: (endpointRepository: IEndpointRepository) =>
-    new useCase(endpointRepository),
-  inject: [REPOSITORY.provide],
-}));
+const USE_CASES = {
+  CREATE_ENDPOINT: {
+    provide: CreateEndpointUseCase,
+    useFactory: (endpointRepository: IEndpointRepository) =>
+      new CreateEndpointUseCase(endpointRepository),
+    inject: [REPOSITORIES.ENDPOINT.provide],
+  } as FactoryProvider,
+  UPDATE_ENDPOINT: {
+    provide: UpdateEndpointUseCase,
+    useFactory: (endpointRepository: IEndpointRepository) =>
+      new UpdateEndpointUseCase(endpointRepository),
+    inject: [REPOSITORIES.ENDPOINT.provide],
+  } as FactoryProvider,
+  FIND_ENDPOINT: {
+    provide: FindEndpointUseCase,
+    useFactory: (endpointRepository: IEndpointRepository) =>
+      new FindEndpointUseCase(endpointRepository),
+    inject: [REPOSITORIES.ENDPOINT.provide],
+  } as FactoryProvider,
+  DELETE_ENDPOINT: {
+    provide: DeleteEndpointUseCase,
+    useFactory: (endpointRepository: IEndpointRepository) =>
+      new DeleteEndpointUseCase(endpointRepository),
+    inject: [REPOSITORIES.ENDPOINT.provide],
+  } as FactoryProvider,
+  LIST_ENDPOINTS_SUMMARY: {
+    provide: ListEndpointsSummaryUseCase,
+    useFactory: (endpointRepository: IEndpointRepository) =>
+      new ListEndpointsSummaryUseCase(endpointRepository),
+    inject: [REPOSITORIES.ENDPOINT.provide],
+  } as FactoryProvider,
+};
 
 export const ENDPOINT_PROVIDERS = {
-  REPOSITORY,
-  USE_CASES: USE_CASES_PROVIDERS,
+  REPOSITORIES,
+  USE_CASES,
 };
