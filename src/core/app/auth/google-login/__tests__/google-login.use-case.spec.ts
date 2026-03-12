@@ -34,7 +34,6 @@ describe("Google Login Use Case - Unit Tests", () => {
         userId: user.userId.toString(),
         email: user.email,
         name: user.name,
-        isActive: user.isActive,
         googleId: user.googleId,
       });
 
@@ -60,7 +59,6 @@ describe("Google Login Use Case - Unit Tests", () => {
         userId: expect.any(String),
         email: user.email,
         name: user.name,
-        isActive: true,
         googleId: user.googleId,
       });
 
@@ -91,7 +89,6 @@ describe("Google Login Use Case - Unit Tests", () => {
         userId: user.userId.toString(),
         email: "newemail@example.com",
         name: "New Name",
-        isActive: user.isActive,
         googleId: user.googleId,
       });
 
@@ -123,7 +120,6 @@ describe("Google Login Use Case - Unit Tests", () => {
         userId: expect.any(String),
         email: "formatted@example.com",
         name: "Formatted User",
-        isActive: true,
         googleId: "1".repeat(21),
       });
     });

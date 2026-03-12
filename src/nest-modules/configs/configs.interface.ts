@@ -12,6 +12,8 @@ export interface IApiConfig {
   port: number;
 }
 
-export interface IGoogleAuthConfig {
-  clientId: string;
+export interface IAuthConfig {
+  googleClientId: string;
+  jwtSecret: string;
+  jwtRefreshSecret: string;
 }

@@ -65,7 +65,6 @@ export class GoogleLoginUseCase
       userId: user.userId.toString(),
       email: user.email,
       name: user.name,
-      isActive: user.isActive,
       googleId: user.googleId,
     };
   }
@@ -75,6 +74,5 @@ type LoginOutput = {
   userId: string;
   email: string;
   name: string;
-  isActive: boolean;
   googleId: string;
 };
