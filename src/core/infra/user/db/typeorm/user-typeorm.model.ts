@@ -4,6 +4,7 @@ import {
   Entity,
   OneToMany,
   PrimaryColumn,
+  type Relation,
 } from "typeorm";
 import { RefreshTokenModel } from "@infra/refresh-token/db/typeorm/refresh-token-typeorm.model";
 
@@ -46,5 +47,5 @@ export class UserModel {
     () => RefreshTokenModel,
     (refreshToken) => refreshToken.user,
   )
-  refreshTokens: RefreshTokenModel[];
+  refreshTokens: Relation<RefreshTokenModel[]>;
 }

@@ -5,6 +5,7 @@ import {
   JoinColumn,
   ManyToOne,
   PrimaryColumn,
+  type Relation,
 } from "typeorm";
 import { UserModel } from "@infra/user/db/typeorm/user-typeorm.model";
 
@@ -44,5 +45,5 @@ export class RefreshTokenModel {
     },
   )
   @JoinColumn({ name: "user_id" })
-  user: UserModel;
+  user: Relation<UserModel>;
 }
