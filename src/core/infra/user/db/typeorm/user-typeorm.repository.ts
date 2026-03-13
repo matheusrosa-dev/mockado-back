@@ -23,7 +23,7 @@ export class UserTypeOrmRepository implements IUserRepository {
     const { affected } = await this.repository.update(model.userId, model);
 
     if (!affected) {
-      throw new NotFoundError(entity.userId, this.getEntity());
+      throw new NotFoundError(entity.userId.toString(), this.getEntity());
     }
   }
 

@@ -1,11 +1,11 @@
 import { MigrationInterface, QueryRunner } from "typeorm";
 
-export class Migrations1773276205335 implements MigrationInterface {
-  name = "Migrations1773276205335";
+export class Start1773420281003 implements MigrationInterface {
+  name = "Start1773420281003";
 
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      `CREATE TABLE "refresh_tokens" ("refresh_token_id" uuid NOT NULL, "user_id" uuid NOT NULL, "refresh_token_hash" character varying(500) NOT NULL, "created_at" TIMESTAMP NOT NULL DEFAULT now(), CONSTRAINT "PK_9dbdad80950b681a645b4f6373a" PRIMARY KEY ("refresh_token_id"))`,
+      `CREATE TABLE "refresh_tokens" ("refresh_token_id" uuid NOT NULL, "user_id" uuid NOT NULL, "google_id" character varying(255) NOT NULL, "refresh_token_hash" character varying(500) NOT NULL, "created_at" TIMESTAMP NOT NULL DEFAULT now(), CONSTRAINT "PK_9dbdad80950b681a645b4f6373a" PRIMARY KEY ("refresh_token_id"))`,
     );
     await queryRunner.query(
       `CREATE TABLE "users" ("user_id" uuid NOT NULL, "google_id" character varying(255) NOT NULL, "email" character varying(255) NOT NULL, "name" character varying(100) NOT NULL, "is_active" boolean NOT NULL DEFAULT true, "created_at" TIMESTAMP NOT NULL DEFAULT now(), CONSTRAINT "UQ_0bd5012aeb82628e07f6a1be53b" UNIQUE ("google_id"), CONSTRAINT "UQ_97672ac88f789774dd47f7c8be3" UNIQUE ("email"), CONSTRAINT "PK_96aac72f1574b88752e9fb00089" PRIMARY KEY ("user_id"))`,

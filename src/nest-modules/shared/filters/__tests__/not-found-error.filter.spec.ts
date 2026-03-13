@@ -19,7 +19,7 @@ const id = new Uuid();
 class StubController {
   @Get()
   index() {
-    throw new NotFoundError(id, StubEntity);
+    throw new NotFoundError(id.toString(), StubEntity);
   }
 }
 

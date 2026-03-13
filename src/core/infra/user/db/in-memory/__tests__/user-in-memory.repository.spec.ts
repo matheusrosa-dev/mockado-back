@@ -92,7 +92,7 @@ describe("User In Memory Repository - Unit Tests", () => {
       const user = UserFactory.fake().oneUser().build();
 
       await expect(repository.update(user)).rejects.toThrow(
-        new NotFoundError(user.userId, User),
+        new NotFoundError(user.userId.toString(), User),
       );
     });
   });
@@ -130,7 +130,7 @@ describe("User In Memory Repository - Unit Tests", () => {
       const uuid = new Uuid();
 
       await expect(repository.delete(uuid)).rejects.toThrow(
-        new NotFoundError(uuid, User),
+        new NotFoundError(uuid.toString(), User),
       );
     });
   });

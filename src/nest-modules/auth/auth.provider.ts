@@ -3,9 +3,10 @@ import { UserTypeOrmRepository } from "@infra/user/db/typeorm/user-typeorm.repos
 import { RefreshTokenTypeOrmRepository } from "@infra/refresh-token/db/typeorm/refresh-token-typeorm.repository";
 import { IUserRepository } from "@domain/user/user.repository";
 import { IRefreshTokenRepository } from "@domain/refresh-token/refresh-token.repository";
-import { GoogleLoginUseCase } from "@app/auth/google-login/google-login.use-case";
+import { GoogleLoginUseCase } from "@app/auth/use-cases/google-login/google-login.use-case";
 import { FactoryProvider } from "@nestjs/common";
-import { ValidateAndRemoveRefreshTokenUseCase } from "@app/auth/validate-and-remove-refresh-token/validate-and-remove-refresh-token.use-case";
+import { RefreshTokenExistsValidator } from "@app/auth/validations/refresh-token-exists/refresh-token-exists.validator";
+import { ReplaceRefreshTokenUseCase } from "@app/auth/use-cases/replace-refresh-token/replace-refresh-token.use-case";
 
 const REPOSITORIES = {
   USER: {
@@ -33,10 +34,20 @@ const USE_CASES = {
     },
     inject: [REPOSITORIES.USER.provide, REPOSITORIES.REFRESH_TOKEN.provide],
   } as FactoryProvider,
-  VALIDATE_REFRESH_TOKEN: {
-    provide: ValidateAndRemoveRefreshTokenUseCase,
+  REPLACE_REFRESH_TOKEN: {
+    provide: ReplaceRefreshTokenUseCase,
     useFactory: (refreshTokenRepository: IRefreshTokenRepository) => {
-      return new ValidateAndRemoveRefreshTokenUseCase(refreshTokenRepository);
+      return new ReplaceRefreshTokenUseCase(refreshTokenRepository);
+    },
+    inject: [REPOSITORIES.REFRESH_TOKEN.provide],
+  },
+};
+
+const VALIDATORS = {
+  REFRESH_TOKEN_EXISTS: {
+    provide: RefreshTokenExistsValidator,
+    useFactory: (refreshTokenRepository: IRefreshTokenRepository) => {
+      return new RefreshTokenExistsValidator(refreshTokenRepository);
     },
     inject: [REPOSITORIES.REFRESH_TOKEN.provide],
   } as FactoryProvider,
@@ -45,4 +56,5 @@ const USE_CASES = {
 export const AUTH_PROVIDERS = {
   REPOSITORIES,
   USE_CASES,
+  VALIDATORS,
 };

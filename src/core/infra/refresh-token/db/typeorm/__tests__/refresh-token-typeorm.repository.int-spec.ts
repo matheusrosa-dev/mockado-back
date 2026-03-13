@@ -86,7 +86,7 @@ describe("Refresh Token TypeOrm Repository - Integration Tests", () => {
       const uuid = new Uuid();
 
       await expect(refreshTokenRepository.delete(uuid)).rejects.toThrow(
-        new NotFoundError(uuid, RefreshToken),
+        new NotFoundError(uuid.toString(), RefreshToken),
       );
     });
   });

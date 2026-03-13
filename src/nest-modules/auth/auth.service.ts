@@ -3,11 +3,12 @@ import { ConfigService } from "@nestjs/config";
 import { JwtService } from "@nestjs/jwt";
 import { OAuth2Client, TokenPayload } from "google-auth-library";
 import { IAuthConfig } from "../configs/configs.interface";
-import { GoogleLoginUseCase } from "@app/auth/google-login/google-login.use-case";
+import { GoogleLoginUseCase } from "@app/auth/use-cases/google-login/google-login.use-case";
 import { GoogleLoginDto } from "./dtos/google-login.dto";
-import { ValidateAndRemoveRefreshTokenUseCase } from "@app/auth/validate-and-remove-refresh-token/validate-and-remove-refresh-token.use-case";
+import { RefreshTokenExistsValidator } from "@app/auth/validations/refresh-token-exists/refresh-token-exists.validator";
 import { ICurrentSession } from "../shared/decorators/current-session.decorator";
-import { ValidateAndRemoveRefreshTokenInput } from "@app/auth/validate-and-remove-refresh-token/validate-and-remove-refresh-token.input";
+import { ReplaceRefreshTokenUseCase } from "@app/auth/use-cases/replace-refresh-token/replace-refresh-token.use-case";
+import { ReplaceRefreshTokenInput } from "@app/auth/use-cases/replace-refresh-token/replace-refresh-token.input";
 import { validateSync } from "class-validator";
 
 @Injectable()
@@ -19,7 +20,8 @@ export class AuthService {
     private jwtService: JwtService,
     private configService: ConfigService,
     private googleLoginUseCase: GoogleLoginUseCase,
-    private validateRefreshTokenUseCase: ValidateAndRemoveRefreshTokenUseCase,
+    private replaceRefreshTokenUseCase: ReplaceRefreshTokenUseCase,
+    private refreshTokenExistsValidator: RefreshTokenExistsValidator,
   ) {
     const clientId = this.configService.get("auth.googleClientId") as string;
 
@@ -72,27 +74,38 @@ export class AuthService {
   }
 
   async refreshTokens(session: ICurrentSession) {
-    const input = new ValidateAndRemoveRefreshTokenInput({
-      googleId: session.googleId,
-      refreshToken: session.refreshToken,
-    });
+    const [foundRefreshToken, validationError] = (
+      await this.refreshTokenExistsValidator.validate({
+        googleId: session.googleId,
+        refreshToken: session.refreshToken,
+      })
+    ).asArray();
 
-    // TODO: TESTAR
-    validateSync(input);
-
-    const isValid = await this.validateRefreshTokenUseCase.execute(input);
-
-    if (!isValid) {
+    if (validationError) {
       throw new UnauthorizedException("Invalid refresh token");
     }
+
+    const useCaseInput = new ReplaceRefreshTokenInput({
+      googleId: foundRefreshToken.googleId,
+      userId: foundRefreshToken.userId.toString(),
+      refreshTokenIdToRemove: foundRefreshToken.refreshTokenId.toString(),
+      newRefreshToken: session.refreshToken,
+    });
+
+    const errors = validateSync(useCaseInput);
+
+    if (errors.length) {
+      console.error("Validation errors for ReplaceRefreshTokenInput: ", errors);
+      throw new UnauthorizedException("Invalid refresh token");
+    }
+
+    await this.replaceRefreshTokenUseCase.execute(useCaseInput);
 
     const tokens = await this.getAuthTokens({
       name: session.name,
       email: session.email,
       googleId: session.googleId,
     });
-
-    // TODO: SALVAR REFRESH TOKEN
 
     return tokens;
   }

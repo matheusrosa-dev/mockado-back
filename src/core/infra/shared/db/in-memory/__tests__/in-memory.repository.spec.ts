@@ -88,7 +88,7 @@ describe("In Memory Repository - Unit Tests", () => {
     it("should throw an error on update when entity not found", async () => {
       const entity = new StubEntity({ name: "name value", price: 5 });
       await expect(repository.update(entity)).rejects.toThrow(
-        new NotFoundError(entity.entityId, StubEntity),
+        new NotFoundError(entity.entityId.toString(), StubEntity),
       );
     });
 
@@ -112,14 +112,14 @@ describe("In Memory Repository - Unit Tests", () => {
     it("should throw an error on delete when entity not found", async () => {
       const uuid = new Uuid();
       await expect(repository.delete(uuid)).rejects.toThrow(
-        new NotFoundError(uuid, StubEntity),
+        new NotFoundError(uuid.toString(), StubEntity),
       );
 
       await expect(
         repository.delete(new Uuid("9366b7dc-2d71-4799-b91c-c64adb205104")),
       ).rejects.toThrow(
         new NotFoundError(
-          new Uuid("9366b7dc-2d71-4799-b91c-c64adb205104"),
+          new Uuid("9366b7dc-2d71-4799-b91c-c64adb205104").toString(),
           StubEntity,
         ),
       );

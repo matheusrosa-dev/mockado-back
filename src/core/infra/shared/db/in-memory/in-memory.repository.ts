@@ -18,7 +18,7 @@ export abstract class InMemoryRepository<E extends Entity>
     );
 
     if (index === -1) {
-      throw new NotFoundError(entity.entityId, this.getEntity());
+      throw new NotFoundError(entity.entityId.toString(), this.getEntity());
     }
 
     this.items[index] = entity;
@@ -30,7 +30,7 @@ export abstract class InMemoryRepository<E extends Entity>
     );
 
     if (index === -1) {
-      throw new NotFoundError(entityId, this.getEntity());
+      throw new NotFoundError(entityId.toString(), this.getEntity());
     }
 
     this.items.splice(index, 1);

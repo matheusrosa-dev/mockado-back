@@ -48,8 +48,6 @@ export class AuthController {
     @Res({ passthrough: true }) res: Response,
     @CurrentSession() session: ICurrentSession,
   ) {
-    console.log("Session: ", session);
-
     const tokens = await this.authService.refreshTokens(session);
 
     this.setAuthCookies({

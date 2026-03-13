@@ -43,7 +43,7 @@ export class RefreshTokenTypeOrmRepository implements IRefreshTokenRepository {
     );
 
     if (!affected) {
-      throw new NotFoundError(refreshTokenId, this.getEntity());
+      throw new NotFoundError(refreshTokenId.toString(), this.getEntity());
     }
   }
 

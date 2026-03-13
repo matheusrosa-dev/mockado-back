@@ -1,6 +1,9 @@
 import { IRefreshTokenRepository } from "@domain/refresh-token/refresh-token.repository";
-import { ValidateAndRemoveRefreshTokenUseCase } from "../validate-and-remove-refresh-token.use-case";
-import { RefreshTokenFactory } from "@domain/refresh-token/refresh-token.entity";
+import { RefreshTokenExistsValidator } from "../refresh-token-exists.validator";
+import {
+  RefreshToken,
+  RefreshTokenFactory,
+} from "@domain/refresh-token/refresh-token.entity";
 import bcrypt from "bcrypt";
 import { RefreshTokenTypeOrmRepository } from "@infra/refresh-token/db/typeorm/refresh-token-typeorm.repository";
 import { setupTypeOrm } from "@infra/shared/testing/helpers";
@@ -8,24 +11,25 @@ import { RefreshTokenModel } from "@infra/refresh-token/db/typeorm/refresh-token
 import { UserModel } from "@infra/user/db/typeorm/user-typeorm.model";
 import { UserTypeOrmRepository } from "@infra/user/db/typeorm/user-typeorm.repository";
 import { UserFactory } from "@domain/user/user.entity";
+import { NotFoundError } from "@domain/shared/errors/not-found.error";
 
-describe("Validate And Remove Refresh Token Use Case - Integration Tests", () => {
+describe("Refresh Token Exists Validator - Integration Tests", () => {
   const { dataSource } = setupTypeOrm({
     entities: [RefreshTokenModel, UserModel],
   });
 
-  let useCase: ValidateAndRemoveRefreshTokenUseCase;
+  let validator: RefreshTokenExistsValidator;
   let refreshTokenRepository: IRefreshTokenRepository;
   let userRepository: UserTypeOrmRepository;
 
   beforeEach(() => {
     userRepository = new UserTypeOrmRepository(dataSource);
     refreshTokenRepository = new RefreshTokenTypeOrmRepository(dataSource);
-    useCase = new ValidateAndRemoveRefreshTokenUseCase(refreshTokenRepository);
+    validator = new RefreshTokenExistsValidator(refreshTokenRepository);
   });
 
-  describe("execute()", () => {
-    it("should return true for a valid refresh token and remove it", async () => {
+  describe("validate()", () => {
+    it("should return true for a valid refresh token", async () => {
       const user = UserFactory.fake().oneUser().build();
       await userRepository.insert(user);
 
@@ -40,17 +44,15 @@ describe("Validate And Remove Refresh Token Use Case - Integration Tests", () =>
 
       await refreshTokenRepository.insert(refreshTokenEntity);
 
-      const result = await useCase.execute({
-        googleId: refreshTokenEntity.googleId,
-        refreshToken: refreshToken,
-      });
+      const [foundRefreshToken, validationError] = (
+        await validator.validate({
+          googleId: refreshTokenEntity.googleId,
+          refreshToken: refreshToken,
+        })
+      ).asArray();
 
-      const deletedToken = await refreshTokenRepository.findManyByAnyId({
-        googleId: refreshTokenEntity.googleId,
-      });
-
-      expect(deletedToken).toHaveLength(0);
-      expect(result).toBe(true);
+      expect(foundRefreshToken).toBeInstanceOf(RefreshToken);
+      expect(validationError).toBeNull();
     });
 
     it("should return false for an invalid refresh token", async () => {
@@ -68,21 +70,27 @@ describe("Validate And Remove Refresh Token Use Case - Integration Tests", () =>
 
       await refreshTokenRepository.insert(refreshTokenEntity);
 
-      const result = await useCase.execute({
-        googleId: refreshTokenEntity.googleId,
-        refreshToken: "invalid-refresh-token",
-      });
+      const [foundRefreshToken, validationError] = (
+        await validator.validate({
+          googleId: refreshTokenEntity.googleId,
+          refreshToken: "invalid-refresh-token",
+        })
+      ).asArray();
 
-      expect(result).toBe(false);
+      expect(validationError).toBeInstanceOf(NotFoundError);
+      expect(foundRefreshToken).toBeNull();
     });
 
     it("should return false if there are no refresh tokens for the googleId", async () => {
-      const result = await useCase.execute({
-        googleId: "non-existent-google-id",
-        refreshToken: "any-refresh-token",
-      });
+      const [foundRefreshToken, validationError] = (
+        await validator.validate({
+          googleId: "non-existent-google-id",
+          refreshToken: "any-refresh-token",
+        })
+      ).asArray();
 
-      expect(result).toBe(false);
+      expect(validationError).toBeInstanceOf(NotFoundError);
+      expect(foundRefreshToken).toBeNull();
     });
   });
 });

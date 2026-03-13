@@ -22,7 +22,7 @@ export class UpdateEndpointUseCase
     const endpoint = await this.repository.findById(endpointId);
 
     if (!endpoint) {
-      throw new NotFoundError(endpointId, Endpoint);
+      throw new NotFoundError(endpointId.toString(), Endpoint);
     }
 
     if (input.title) {

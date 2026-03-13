@@ -30,7 +30,8 @@
         "noStaticOnlyClass": "off"
       },
       "suspicious": {
-        "noThenProperty": "off"
+        "noThenProperty": "off",
+        "noConfusingVoidType": "off"
       }
     }
   },

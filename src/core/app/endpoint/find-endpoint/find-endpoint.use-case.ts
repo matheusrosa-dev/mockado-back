@@ -20,7 +20,7 @@ export class FindEndpointUseCase
     const endpoint = await this.repository.findById(endpointId);
 
     if (!endpoint) {
-      throw new NotFoundError(endpointId, Endpoint);
+      throw new NotFoundError(endpointId.toString(), Endpoint);
     }
 
     return EndpointOutputMapper.toOutput(endpoint);

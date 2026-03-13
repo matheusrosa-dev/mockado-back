@@ -24,7 +24,7 @@ export class EndpointTypeOrmRepository implements IEndpointRepository {
     const { affected } = await this.repository.update(model.endpointId, model);
 
     if (!affected) {
-      throw new NotFoundError(entity.endpointId, this.getEntity());
+      throw new NotFoundError(entity.endpointId.toString(), this.getEntity());
     }
   }
 
@@ -32,7 +32,7 @@ export class EndpointTypeOrmRepository implements IEndpointRepository {
     const { affected } = await this.repository.delete(endpointId.toString());
 
     if (!affected) {
-      throw new NotFoundError(endpointId, this.getEntity());
+      throw new NotFoundError(endpointId.toString(), this.getEntity());
     }
   }
 

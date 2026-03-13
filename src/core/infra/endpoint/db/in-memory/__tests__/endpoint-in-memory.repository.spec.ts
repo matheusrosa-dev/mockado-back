@@ -107,7 +107,7 @@ describe("Endpoint In Memory Repository - Unit Tests", () => {
       const endpoint = EndpointFactory.fake().oneEndpoint().build();
 
       await expect(repository.update(endpoint)).rejects.toThrow(
-        new NotFoundError(endpoint.endpointId, Endpoint),
+        new NotFoundError(endpoint.endpointId.toString(), Endpoint),
       );
     });
   });
@@ -126,7 +126,7 @@ describe("Endpoint In Memory Repository - Unit Tests", () => {
       const uuid = new Uuid();
 
       await expect(repository.delete(uuid)).rejects.toThrow(
-        new NotFoundError(uuid, Endpoint),
+        new NotFoundError(uuid.toString(), Endpoint),
       );
     });
   });

@@ -55,7 +55,7 @@ describe("Refresh Token In Memory Repository - Unit Tests", () => {
       const uuid = new Uuid();
 
       await expect(repository.delete(uuid)).rejects.toThrow(
-        new NotFoundError(uuid, RefreshToken),
+        new NotFoundError(uuid.toString(), RefreshToken),
       );
     });
   });

@@ -16,6 +16,7 @@ import { AuthService } from "./auth.service";
   providers: [
     ...Object.values(AUTH_PROVIDERS.REPOSITORIES),
     ...Object.values(AUTH_PROVIDERS.USE_CASES),
+    ...Object.values(AUTH_PROVIDERS.VALIDATORS),
     AccessTokenStrategy,
     RefreshTokenStrategy,
     AuthService,
