@@ -15,8 +15,6 @@ export class ReplaceRefreshTokenUseCase
   async execute(
     input: ReplaceRefreshTokenInput,
   ): Promise<ReplaceRefreshTokenOutput> {
-    // TODO: ADICIONAR AQUELA LOGICA DE REVERTER SE DER ERRO
-
     const refreshTokenIdToRemove = new Uuid(input.refreshTokenIdToRemove);
 
     await this.refreshTokenRepository.delete(refreshTokenIdToRemove);
