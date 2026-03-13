@@ -10,6 +10,7 @@ import { ICurrentSession } from "../shared/decorators/current-session.decorator"
 import { ReplaceRefreshTokenUseCase } from "@app/auth/use-cases/replace-refresh-token/replace-refresh-token.use-case";
 import { ReplaceRefreshTokenInput } from "@app/auth/use-cases/replace-refresh-token/replace-refresh-token.input";
 import { validateSync } from "class-validator";
+import { RevokeRefreshTokenUseCase } from "@app/auth/use-cases/revoke-refresh-token/revoke-refresh-token.use-case";
 
 @Injectable()
 export class AuthService {
@@ -21,6 +22,7 @@ export class AuthService {
     private configService: ConfigService,
     private googleLoginUseCase: GoogleLoginUseCase,
     private replaceRefreshTokenUseCase: ReplaceRefreshTokenUseCase,
+    private revokeRefreshTokenUseCase: RevokeRefreshTokenUseCase,
     private refreshTokenExistsValidator: RefreshTokenExistsValidator,
   ) {
     const clientId = this.configService.get("auth.googleClientId") as string;
@@ -88,7 +90,7 @@ export class AuthService {
     const useCaseInput = new ReplaceRefreshTokenInput({
       googleId: foundRefreshToken.googleId,
       userId: foundRefreshToken.userId.toString(),
-      refreshTokenIdToRemove: foundRefreshToken.refreshTokenId.toString(),
+      refreshTokenIdToRevoke: foundRefreshToken.refreshTokenId.toString(),
       newRefreshToken: session.refreshToken,
     });
 
@@ -107,7 +109,26 @@ export class AuthService {
       googleId: session.googleId,
     });
 
+    // TODO: RETORNAR NOVOS DADOS DO USUARIO
+
     return tokens;
+  }
+
+  async logout(session: ICurrentSession) {
+    const [foundRefreshToken, validationError] = (
+      await this.refreshTokenExistsValidator.validate({
+        googleId: session.googleId,
+        refreshToken: session.refreshToken,
+      })
+    ).asArray();
+
+    if (validationError) {
+      throw new UnauthorizedException("Invalid refresh token");
+    }
+
+    await this.revokeRefreshTokenUseCase.execute({
+      refreshTokenId: foundRefreshToken.refreshTokenId.toString(),
+    });
   }
 
   // biome-ignore lint/suspicious/noExplicitAny: <Payload can be any>

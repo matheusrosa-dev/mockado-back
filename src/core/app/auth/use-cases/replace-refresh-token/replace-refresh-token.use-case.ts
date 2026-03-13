@@ -15,9 +15,9 @@ export class ReplaceRefreshTokenUseCase
   async execute(
     input: ReplaceRefreshTokenInput,
   ): Promise<ReplaceRefreshTokenOutput> {
-    const refreshTokenIdToRemove = new Uuid(input.refreshTokenIdToRemove);
+    const refreshTokenIdToRevoke = new Uuid(input.refreshTokenIdToRevoke);
 
-    await this.refreshTokenRepository.delete(refreshTokenIdToRemove);
+    await this.refreshTokenRepository.delete(refreshTokenIdToRevoke);
 
     const refreshTokenHash = await bcrypt.hash(input.newRefreshToken, 10);
 

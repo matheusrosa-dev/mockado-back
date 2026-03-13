@@ -3,7 +3,7 @@ import { validateSync } from "class-validator";
 import { ReplaceRefreshTokenInput } from "../replace-refresh-token.input";
 
 const validProps = {
-  refreshTokenIdToRemove: "550e8400-e29b-41d4-a716-446655440000",
+  refreshTokenIdToRevoke: "550e8400-e29b-41d4-a716-446655440000",
   newRefreshToken: "some-new-refresh-token",
   userId: "550e8400-e29b-41d4-a716-446655440001",
   googleId: "1234567890",
@@ -22,33 +22,33 @@ describe("Replace Refresh Token Input - Unit Tests", () => {
     });
   });
 
-  describe("refreshTokenIdToRemove", () => {
-    it("should fail when refreshTokenIdToRemove is empty", () => {
-      const errors = validate({ ...validProps, refreshTokenIdToRemove: "" });
+  describe("refreshTokenIdToRevoke", () => {
+    it("should fail when refreshTokenIdToRevoke is empty", () => {
+      const errors = validate({ ...validProps, refreshTokenIdToRevoke: "" });
       const fields = errors.map((error) => error.property);
-      expect(fields).toContain("refreshTokenIdToRemove");
+      expect(fields).toContain("refreshTokenIdToRevoke");
     });
 
-    it("should fail when refreshTokenIdToRemove is missing", () => {
-      const { refreshTokenIdToRemove: _, ...rest } = validProps;
+    it("should fail when refreshTokenIdToRevoke is missing", () => {
+      const { refreshTokenIdToRevoke: _, ...rest } = validProps;
       const errors = validate(rest);
       const fields = errors.map((error) => error.property);
-      expect(fields).toContain("refreshTokenIdToRemove");
+      expect(fields).toContain("refreshTokenIdToRevoke");
     });
 
-    it("should fail when refreshTokenIdToRemove is not a UUID", () => {
+    it("should fail when refreshTokenIdToRevoke is not a UUID", () => {
       const errors = validate({
         ...validProps,
-        refreshTokenIdToRemove: "not-a-uuid",
+        refreshTokenIdToRevoke: "not-a-uuid",
       });
       const fields = errors.map((error) => error.property);
-      expect(fields).toContain("refreshTokenIdToRemove");
+      expect(fields).toContain("refreshTokenIdToRevoke");
     });
 
-    it("should fail when refreshTokenIdToRemove is not a string", () => {
-      const errors = validate({ ...validProps, refreshTokenIdToRemove: 123 });
+    it("should fail when refreshTokenIdToRevoke is not a string", () => {
+      const errors = validate({ ...validProps, refreshTokenIdToRevoke: 123 });
       const fields = errors.map((error) => error.property);
-      expect(fields).toContain("refreshTokenIdToRemove");
+      expect(fields).toContain("refreshTokenIdToRevoke");
     });
   });
 

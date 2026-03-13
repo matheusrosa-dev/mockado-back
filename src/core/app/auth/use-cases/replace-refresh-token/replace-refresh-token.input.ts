@@ -4,13 +4,13 @@ type ConstructorProps = {
   googleId: string;
   userId: string;
   newRefreshToken: string;
-  refreshTokenIdToRemove: string;
+  refreshTokenIdToRevoke: string;
 };
 
 export class ReplaceRefreshTokenInput {
   @IsNotEmpty()
   @IsUUID()
-  refreshTokenIdToRemove: string;
+  refreshTokenIdToRevoke: string;
 
   @IsNotEmpty()
   @IsString()

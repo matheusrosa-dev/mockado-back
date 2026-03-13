@@ -11,6 +11,7 @@ import {
   IGoogleLoginUnitOfWork,
 } from "@app/auth/use-cases/google-login/google-login.unit-of-work";
 import { TypeOrmGoogleLoginUnitOfWork } from "@infra/auth/google-login/typeorm-google-login.unit-of-work";
+import { RevokeRefreshTokenUseCase } from "@app/auth/use-cases/revoke-refresh-token/revoke-refresh-token.use-case";
 
 const REPOSITORIES = {
   USER: {
@@ -49,6 +50,13 @@ const USE_CASES = {
     provide: ReplaceRefreshTokenUseCase,
     useFactory: (refreshTokenRepository: IRefreshTokenRepository) => {
       return new ReplaceRefreshTokenUseCase(refreshTokenRepository);
+    },
+    inject: [REPOSITORIES.REFRESH_TOKEN.provide],
+  },
+  REVOKE_REFRESH_TOKEN: {
+    provide: RevokeRefreshTokenUseCase,
+    useFactory: (refreshTokenRepository: IRefreshTokenRepository) => {
+      return new RevokeRefreshTokenUseCase(refreshTokenRepository);
     },
     inject: [REPOSITORIES.REFRESH_TOKEN.provide],
   },

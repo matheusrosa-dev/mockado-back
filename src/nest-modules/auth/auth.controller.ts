@@ -24,11 +24,8 @@ export class AuthController {
     @Body() loginDto: GoogleLoginDto,
     @Res({ passthrough: true }) response: Response,
   ) {
-    const {
-      accessToken,
-      refreshToken,
-      user: output,
-    } = await this.authService.googleLogin(loginDto);
+    const { accessToken, refreshToken, ...output } =
+      await this.authService.googleLogin(loginDto);
 
     this.setAuthCookies({
       response,
@@ -45,22 +42,32 @@ export class AuthController {
   @UseGuards(RefreshTokenGuard)
   @Post("refresh")
   async refreshTokens(
-    @Res({ passthrough: true }) res: Response,
+    @Res({ passthrough: true }) response: Response,
     @CurrentSession() session: ICurrentSession,
   ) {
     try {
       const tokens = await this.authService.refreshTokens(session);
 
       this.setAuthCookies({
-        response: res,
+        response,
         accessToken: tokens.accessToken,
         refreshToken: tokens.refreshToken,
       });
     } catch (error) {
-      this.removeAuthCookies(res);
+      this.removeAuthCookies(response);
 
       throw error;
     }
+  }
+
+  @Post("logout")
+  async logout(
+    @Res({ passthrough: true }) response: Response,
+    @CurrentSession() session: ICurrentSession,
+  ) {
+    await this.authService.logout(session);
+
+    this.removeAuthCookies(response);
   }
 
   private setAuthCookies(props: {
