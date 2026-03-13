@@ -115,20 +115,18 @@ export class AuthService {
   }
 
   async logout(session: ICurrentSession) {
-    const [foundRefreshToken, validationError] = (
+    const [foundRefreshToken] = (
       await this.refreshTokenExistsValidator.validate({
         googleId: session.googleId,
         refreshToken: session.refreshToken,
       })
     ).asArray();
 
-    if (validationError) {
-      throw new UnauthorizedException("Invalid refresh token");
+    if (foundRefreshToken) {
+      await this.revokeRefreshTokenUseCase.execute({
+        refreshTokenId: foundRefreshToken.refreshTokenId.toString(),
+      });
     }
-
-    await this.revokeRefreshTokenUseCase.execute({
-      refreshTokenId: foundRefreshToken.refreshTokenId.toString(),
-    });
   }
 
   // biome-ignore lint/suspicious/noExplicitAny: <Payload can be any>

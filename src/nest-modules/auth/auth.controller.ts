@@ -89,12 +89,12 @@ export class AuthController {
       httpOnly: true,
       sameSite: "strict",
       maxAge: authConfig.jwtRefreshExpirationTime * 1000,
-      path: "/auth/refresh",
+      path: "/auth",
     });
   }
 
   private removeAuthCookies(response: Response) {
     response.clearCookie("access_token");
-    response.clearCookie("refresh_token", { path: "/auth/refresh" });
+    response.clearCookie("refresh_token", { path: "/auth" });
   }
 }
