@@ -12,6 +12,7 @@ import { StatusCode } from "./value-objects/status-code.vo";
 
 type ConstructorProps = {
   endpointId?: Uuid;
+  userId: Uuid;
   method: HttpMethod;
   title: string;
   description?: string;
@@ -25,6 +26,7 @@ type ConstructorProps = {
 
 export class Endpoint extends Entity {
   private _endpointId: Uuid;
+  private _userId: Uuid;
   private _method: HttpMethod;
   private _title: string;
   private _description: string;
@@ -47,6 +49,7 @@ export class Endpoint extends Entity {
     );
 
     this._endpointId = props.endpointId ?? new Uuid();
+    this._userId = props.userId;
     this._method = props.method;
     this._title = props.title;
     this._description = props.description ?? "";
@@ -181,6 +184,10 @@ export class Endpoint extends Entity {
     return validator.validate(this.notification, this, fields);
   }
 
+  get userId() {
+    return this._userId;
+  }
+
   get endpointId() {
     return this._endpointId;
   }
@@ -228,6 +235,7 @@ export class Endpoint extends Entity {
   toJSON() {
     return {
       endpointId: this._endpointId.toString(),
+      userId: this._userId.toString(),
       title: this._title,
       method: this._method,
       description: this._description,
@@ -246,6 +254,7 @@ export class Endpoint extends Entity {
 }
 
 type CreateCommandProps = {
+  userId: Uuid;
   method: HttpMethod;
   title: string;
   description?: string;

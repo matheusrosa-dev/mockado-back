@@ -13,6 +13,7 @@ describe("Endpoint Entity - Unit Tests", () => {
         method,
         title: "My Endpoint",
         statusCode: new StatusCode(100),
+        userId: new Uuid(),
       };
 
       const endpoint = new Endpoint(requiredProps);
@@ -20,6 +21,7 @@ describe("Endpoint Entity - Unit Tests", () => {
       expect(endpoint.method).toBe(requiredProps.method);
       expect(endpoint.title).toBe(requiredProps.title);
       expect(endpoint.statusCode).toBe(requiredProps.statusCode);
+      expect(endpoint.userId).toBe(requiredProps.userId);
     });
 
     it.each(
@@ -30,6 +32,7 @@ describe("Endpoint Entity - Unit Tests", () => {
         title: "My Endpoint",
         statusCode: new StatusCode(200),
         responseBodyType,
+        userId: new Uuid(),
       });
 
       expect(endpoint.responseBodyType).toBe(responseBodyType);
@@ -40,6 +43,7 @@ describe("Endpoint Entity - Unit Tests", () => {
         method: HttpMethod.GET,
         title: "My Endpoint",
         statusCode: new StatusCode(204),
+        userId: new Uuid(),
       };
 
       const endpoint = new Endpoint({
@@ -52,6 +56,7 @@ describe("Endpoint Entity - Unit Tests", () => {
       expect(endpoint.method).toBe(endpointProps.method);
       expect(endpoint.title).toBe(endpointProps.title);
       expect(endpoint.statusCode).toBe(endpointProps.statusCode);
+      expect(endpoint.userId).toBe(endpointProps.userId);
       expect(endpoint.responseBodyType).toBeUndefined();
       expect(endpoint.responseJson).toBeUndefined();
       expect(endpoint.responseText).toBeUndefined();
@@ -63,6 +68,7 @@ describe("Endpoint Entity - Unit Tests", () => {
         title: "My Endpoint",
         statusCode: new StatusCode(200),
         responseBodyType: ResponseBodyType.JSON,
+        userId: new Uuid(),
       });
 
       expect(endpoint1.endpointId).toBeInstanceOf(Uuid);
@@ -76,6 +82,7 @@ describe("Endpoint Entity - Unit Tests", () => {
         title: "My Endpoint",
         statusCode: new StatusCode(200),
         responseBodyType: ResponseBodyType.TEXT,
+        userId: new Uuid(),
       });
 
       expect(endpoint2.responseText).toBe("");
@@ -91,6 +98,7 @@ describe("Endpoint Entity - Unit Tests", () => {
         title: "My Endpoint",
         statusCode: new StatusCode(200),
         createdAt: date,
+        userId: new Uuid(),
       });
 
       expect(endpoint.endpointId.equals(id)).toBeTruthy();
@@ -106,6 +114,7 @@ describe("Endpoint Entity - Unit Tests", () => {
         description: "A description",
         delay: 5,
         responseJson: '{"key":"value"}',
+        userId: new Uuid(),
       });
 
       expect(endpoint1.description).toBe("A description");
@@ -118,6 +127,7 @@ describe("Endpoint Entity - Unit Tests", () => {
         statusCode: new StatusCode(200),
         responseBodyType: ResponseBodyType.TEXT,
         responseText: "some text",
+        userId: new Uuid(),
       });
 
       expect(endpoint2.responseText).toBe("some text");
@@ -500,6 +510,7 @@ describe("Endpoint Entity - Unit Tests", () => {
 
       expect(endpointWithoutBody.toJSON()).toEqual({
         endpointId: endpointWithoutBody.endpointId.toString(),
+        userId: endpointWithoutBody.userId.toString(),
         title: endpointWithoutBody.title,
         method: endpointWithoutBody.method,
         description: endpointWithoutBody.description,
@@ -518,6 +529,7 @@ describe("Endpoint Entity - Unit Tests", () => {
 
       expect(endpointWithJson.toJSON()).toEqual({
         endpointId: endpointWithJson.endpointId.toString(),
+        userId: endpointWithJson.userId.toString(),
         title: endpointWithJson.title,
         method: endpointWithJson.method,
         description: endpointWithJson.description,
@@ -530,6 +542,7 @@ describe("Endpoint Entity - Unit Tests", () => {
 
       const endpointWithText = new Endpoint({
         endpointId: new Uuid(),
+        userId: new Uuid(),
         method: HttpMethod.GET,
         title: "My Endpoint",
         statusCode: new StatusCode(200),
@@ -542,6 +555,7 @@ describe("Endpoint Entity - Unit Tests", () => {
 
       expect(endpointWithText.toJSON()).toEqual({
         endpointId: endpointWithText.endpointId.toString(),
+        userId: endpointWithText.userId.toString(),
         title: endpointWithText.title,
         method: endpointWithText.method,
         description: endpointWithText.description,

@@ -8,20 +8,30 @@ describe("Endpoint Fake Builder - Unit Tests", () => {
     it("should instance a fake endpoint with default values", () => {
       const fakeEndpoint = EndpointFactory.fake().oneEndpoint().build();
 
-      expect(fakeEndpoint.endpointId.toString()).toBeDefined();
-      expect(fakeEndpoint.title).toBeDefined();
-      expect(fakeEndpoint.method).toBeDefined();
-      expect(fakeEndpoint.statusCode).toBeDefined();
-      expect(fakeEndpoint.createdAt).toBeDefined();
+      expect(fakeEndpoint.toJSON()).toEqual({
+        endpointId: fakeEndpoint.endpointId.toString(),
+        userId: fakeEndpoint.userId.toString(),
+        method: fakeEndpoint.method,
+        title: fakeEndpoint.title,
+        description: fakeEndpoint.description,
+        delay: fakeEndpoint.delay,
+        statusCode: fakeEndpoint.statusCode.statusCode,
+        responseBodyType: fakeEndpoint.responseBodyType,
+        responseJson: fakeEndpoint.responseJson,
+        responseText: fakeEndpoint.responseText,
+        createdAt: fakeEndpoint.createdAt,
+      });
     });
 
     it("should instance a fake endpoint with custom values", () => {
       const id = new Uuid();
+      const userId = new Uuid();
 
       // Custom values
       const fakeEndpoint = EndpointFactory.fake()
         .oneEndpoint()
         .withEndpointId(id)
+        .withUserId(userId)
         .withTitle("Custom Title")
         .withMethod(HttpMethod.POST)
         .withDescription("Custom Description")
@@ -31,6 +41,7 @@ describe("Endpoint Fake Builder - Unit Tests", () => {
         .build();
 
       expect(fakeEndpoint.endpointId.equals(id)).toBeTruthy();
+      expect(fakeEndpoint.userId.equals(userId)).toBeTruthy();
       expect(fakeEndpoint.title).toBe("Custom Title");
       expect(fakeEndpoint.method).toBe(HttpMethod.POST);
       expect(fakeEndpoint.description).toBe("Custom Description");
@@ -98,6 +109,7 @@ describe("Endpoint Fake Builder - Unit Tests", () => {
       expect(fakeEndpoints).toHaveLength(amount);
       fakeEndpoints.forEach((endpoint) => {
         expect(endpoint.endpointId.toString()).toBeDefined();
+        expect(endpoint.userId.toString()).toBeDefined();
         expect(endpoint.title).toBeDefined();
         expect(endpoint.method).toBeDefined();
         expect(endpoint.statusCode).toBeDefined();
@@ -107,12 +119,14 @@ describe("Endpoint Fake Builder - Unit Tests", () => {
 
     it("should instance an array of fake endpoints with custom values", () => {
       const id = new Uuid();
+      const userId = new Uuid();
       const amount = 3;
 
       // Custom values
       const fakeEndpoints = EndpointFactory.fake()
         .manyEndpoints(amount)
         .withEndpointId(id)
+        .withUserId(userId)
         .withTitle("Custom Title")
         .withMethod(HttpMethod.POST)
         .withDescription("Custom Description")
@@ -124,6 +138,7 @@ describe("Endpoint Fake Builder - Unit Tests", () => {
       expect(fakeEndpoints).toHaveLength(amount);
       fakeEndpoints.forEach((endpoint) => {
         expect(endpoint.endpointId.equals(id)).toBeTruthy();
+        expect(endpoint.userId.equals(userId)).toBeTruthy();
         expect(endpoint.title).toBe("Custom Title");
         expect(endpoint.method).toBe(HttpMethod.POST);
         expect(endpoint.description).toBe("Custom Description");

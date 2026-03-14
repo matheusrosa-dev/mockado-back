@@ -10,6 +10,7 @@ export class EndpointFakeBuilder<TBuild = Endpoint | Endpoint[]> {
   private readonly chance = Chance();
 
   private _endpointId?: PropOrFactory<Uuid>;
+  private _userId: PropOrFactory<Uuid> = () => new Uuid();
   private _method: PropOrFactory<HttpMethod> = () =>
     this.chance.pickone(Object.values(HttpMethod));
   private _title: PropOrFactory<string> = () => this.chance.word();
@@ -40,6 +41,11 @@ export class EndpointFakeBuilder<TBuild = Endpoint | Endpoint[]> {
 
   withEndpointId(valueOrFactory: PropOrFactory<Uuid>) {
     this._endpointId = valueOrFactory;
+    return this;
+  }
+
+  withUserId(valueOrFactory: PropOrFactory<Uuid>) {
+    this._userId = valueOrFactory;
     return this;
   }
 
@@ -95,6 +101,7 @@ export class EndpointFakeBuilder<TBuild = Endpoint | Endpoint[]> {
           endpointId: this.callFactory(this._endpointId),
         }),
 
+        userId: this.callFactory(this._userId),
         method: this.callFactory(this._method),
         title: this.callFactory(this._title),
         description: this.callFactory(this._description),
