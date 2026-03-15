@@ -1,10 +1,10 @@
-import { CreateEndpointUseCase } from "@app/endpoint/create-endpoint/create-endpoint.use-case";
-import { UpdateEndpointUseCase } from "@app/endpoint/update-endpoint/update-endpoint.use-case";
-import { FindEndpointUseCase } from "@app/endpoint/find-endpoint/find-endpoint.use-case";
+import { CreateEndpointUseCase } from "@app/endpoint/use-cases/create-endpoint/create-endpoint.use-case";
+import { UpdateEndpointUseCase } from "@app/endpoint/use-cases/update-endpoint/update-endpoint.use-case";
+import { FindEndpointUseCase } from "@app/endpoint/use-cases/find-endpoint/find-endpoint.use-case";
 import { Body, Controller, Get, Param, Patch, Post } from "@nestjs/common";
 import { CreateEndpointDto } from "./dtos/create-endpoint.dto";
 import { FindEndpointByIdDto } from "./dtos/find-endpoint-by-id.dto";
-import { ListEndpointsSummaryUseCase } from "@app/endpoint/list-endpoints-summary/list-endpoints-summary.use-case";
+import { ListEndpointsSummaryUseCase } from "@app/endpoint/use-cases/list-endpoints-summary/list-endpoints-summary.use-case";
 import {
   UpdateEndpointBodyDto,
   UpdateEndpointParamsDto,

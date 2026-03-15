@@ -1,4 +1,4 @@
-import { IUseCase } from "../../shared/use-case.interface";
+import { IUseCase } from "../../../shared/use-case.interface";
 import { IEndpointRepository } from "@domain/endpoint/endpoint.repository";
 import { HttpMethod } from "@domain/endpoint/endpoint.types";
 import { ListEndpointsSummaryInput } from "./list-endpoints-summary.input";

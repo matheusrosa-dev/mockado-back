@@ -5,7 +5,7 @@ import { HttpMethod, ResponseBodyType } from "@domain/endpoint/endpoint.types";
 import { EntityValidationError } from "@domain/shared/validators/validation.error";
 import { NotFoundError } from "@domain/shared/errors/not-found.error";
 import { Uuid } from "@domain/shared/value-objects/uuid.vo";
-import { EndpointOutputMapper } from "@app/endpoint/common/endpoint.output";
+import { EndpointOutputMapper } from "@app/endpoint/use-cases/common/endpoint.output";
 import { setupTypeOrm } from "@infra/shared/testing/helpers";
 import { EndpointModel } from "@infra/endpoint/db/typeorm/endpoint-typeorm.model";
 import { EndpointTypeOrmRepository } from "@infra/endpoint/db/typeorm/endpoint-typeorm.repository";

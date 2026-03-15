@@ -1,4 +1,4 @@
-import { IUseCase } from "../../shared/use-case.interface";
+import { IUseCase } from "../../../shared/use-case.interface";
 import { IEndpointRepository } from "@domain/endpoint/endpoint.repository";
 import { FindEndpointInput } from "./find-endpoint.input";
 import { Uuid } from "@domain/shared/value-objects/uuid.vo";

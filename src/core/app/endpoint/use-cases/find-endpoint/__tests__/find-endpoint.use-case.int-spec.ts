@@ -6,7 +6,7 @@ import { NotFoundError } from "@domain/shared/errors/not-found.error";
 import { setupTypeOrm } from "@infra/shared/testing/helpers";
 import { EndpointModel } from "@infra/endpoint/db/typeorm/endpoint-typeorm.model";
 import { EndpointTypeOrmRepository } from "@infra/endpoint/db/typeorm/endpoint-typeorm.repository";
-import { EndpointOutputMapper } from "@app/endpoint/common/endpoint.output";
+import { EndpointOutputMapper } from "@app/endpoint/use-cases/common/endpoint.output";
 import { StatusCode } from "@domain/endpoint/value-objects/status-code.vo";
 import { UserModel } from "@infra/user/db/typeorm/user-typeorm.model";
 import { RefreshTokenModel } from "@infra/refresh-token/db/typeorm/refresh-token-typeorm.model";
