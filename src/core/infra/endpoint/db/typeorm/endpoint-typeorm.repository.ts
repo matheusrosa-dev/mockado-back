@@ -4,6 +4,7 @@ import { IEndpointRepository } from "@domain/endpoint/endpoint.repository";
 import { EndpointModel } from "./endpoint-typeorm.model";
 import { Uuid } from "@domain/shared/value-objects/uuid.vo";
 import { EndpointModelMapper } from "./endpoint-model-mapper";
+import { NotFoundError } from "@domain/shared/errors/not-found.error";
 
 export class EndpointTypeOrmRepository implements IEndpointRepository {
   private repository: Repository<EndpointModel>;
@@ -16,6 +17,19 @@ export class EndpointTypeOrmRepository implements IEndpointRepository {
     const model = EndpointModelMapper.toModel(entity);
 
     await this.repository.save(model);
+  }
+
+  async update(entity: Endpoint): Promise<void> {
+    const model = EndpointModelMapper.toModel(entity);
+
+    const result = await this.repository.update(
+      { endpointId: model.endpointId },
+      model,
+    );
+
+    if (!result?.affected) {
+      throw new NotFoundError(model.endpointId, Endpoint);
+    }
   }
 
   async findByIdWithUserId(props: {
@@ -77,14 +91,5 @@ export class EndpointTypeOrmRepository implements IEndpointRepository {
 
   findById(): Promise<Endpoint | null> {
     throw new Error("Method not implemented.");
-  }
-
-  update(): Promise<void> {
-    throw new Error("Method not implemented.");
-  }
-
-  // TODO: checar se tem necessidade depois de remover os in memory repositories
-  getEntity() {
-    return Endpoint;
   }
 }

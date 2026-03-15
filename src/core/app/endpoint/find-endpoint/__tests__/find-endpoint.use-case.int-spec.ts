@@ -8,35 +8,68 @@ import { EndpointModel } from "@infra/endpoint/db/typeorm/endpoint-typeorm.model
 import { EndpointTypeOrmRepository } from "@infra/endpoint/db/typeorm/endpoint-typeorm.repository";
 import { EndpointOutputMapper } from "@app/endpoint/common/endpoint.output";
 import { StatusCode } from "@domain/endpoint/value-objects/status-code.vo";
+import { UserModel } from "@infra/user/db/typeorm/user-typeorm.model";
+import { RefreshTokenModel } from "@infra/refresh-token/db/typeorm/refresh-token-typeorm.model";
+import { IUserRepository } from "@domain/user/user.repository";
+import { UserFactory } from "@domain/user/user.entity";
+import { UserTypeOrmRepository } from "@infra/user/db/typeorm/user-typeorm.repository";
 
 describe("Find Endpoint Use Case - Integration Tests", () => {
   let useCase: FindEndpointUseCase;
-  let repository: IEndpointRepository;
+  let endpointRepository: IEndpointRepository;
+  let userRepository: IUserRepository;
 
   const { dataSource } = setupTypeOrm({
-    entities: [EndpointModel],
+    entities: [EndpointModel, UserModel, RefreshTokenModel],
   });
 
   beforeEach(() => {
-    repository = new EndpointTypeOrmRepository(dataSource);
-    useCase = new FindEndpointUseCase(repository);
+    endpointRepository = new EndpointTypeOrmRepository(dataSource);
+    userRepository = new UserTypeOrmRepository(dataSource);
+
+    useCase = new FindEndpointUseCase(endpointRepository);
   });
 
   describe("execute()", () => {
-    it("should find an endpoint", async () => {
+    it("should throw not found error if endpoint does not exist for the user", async () => {
+      const user = UserFactory.fake().oneUser().build();
       const endpoint = EndpointFactory.fake()
         .oneEndpoint()
+        .withUserId(user.userId)
+        .build();
+
+      await userRepository.insert(user);
+      await endpointRepository.insert(endpoint);
+
+      await expect(
+        useCase.execute({
+          endpointId: endpoint.endpointId.toString(),
+          googleId: "some-google-id",
+          userId: new Uuid().id,
+        }),
+      ).rejects.toThrow(NotFoundError);
+    });
+
+    it("should find an endpoint", async () => {
+      const user = UserFactory.fake().oneUser().build();
+      const endpoint = EndpointFactory.fake()
+        .oneEndpoint()
+        .withUserId(user.userId)
         .withStatusCode(new StatusCode(204))
         .build();
 
-      await repository.insert(endpoint);
+      await userRepository.insert(user);
+      await endpointRepository.insert(endpoint);
 
       const foundEndpoint = await useCase.execute({
         endpointId: endpoint.endpointId.toString(),
+        userId: user.userId.toString(),
+        googleId: user.googleId,
       });
 
       expect(foundEndpoint).toEqual({
         id: endpoint.endpointId.toString(),
+        userId: endpoint.userId.toString(),
         title: endpoint.title,
         method: endpoint.method,
         statusCode: endpoint.statusCode.statusCode,
@@ -46,25 +79,22 @@ describe("Find Endpoint Use Case - Integration Tests", () => {
       });
     });
 
-    it("should throw an error if endpoint not found", async () => {
-      const id = new Uuid();
-
-      await expect(
-        useCase.execute({
-          endpointId: id.id,
-        }),
-      ).rejects.toThrow(NotFoundError);
-    });
-
     it("should return formatted output", async () => {
       const outputSpy = jest.spyOn(EndpointOutputMapper, "toOutput");
 
-      const endpoint = EndpointFactory.fake().oneEndpoint().build();
+      const user = UserFactory.fake().oneUser().build();
+      const endpoint = EndpointFactory.fake()
+        .oneEndpoint()
+        .withUserId(user.userId)
+        .build();
 
-      await repository.insert(endpoint);
+      await userRepository.insert(user);
+      await endpointRepository.insert(endpoint);
 
       const output = await useCase.execute({
         endpointId: endpoint.endpointId.toString(),
+        userId: user.userId.toString(),
+        googleId: user.googleId,
       });
 
       expect(outputSpy).toHaveBeenCalledTimes(1);
@@ -74,7 +104,6 @@ describe("Find Endpoint Use Case - Integration Tests", () => {
       expect(output).toStrictEqual({
         ...outputMapped,
         id: output.id,
-        createdAt: output.createdAt,
       });
     });
   });

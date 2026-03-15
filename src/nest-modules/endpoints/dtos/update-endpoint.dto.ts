@@ -4,6 +4,12 @@ import { UpdateEndpointInput } from "@app/endpoint/update-endpoint/update-endpoi
 export class UpdateEndpointBodyDto extends UpdateEndpointInput {
   @IsOptional()
   declare id: string;
+
+  @IsOptional()
+  declare googleId?: string;
+
+  @IsOptional()
+  declare userId?: string;
 }
 
 export class UpdateEndpointParamsDto {

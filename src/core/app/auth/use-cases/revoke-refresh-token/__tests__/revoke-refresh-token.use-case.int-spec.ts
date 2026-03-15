@@ -10,6 +10,7 @@ import { RefreshTokenModel } from "@infra/refresh-token/db/typeorm/refresh-token
 import { UserModel } from "@infra/user/db/typeorm/user-typeorm.model";
 import { UserTypeOrmRepository } from "@infra/user/db/typeorm/user-typeorm.repository";
 import { RefreshTokenTypeOrmRepository } from "@infra/refresh-token/db/typeorm/refresh-token-typeorm.repository";
+import { EndpointModel } from "@infra/endpoint/db/typeorm/endpoint-typeorm.model";
 
 describe("Revoke Refresh Token Use Case - Integration Tests", () => {
   let useCase: RevokeRefreshTokenUseCase;
@@ -17,7 +18,7 @@ describe("Revoke Refresh Token Use Case - Integration Tests", () => {
   let refreshTokenRepository: IRefreshTokenRepository;
 
   const { dataSource } = setupTypeOrm({
-    entities: [RefreshTokenModel, UserModel],
+    entities: [RefreshTokenModel, UserModel, EndpointModel],
   });
 
   beforeEach(() => {

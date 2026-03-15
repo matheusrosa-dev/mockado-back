@@ -10,10 +10,11 @@ import { UserTypeOrmRepository } from "@infra/user/db/typeorm/user-typeorm.repos
 import { RefreshTokenTypeOrmRepository } from "@infra/refresh-token/db/typeorm/refresh-token-typeorm.repository";
 import { Uuid } from "@domain/shared/value-objects/uuid.vo";
 import { TypeOrmGoogleLoginUnitOfWork } from "@infra/auth/google-login/typeorm-google-login.unit-of-work";
+import { EndpointModel } from "@infra/endpoint/db/typeorm/endpoint-typeorm.model";
 
 describe("Google Login Use Case - Integration Tests", () => {
   const { dataSource } = setupTypeOrm({
-    entities: [RefreshTokenModel, UserModel],
+    entities: [RefreshTokenModel, UserModel, EndpointModel],
   });
 
   let useCase: GoogleLoginUseCase;

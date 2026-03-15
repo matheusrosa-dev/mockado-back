@@ -1,7 +1,7 @@
 import { UserFactory } from "@domain/user/user.entity";
 import { UserModelMapper } from "../user-model-mapper";
 
-describe("User Model Mapper - Integration", () => {
+describe("User Model Mapper - Integration Tests", () => {
   describe("toModel()", () => {
     it("should map User entity to UserModel", () => {
       const user = UserFactory.fake().oneUser().build();
@@ -25,13 +25,7 @@ describe("User Model Mapper - Integration", () => {
       const userModel = UserModelMapper.toModel(user);
       const mappedUser = UserModelMapper.toEntity(userModel);
 
-      expect(mappedUser).toBeDefined();
-      expect(mappedUser.userId.toString()).toBe(user.userId.toString());
-      expect(mappedUser.googleId).toBe(user.googleId);
-      expect(mappedUser.email).toBe(user.email);
-      expect(mappedUser.name).toBe(user.name);
-      expect(mappedUser.isActive).toBe(user.isActive);
-      expect(mappedUser.createdAt).toEqual(user.createdAt);
+      expect(mappedUser.toJSON()).toEqual(user.toJSON());
     });
   });
 });

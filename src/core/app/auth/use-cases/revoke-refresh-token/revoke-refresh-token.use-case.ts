@@ -6,9 +6,7 @@ import { Uuid } from "@domain/shared/value-objects/uuid.vo";
 export class RevokeRefreshTokenUseCase
   implements IUseCase<RevokeRefreshTokenInput, RevokeRefreshTokenOutput>
 {
-  constructor(
-    private readonly refreshTokenRepository: IRefreshTokenRepository,
-  ) {}
+  constructor(private refreshTokenRepository: IRefreshTokenRepository) {}
 
   async execute(
     input: RevokeRefreshTokenInput,

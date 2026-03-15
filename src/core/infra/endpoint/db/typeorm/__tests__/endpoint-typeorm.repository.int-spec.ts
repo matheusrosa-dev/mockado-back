@@ -21,7 +21,73 @@ describe("Endpoint TypeOrm Repository - Integration Tests", () => {
     userRepository = new UserTypeOrmRepository(dataSource);
   });
 
+  describe("insert()", () => {
+    it("should insert endpoint successfully", async () => {
+      const user = UserFactory.fake().oneUser().build();
+      const endpoint = EndpointFactory.fake()
+        .oneEndpoint()
+        .withUserId(user.userId)
+        .build();
+
+      await userRepository.insert(user);
+      await endpointRepository.insert(endpoint);
+
+      const model = await endpointRepository.findByIdWithUserId({
+        endpointId: endpoint.endpointId,
+        userId: user.userId,
+      });
+
+      expect(model).toBeDefined();
+    });
+  });
+
+  describe("update()", () => {
+    it("should update endpoint successfully", async () => {
+      const users = UserFactory.fake().manyUsers(2).build();
+      const [mainUser, diffUser] = users;
+
+      const mainEndpoint = EndpointFactory.fake()
+        .oneEndpoint()
+        .withUserId(mainUser.userId)
+        .build();
+
+      const diffEndpoint = EndpointFactory.fake()
+        .oneEndpoint()
+        .withUserId(diffUser.userId)
+        .build();
+
+      await Promise.all(users.map((user) => userRepository.insert(user)));
+      await Promise.all(
+        [mainEndpoint, diffEndpoint].map((endpoint) =>
+          endpointRepository.insert(endpoint),
+        ),
+      );
+
+      mainEndpoint.changeTitle("Updated Title");
+      await endpointRepository.update(mainEndpoint);
+
+      const updatedModel = await endpointRepository.findByIdWithUserId({
+        endpointId: mainEndpoint.endpointId,
+        userId: mainUser.userId,
+      });
+
+      const nonUpdatedModel = await endpointRepository.findByIdWithUserId({
+        endpointId: diffEndpoint.endpointId,
+        userId: diffUser.userId,
+      });
+
+      expect(updatedModel!.title).toBe("Updated Title");
+      expect(nonUpdatedModel!.title).toBe(diffEndpoint.title);
+    });
+  });
+
   describe("findSummaryByUserId()", () => {
+    it("should throw error when neither userId nor googleId is provided", async () => {
+      await expect(endpointRepository.findSummaryByUserId({})).rejects.toThrow(
+        "Either userId or googleId must be provided",
+      );
+    });
+
     it("should return empty array when userId has no endpoints", async () => {
       const user = UserFactory.fake().oneUser().build();
       const endpoint = EndpointFactory.fake()
@@ -98,12 +164,6 @@ describe("Endpoint TypeOrm Repository - Integration Tests", () => {
         title: endpoint.title,
         method: endpoint.method,
       });
-    });
-
-    it("should throw error when neither userId nor googleId is provided", async () => {
-      await expect(endpointRepository.findSummaryByUserId({})).rejects.toThrow(
-        "Either userId or googleId must be provided",
-      );
     });
   });
 

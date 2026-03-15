@@ -2,7 +2,7 @@ import { EndpointFactory } from "@domain/endpoint/endpoint.entity";
 import { EndpointModelMapper } from "../endpoint-model-mapper";
 import { StatusCode } from "@domain/endpoint/value-objects/status-code.vo";
 
-describe("Endpoint Model Mapper - Integration ", () => {
+describe("Endpoint Model Mapper - Integration Tests", () => {
   describe("toModel()", () => {
     it("should map Endpoint entity to EndpointModel", () => {
       const endpoint = EndpointFactory.fake()
@@ -38,18 +38,7 @@ describe("Endpoint Model Mapper - Integration ", () => {
 
       const mappedEndpoint = EndpointModelMapper.toEntity(endpointModel);
 
-      expect(mappedEndpoint).toBeDefined();
-      expect(mappedEndpoint.endpointId.equals(endpoint.endpointId)).toBe(true);
-      expect(mappedEndpoint.userId.equals(endpoint.userId)).toBe(true);
-      expect(mappedEndpoint.title).toBe(endpoint.title);
-      expect(mappedEndpoint.method).toBe(endpoint.method);
-      expect(mappedEndpoint.description).toBe(endpoint.description);
-      expect(mappedEndpoint.delay).toBe(endpoint.delay);
-      expect(mappedEndpoint.statusCode.equals(endpoint.statusCode)).toBe(true);
-      expect(mappedEndpoint.responseBodyType).toBeUndefined();
-      expect(mappedEndpoint.responseJson).toBeUndefined();
-      expect(mappedEndpoint.responseText).toBeUndefined();
-      expect(mappedEndpoint.createdAt).toEqual(endpoint.createdAt);
+      expect(mappedEndpoint.toJSON()).toEqual(endpoint.toJSON());
     });
   });
 });

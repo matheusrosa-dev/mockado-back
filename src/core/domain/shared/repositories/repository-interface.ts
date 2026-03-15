@@ -8,7 +8,4 @@ export interface IRepository<E extends Entity> {
 
   findById(entityId: ValueObject): Promise<E | null>;
   findAll(): Promise<E[]>;
-
-  // biome-ignore lint/suspicious/noExplicitAny: <It has to be any because we need to return the constructor of the entity>
-  getEntity(): new (...args: any[]) => E;
 }

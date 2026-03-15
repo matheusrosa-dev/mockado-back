@@ -9,7 +9,7 @@ import { IGoogleLoginUnitOfWork } from "./google-login.unit-of-work";
 export class GoogleLoginUseCase
   implements IUseCase<GoogleLoginInput, LoginOutput>
 {
-  constructor(private readonly unitOfWork: IGoogleLoginUnitOfWork) {}
+  constructor(private unitOfWork: IGoogleLoginUnitOfWork) {}
 
   async execute(input: GoogleLoginInput): Promise<LoginOutput> {
     return this.unitOfWork.runInTransaction(async (repositories) => {

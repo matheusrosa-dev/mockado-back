@@ -1,4 +1,4 @@
-import { IUseCase } from "../../shared/use-case.interface";
+import { IUseCase } from "@app/shared/use-case.interface";
 
 type StatusCode = {
   code: number;

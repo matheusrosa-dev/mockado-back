@@ -5,9 +5,7 @@ import { NotFoundError } from "@domain/shared/errors/not-found.error";
 import bcrypt from "bcrypt";
 
 export class RefreshTokenExistsValidator {
-  constructor(
-    private readonly refreshTokenRepository: IRefreshTokenRepository,
-  ) {}
+  constructor(private refreshTokenRepository: IRefreshTokenRepository) {}
 
   // TODO: ADICIONAR VALIDATORS NOS OUTROS USE CASES
   async validate(props: {

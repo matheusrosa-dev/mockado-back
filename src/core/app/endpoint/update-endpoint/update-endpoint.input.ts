@@ -8,11 +8,14 @@ import {
   IsUUID,
   Max,
   Min,
+  ValidateIf,
 } from "class-validator";
 import { HttpMethod, ResponseBodyType } from "@domain/endpoint/endpoint.types";
 
 type ConstructorProps = {
   id: string;
+  userId?: string;
+  googleId?: string;
   title?: string;
   method?: HttpMethod;
   description?: string;
@@ -27,6 +30,16 @@ export class UpdateEndpointInput {
   @IsNotEmpty()
   @IsUUID()
   id: string;
+
+  @ValidateIf((object) => !object.googleId)
+  @IsNotEmpty()
+  @IsUUID()
+  userId?: string;
+
+  @ValidateIf((object) => !object.userId)
+  @IsNotEmpty()
+  @IsString()
+  googleId?: string;
 
   @IsOptional()
   @IsString()

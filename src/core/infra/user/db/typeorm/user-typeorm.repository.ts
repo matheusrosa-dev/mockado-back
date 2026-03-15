@@ -23,20 +23,8 @@ export class UserTypeOrmRepository implements IUserRepository {
     const { affected } = await this.repository.update(model.userId, model);
 
     if (!affected) {
-      throw new NotFoundError(entity.userId.toString(), this.getEntity());
+      throw new NotFoundError(entity.userId.toString(), User);
     }
-  }
-
-  async delete(): Promise<void> {
-    throw new Error("Method not implemented.");
-  }
-
-  async findById(): Promise<User | null> {
-    throw new Error("Method not implemented.");
-  }
-
-  async findAll(): Promise<User[]> {
-    throw new Error("Method not implemented.");
   }
 
   async findByGoogleId(googleId: string): Promise<User | null> {
@@ -49,7 +37,15 @@ export class UserTypeOrmRepository implements IUserRepository {
     return UserModelMapper.toEntity(model);
   }
 
-  getEntity() {
-    return User;
+  async delete(): Promise<void> {
+    throw new Error("Method not implemented.");
+  }
+
+  async findById(): Promise<User | null> {
+    throw new Error("Method not implemented.");
+  }
+
+  async findAll(): Promise<User[]> {
+    throw new Error("Method not implemented.");
   }
 }

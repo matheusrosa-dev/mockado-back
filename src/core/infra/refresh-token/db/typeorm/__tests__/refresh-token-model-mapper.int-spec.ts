@@ -1,7 +1,7 @@
 import { RefreshTokenFactory } from "@domain/refresh-token/refresh-token.entity";
 import { RefreshTokenModelMapper } from "../refresh-token-model-mapper";
 
-describe("RefreshToken Model Mapper - Integration", () => {
+describe("RefreshToken Model Mapper - Integration Tests", () => {
   describe("toModel()", () => {
     it("should map RefreshToken entity to RefreshTokenModel", () => {
       const refreshToken = RefreshTokenFactory.fake().oneRefreshToken().build();
@@ -29,18 +29,7 @@ describe("RefreshToken Model Mapper - Integration", () => {
       const mappedRefreshToken =
         RefreshTokenModelMapper.toEntity(refreshTokenModel);
 
-      expect(mappedRefreshToken).toBeDefined();
-      expect(mappedRefreshToken.refreshTokenId.toString()).toBe(
-        refreshToken.refreshTokenId.toString(),
-      );
-      expect(mappedRefreshToken.userId.toString()).toBe(
-        refreshToken.userId.toString(),
-      );
-      expect(mappedRefreshToken.googleId).toBe(refreshToken.googleId);
-      expect(mappedRefreshToken.refreshTokenHash).toBe(
-        refreshToken.refreshTokenHash,
-      );
-      expect(mappedRefreshToken.createdAt).toEqual(refreshToken.createdAt);
+      expect(mappedRefreshToken.toJSON()).toEqual(refreshToken.toJSON());
     });
   });
 });

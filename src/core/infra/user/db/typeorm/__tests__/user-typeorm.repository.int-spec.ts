@@ -4,10 +4,11 @@ import { UserTypeOrmRepository } from "../user-typeorm.repository";
 import { RefreshTokenModel } from "@infra/refresh-token/db/typeorm/refresh-token-typeorm.model";
 import { UserFactory } from "@domain/user/user.entity";
 import { NotFoundError } from "@domain/shared/errors/not-found.error";
+import { EndpointModel } from "@infra/endpoint/db/typeorm/endpoint-typeorm.model";
 
 describe("User TypeOrm Repository - Integration Tests", () => {
   const { dataSource } = setupTypeOrm({
-    entities: [UserModel, RefreshTokenModel],
+    entities: [UserModel, RefreshTokenModel, EndpointModel],
   });
 
   let repository: UserTypeOrmRepository;
@@ -24,18 +25,15 @@ describe("User TypeOrm Repository - Integration Tests", () => {
 
       const foundUser = await repository.findByGoogleId(user.googleId);
 
-      expect(foundUser).not.toBeNull();
-      expect(foundUser!.userId.equals(user.userId)).toBe(true);
-      expect(foundUser!.googleId).toBe(user.googleId);
-      expect(foundUser!.email).toBe(user.email);
-      expect(foundUser!.name).toBe(user.name);
-      expect(foundUser!.isActive).toBe(user.isActive);
-      expect(foundUser!.createdAt).toEqual(user.createdAt);
+      expect(foundUser!.toJSON()).toEqual(user.toJSON());
     });
   });
 
   describe("findByGoogleId()", () => {
     it("should return null if user not found", async () => {
+      const user = UserFactory.fake().oneUser().build();
+      await repository.insert(user);
+
       const foundUser = await repository.findByGoogleId(
         "non-existent-google-id",
       );
@@ -56,10 +54,7 @@ describe("User TypeOrm Repository - Integration Tests", () => {
 
       const updatedUser = await repository.findByGoogleId(user.googleId);
 
-      expect(updatedUser).not.toBeNull();
-      expect(updatedUser!.name).toBe("Updated Name");
-      expect(updatedUser!.isActive).toBe(false);
-      expect(updatedUser!.email).toBe("updated@example.com");
+      expect(updatedUser!.toJSON()).toEqual(user.toJSON());
     });
 
     it("should throw an error when trying to update a non-existent user", async () => {

@@ -5,13 +5,17 @@ import {
   IsNotEmpty,
   IsOptional,
   IsString,
+  IsUUID,
   Max,
   Min,
+  ValidateIf,
 } from "class-validator";
 import { HttpMethod, ResponseBodyType } from "@domain/endpoint/endpoint.types";
 
 type ConstructorProps = {
   title: string;
+  userId?: string;
+  googleId?: string;
   method: HttpMethod;
   description?: string;
   delay?: number;
@@ -22,9 +26,19 @@ type ConstructorProps = {
 };
 
 export class CreateEndpointInput {
-  @IsString()
   @IsNotEmpty()
+  @IsString()
   title: string;
+
+  @ValidateIf((object) => !object.googleId)
+  @IsNotEmpty()
+  @IsUUID()
+  userId?: string;
+
+  @ValidateIf((object) => !object.userId)
+  @IsNotEmpty()
+  @IsString()
+  googleId?: string;
 
   @IsEnum(HttpMethod)
   method: HttpMethod;

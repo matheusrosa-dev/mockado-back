@@ -3,6 +3,7 @@ import { HttpMethod, ResponseBodyType } from "@domain/endpoint/endpoint.types";
 
 export type EndpointOutput = {
   id: string;
+  userId: string;
   method: HttpMethod;
   title: string;
   description: string;

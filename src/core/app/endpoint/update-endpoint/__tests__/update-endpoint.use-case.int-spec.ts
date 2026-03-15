@@ -10,284 +10,200 @@ import { setupTypeOrm } from "@infra/shared/testing/helpers";
 import { EndpointModel } from "@infra/endpoint/db/typeorm/endpoint-typeorm.model";
 import { EndpointTypeOrmRepository } from "@infra/endpoint/db/typeorm/endpoint-typeorm.repository";
 import { StatusCode } from "@domain/endpoint/value-objects/status-code.vo";
+import { RefreshTokenModel } from "@infra/refresh-token/db/typeorm/refresh-token-typeorm.model";
+import { UserModel } from "@infra/user/db/typeorm/user-typeorm.model";
+import { IUserRepository } from "@domain/user/user.repository";
+import { UserTypeOrmRepository } from "@infra/user/db/typeorm/user-typeorm.repository";
+import { UserFactory } from "@domain/user/user.entity";
 
 describe("Update Endpoint Use Case - Integration Tests", () => {
   let useCase: UpdateEndpointUseCase;
-  let repository: IEndpointRepository;
+  let endpointRepository: IEndpointRepository;
+  let userRepository: IUserRepository;
 
   const { dataSource } = setupTypeOrm({
-    entities: [EndpointModel],
+    entities: [EndpointModel, UserModel, RefreshTokenModel],
   });
 
   beforeEach(() => {
-    repository = new EndpointTypeOrmRepository(dataSource);
-    useCase = new UpdateEndpointUseCase(repository);
+    endpointRepository = new EndpointTypeOrmRepository(dataSource);
+    userRepository = new UserTypeOrmRepository(dataSource);
+    useCase = new UpdateEndpointUseCase(endpointRepository);
   });
 
   describe("execute()", () => {
-    it("should update the title of an endpoint", async () => {
+    it("should update basic properties of an endpoint", async () => {
+      const user = UserFactory.fake().oneUser().build();
       const endpoint = EndpointFactory.fake()
         .oneEndpoint()
+        .withUserId(user.userId)
+        .withTitle("Original Title")
         .withMethod(HttpMethod.GET)
         .withStatusCode(new StatusCode(200))
+        .withDescription("Original description")
+        .withDelay(1)
         .build();
 
-      await repository.insert(endpoint);
+      await userRepository.insert(user);
+      await endpointRepository.insert(endpoint);
 
       const output = await useCase.execute({
         id: endpoint.endpointId.toString(),
+        userId: user.userId.toString(),
+        googleId: user.googleId,
         title: "Updated Title",
-      });
-
-      const updatedEndpoint = await repository.findById(new Uuid(output.id));
-
-      expect(updatedEndpoint).not.toBeNull();
-      expect(updatedEndpoint?.endpointId.toString()).toBe(output.id);
-      expect(updatedEndpoint?.title).toBe(output.title);
-      expect(updatedEndpoint?.method).toBe(output.method);
-      expect(updatedEndpoint?.statusCode.statusCode).toBe(output.statusCode);
-      expect(updatedEndpoint?.description).toBe(output.description);
-      expect(updatedEndpoint?.delay).toBe(output.delay);
-      expect(updatedEndpoint?.responseBodyType).toBe(output.responseBodyType);
-      expect(updatedEndpoint?.responseJson).toBe(output.responseJson);
-      expect(updatedEndpoint?.responseText).toBe(output.responseText);
-      expect(updatedEndpoint?.createdAt).toEqual(output.createdAt);
-    });
-
-    it("should update the method of an endpoint", async () => {
-      const endpoint = EndpointFactory.fake()
-        .oneEndpoint()
-        .withMethod(HttpMethod.GET)
-        .withStatusCode(new StatusCode(200))
-        .build();
-
-      await repository.insert(endpoint);
-
-      const output = await useCase.execute({
-        id: endpoint.endpointId.toString(),
         method: HttpMethod.POST,
+        statusCode: 201,
+        description: "Updated description",
+        delay: 5,
       });
 
-      const updatedEndpoint = await repository.findById(new Uuid(output.id));
-
-      expect(updatedEndpoint).not.toBeNull();
-      expect(updatedEndpoint?.endpointId.toString()).toBe(output.id);
-      expect(updatedEndpoint?.title).toBe(output.title);
-      expect(updatedEndpoint?.method).toBe(output.method);
-      expect(updatedEndpoint?.statusCode.statusCode).toBe(output.statusCode);
-      expect(updatedEndpoint?.description).toBe(output.description);
-      expect(updatedEndpoint?.delay).toBe(output.delay);
-      expect(updatedEndpoint?.responseBodyType).toBe(output.responseBodyType);
-      expect(updatedEndpoint?.responseJson).toBe(output.responseJson);
-      expect(updatedEndpoint?.responseText).toBe(output.responseText);
-      expect(updatedEndpoint?.createdAt).toEqual(output.createdAt);
-    });
-
-    it("should update the statusCode of an endpoint", async () => {
-      const endpoint = EndpointFactory.fake()
-        .oneEndpoint()
-        .withMethod(HttpMethod.GET)
-        .withStatusCode(new StatusCode(200))
-        .build();
-
-      await repository.insert(endpoint);
-
-      const output = await useCase.execute({
-        id: endpoint.endpointId.toString(),
-        statusCode: 404,
+      const updatedEndpoint = await endpointRepository.findByIdWithUserId({
+        endpointId: endpoint.endpointId,
+        userId: user.userId,
       });
 
-      const updatedEndpoint = await repository.findById(new Uuid(output.id));
-
-      expect(updatedEndpoint).not.toBeNull();
-      expect(updatedEndpoint?.endpointId.toString()).toBe(output.id);
-      expect(updatedEndpoint?.title).toBe(output.title);
-      expect(updatedEndpoint?.method).toBe(output.method);
-      expect(updatedEndpoint?.statusCode.statusCode).toBe(output.statusCode);
-      expect(updatedEndpoint?.description).toBe(output.description);
-      expect(updatedEndpoint?.delay).toBe(output.delay);
-      expect(updatedEndpoint?.responseBodyType).toBe(output.responseBodyType);
-      expect(updatedEndpoint?.responseJson).toBe(output.responseJson);
-      expect(updatedEndpoint?.responseText).toBe(output.responseText);
-      expect(updatedEndpoint?.createdAt).toEqual(output.createdAt);
-    });
-
-    it("should update the description of an endpoint", async () => {
-      const endpoint = EndpointFactory.fake().oneEndpoint().build();
-
-      await repository.insert(endpoint);
-
-      const output = await useCase.execute({
-        id: endpoint.endpointId.toString(),
-        description: "A new description",
+      expect(updatedEndpoint!.toJSON()).toEqual({
+        endpointId: endpoint.endpointId.toString(),
+        userId: endpoint.userId.toString(),
+        title: output.title,
+        method: output.method,
+        description: output.description,
+        statusCode: output.statusCode,
+        delay: output.delay,
+        responseBodyType: output.responseBodyType,
+        responseJson: output.responseJson,
+        responseText: output.responseText,
+        createdAt: endpoint.createdAt,
       });
-
-      const updatedEndpoint = await repository.findById(new Uuid(output.id));
-
-      expect(updatedEndpoint).not.toBeNull();
-      expect(updatedEndpoint?.endpointId.toString()).toBe(output.id);
-      expect(updatedEndpoint?.title).toBe(output.title);
-      expect(updatedEndpoint?.method).toBe(output.method);
-      expect(updatedEndpoint?.statusCode.statusCode).toBe(output.statusCode);
-      expect(updatedEndpoint?.description).toBe(output.description);
-      expect(updatedEndpoint?.delay).toBe(output.delay);
-      expect(updatedEndpoint?.responseBodyType).toBe(output.responseBodyType);
-      expect(updatedEndpoint?.responseJson).toBe(output.responseJson);
-      expect(updatedEndpoint?.responseText).toBe(output.responseText);
-      expect(updatedEndpoint?.createdAt).toEqual(output.createdAt);
-    });
-
-    it("should update the delay of an endpoint", async () => {
-      const endpoint = EndpointFactory.fake().oneEndpoint().build();
-
-      await repository.insert(endpoint);
-
-      const output = await useCase.execute({
-        id: endpoint.endpointId.toString(),
-        delay: 7,
-      });
-
-      const updatedEndpoint = await repository.findById(new Uuid(output.id));
-
-      expect(updatedEndpoint).not.toBeNull();
-      expect(updatedEndpoint?.endpointId.toString()).toBe(output.id);
-      expect(updatedEndpoint?.title).toBe(output.title);
-      expect(updatedEndpoint?.method).toBe(output.method);
-      expect(updatedEndpoint?.statusCode.statusCode).toBe(output.statusCode);
-      expect(updatedEndpoint?.description).toBe(output.description);
-      expect(updatedEndpoint?.delay).toBe(output.delay);
-      expect(updatedEndpoint?.responseBodyType).toBe(output.responseBodyType);
-      expect(updatedEndpoint?.responseJson).toBe(output.responseJson);
-      expect(updatedEndpoint?.responseText).toBe(output.responseText);
-      expect(updatedEndpoint?.createdAt).toEqual(output.createdAt);
     });
 
     it("should update the responseBodyType to JSON and set responseJson", async () => {
+      const user = UserFactory.fake().oneUser().build();
       const endpoint = EndpointFactory.fake()
         .oneEndpoint()
+        .withUserId(user.userId)
         .withStatusCode(new StatusCode(200))
         .withResponseBodyType(ResponseBodyType.TEXT)
         .build();
 
-      await repository.insert(endpoint);
+      await userRepository.insert(user);
+      await endpointRepository.insert(endpoint);
 
       const output = await useCase.execute({
         id: endpoint.endpointId.toString(),
+        userId: user.userId.toString(),
         responseBodyType: ResponseBodyType.JSON,
         responseJson: '{"updated":true}',
       });
 
-      const updatedEndpoint = await repository.findById(new Uuid(output.id));
+      const updatedEndpoint = await endpointRepository.findByIdWithUserId({
+        endpointId: endpoint.endpointId,
+        userId: user.userId,
+      });
 
-      expect(updatedEndpoint).not.toBeNull();
-      expect(updatedEndpoint?.endpointId.toString()).toBe(output.id);
-      expect(updatedEndpoint?.title).toBe(output.title);
-      expect(updatedEndpoint?.method).toBe(output.method);
-      expect(updatedEndpoint?.statusCode.statusCode).toBe(output.statusCode);
-      expect(updatedEndpoint?.description).toBe(output.description);
-      expect(updatedEndpoint?.delay).toBe(output.delay);
-      expect(updatedEndpoint?.responseBodyType).toBe(output.responseBodyType);
-      expect(updatedEndpoint?.responseJson).toBe(output.responseJson);
-      expect(updatedEndpoint?.responseText).toBe(output.responseText);
-      expect(updatedEndpoint?.createdAt).toEqual(output.createdAt);
+      expect(updatedEndpoint!.toJSON()).toEqual({
+        endpointId: endpoint.endpointId.toString(),
+        userId: endpoint.userId.toString(),
+        title: endpoint.title,
+        method: endpoint.method,
+        description: endpoint.description,
+        statusCode: endpoint.statusCode.statusCode,
+        delay: endpoint.delay,
+        responseBodyType: output.responseBodyType,
+        responseJson: output.responseJson,
+        responseText: output.responseText,
+        createdAt: endpoint.createdAt,
+      });
     });
 
     it("should update the responseBodyType to TEXT and set responseText", async () => {
+      const user = UserFactory.fake().oneUser().build();
       const endpoint = EndpointFactory.fake()
         .oneEndpoint()
+        .withUserId(user.userId)
         .withStatusCode(new StatusCode(200))
         .withResponseBodyType(ResponseBodyType.JSON)
         .build();
 
-      await repository.insert(endpoint);
+      await userRepository.insert(user);
+      await endpointRepository.insert(endpoint);
 
       const output = await useCase.execute({
+        userId: user.userId.toString(),
         id: endpoint.endpointId.toString(),
         responseBodyType: ResponseBodyType.TEXT,
         responseText: "Hello!",
       });
 
-      const updatedEndpoint = await repository.findById(new Uuid(output.id));
-
-      expect(updatedEndpoint).not.toBeNull();
-      expect(updatedEndpoint?.endpointId.toString()).toBe(output.id);
-      expect(updatedEndpoint?.title).toBe(output.title);
-      expect(updatedEndpoint?.method).toBe(output.method);
-      expect(updatedEndpoint?.statusCode.statusCode).toBe(output.statusCode);
-      expect(updatedEndpoint?.description).toBe(output.description);
-      expect(updatedEndpoint?.delay).toBe(output.delay);
-      expect(updatedEndpoint?.responseBodyType).toBe(output.responseBodyType);
-      expect(updatedEndpoint?.responseJson).toBe(output.responseJson);
-      expect(updatedEndpoint?.responseText).toBe(output.responseText);
-      expect(updatedEndpoint?.createdAt).toEqual(output.createdAt);
-    });
-
-    it("should update multiple fields at once", async () => {
-      const endpoint = EndpointFactory.fake()
-        .oneEndpoint()
-        .withMethod(HttpMethod.GET)
-        .withStatusCode(new StatusCode(200))
-        .build();
-
-      await repository.insert(endpoint);
-
-      const output = await useCase.execute({
-        id: endpoint.endpointId.toString(),
-        title: "Bulk Update",
-        method: HttpMethod.DELETE,
-        statusCode: 201,
-        description: "Bulk description",
-        delay: 5,
+      const updatedEndpoint = await endpointRepository.findByIdWithUserId({
+        endpointId: endpoint.endpointId,
+        userId: user.userId,
       });
 
-      expect(output.title).toBe("Bulk Update");
-      expect(output.method).toBe(HttpMethod.DELETE);
-      expect(output.statusCode).toBe(201);
-      expect(output.description).toBe("Bulk description");
-      expect(output.delay).toBe(5);
+      expect(updatedEndpoint!.toJSON()).toEqual({
+        endpointId: endpoint.endpointId.toString(),
+        userId: endpoint.userId.toString(),
+        title: endpoint.title,
+        method: endpoint.method,
+        description: endpoint.description,
+        statusCode: endpoint.statusCode.statusCode,
+        delay: endpoint.delay,
+        responseBodyType: output.responseBodyType,
+        responseJson: output.responseJson,
+        responseText: output.responseText,
+        createdAt: endpoint.createdAt,
+      });
     });
 
-    it("should persist the updated endpoint in the repository", async () => {
+    it("should throw NotFoundError when user does not exist", async () => {
+      const user = UserFactory.fake().oneUser().build();
       const endpoint = EndpointFactory.fake()
         .oneEndpoint()
-        .withMethod(HttpMethod.GET)
-        .withStatusCode(new StatusCode(200))
+        .withUserId(user.userId)
         .build();
 
-      await repository.insert(endpoint);
+      await userRepository.insert(user);
+      await endpointRepository.insert(endpoint);
 
-      await useCase.execute({
-        id: endpoint.endpointId.toString(),
-        title: "Persisted Title",
-      });
-
-      const updatedEndpoint = await repository.findById(
-        new Uuid(endpoint.endpointId.toString()),
-      );
-      expect(updatedEndpoint?.title).toBe("Persisted Title");
-    });
-
-    it("should throw NotFoundError when endpoint does not exist", async () => {
       await expect(
         useCase.execute({
           id: new Uuid().id,
-          title: "Ghost",
+          userId: new Uuid().id,
+          description: "Updated description",
+        }),
+      ).rejects.toThrow(NotFoundError);
+    });
+
+    it("should throw NotFoundError when endpoint does not exist", async () => {
+      const user = UserFactory.fake().oneUser().build();
+      await userRepository.insert(user);
+
+      await expect(
+        useCase.execute({
+          id: new Uuid().id,
+          userId: user.userId.toString(),
+          description: "Updated description",
         }),
       ).rejects.toThrow(NotFoundError);
     });
 
     it("should throw EntityValidationError when update produces an invalid entity", async () => {
+      const user = UserFactory.fake().oneUser().build();
       const endpoint = EndpointFactory.fake()
         .oneEndpoint()
+        .withUserId(user.userId)
         .withMethod(HttpMethod.GET)
         .withStatusCode(new StatusCode(200))
         .build();
 
-      await repository.insert(endpoint);
+      await userRepository.insert(user);
+      await endpointRepository.insert(endpoint);
 
       await expect(
         useCase.execute({
           id: endpoint.endpointId.toString(),
+          userId: user.userId.toString(),
           delay: 11, // Invalid: @Max(10) - triggers entity validation error
         }),
       ).rejects.toThrow(EntityValidationError);
@@ -296,12 +212,18 @@ describe("Update Endpoint Use Case - Integration Tests", () => {
     it("should return formatted output", async () => {
       const outputSpy = jest.spyOn(EndpointOutputMapper, "toOutput");
 
-      const endpoint = EndpointFactory.fake().oneEndpoint().build();
+      const user = UserFactory.fake().oneUser().build();
+      const endpoint = EndpointFactory.fake()
+        .oneEndpoint()
+        .withUserId(user.userId)
+        .build();
 
-      await repository.insert(endpoint);
+      await userRepository.insert(user);
+      await endpointRepository.insert(endpoint);
 
       const output = await useCase.execute({
         id: endpoint.endpointId.toString(),
+        userId: user.userId.toString(),
         delay: 3,
         description: "Updated description",
       });

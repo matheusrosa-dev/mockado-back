@@ -7,7 +7,7 @@ import { UserTypeOrmRepository } from "@infra/user/db/typeorm/user-typeorm.repos
 import { DataSource } from "typeorm";
 
 export class TypeOrmGoogleLoginUnitOfWork implements IGoogleLoginUnitOfWork {
-  constructor(private readonly dataSource: DataSource) {}
+  constructor(private dataSource: DataSource) {}
 
   async runInTransaction<T>(
     work: (repositories: GoogleLoginRepositories) => Promise<T>,

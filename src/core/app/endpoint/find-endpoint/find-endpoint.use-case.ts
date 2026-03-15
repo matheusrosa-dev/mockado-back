@@ -12,12 +12,16 @@ import { Endpoint } from "@domain/endpoint/endpoint.entity";
 export class FindEndpointUseCase
   implements IUseCase<FindEndpointInput, EndpointOutput>
 {
-  constructor(private readonly repository: IEndpointRepository) {}
+  constructor(private endpointRepository: IEndpointRepository) {}
 
   async execute(input: FindEndpointInput): Promise<EndpointOutput> {
     const endpointId = new Uuid(input.endpointId);
 
-    const endpoint = await this.repository.findById(endpointId);
+    const endpoint = await this.endpointRepository.findByIdWithUserId({
+      endpointId,
+      ...(input.userId && { userId: new Uuid(input.userId) }),
+      ...(input.googleId && { googleId: input.googleId }),
+    });
 
     if (!endpoint) {
       throw new NotFoundError(endpointId.toString(), Endpoint);

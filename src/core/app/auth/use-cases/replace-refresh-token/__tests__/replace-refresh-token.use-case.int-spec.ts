@@ -9,6 +9,7 @@ import { RefreshTokenTypeOrmRepository } from "@infra/refresh-token/db/typeorm/r
 import { setupTypeOrm } from "@infra/shared/testing/helpers";
 import { RefreshTokenModel } from "@infra/refresh-token/db/typeorm/refresh-token-typeorm.model";
 import { UserModel } from "@infra/user/db/typeorm/user-typeorm.model";
+import { EndpointModel } from "@infra/endpoint/db/typeorm/endpoint-typeorm.model";
 
 describe("Replace Refresh Token Use Case - Integration Tests", () => {
   let useCase: ReplaceRefreshTokenUseCase;
@@ -16,7 +17,7 @@ describe("Replace Refresh Token Use Case - Integration Tests", () => {
   let refreshTokenRepository: IRefreshTokenRepository;
 
   const { dataSource } = setupTypeOrm({
-    entities: [RefreshTokenModel, UserModel],
+    entities: [RefreshTokenModel, UserModel, EndpointModel],
   });
 
   beforeEach(() => {

@@ -1,6 +1,6 @@
 import { Module } from "@nestjs/common";
-import { ListStatusCodesUseCase } from "@app/status-code/list-status-codes/list-status-code.use-case";
 import { StatusCodesController } from "./status-codes.controller";
+import { ListStatusCodesUseCase } from "@app/status-code/use-cases/list-status-codes/list-status-code.use-case";
 
 @Module({
   controllers: [StatusCodesController],

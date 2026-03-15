@@ -6,11 +6,7 @@ type ConstructorProps = {
   googleId?: string;
 };
 
-export class FindEndpointInput {
-  @IsNotEmpty()
-  @IsUUID()
-  endpointId: string;
-
+export class ListEndpointsSummaryInput {
   @ValidateIf((object) => !object.googleId)
   @IsNotEmpty()
   @IsUUID()

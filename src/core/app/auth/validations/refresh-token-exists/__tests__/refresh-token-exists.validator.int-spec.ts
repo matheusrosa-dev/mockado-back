@@ -12,10 +12,11 @@ import { UserModel } from "@infra/user/db/typeorm/user-typeorm.model";
 import { UserTypeOrmRepository } from "@infra/user/db/typeorm/user-typeorm.repository";
 import { UserFactory } from "@domain/user/user.entity";
 import { NotFoundError } from "@domain/shared/errors/not-found.error";
+import { EndpointModel } from "@infra/endpoint/db/typeorm/endpoint-typeorm.model";
 
 describe("Refresh Token Exists Validator - Integration Tests", () => {
   const { dataSource } = setupTypeOrm({
-    entities: [RefreshTokenModel, UserModel],
+    entities: [RefreshTokenModel, UserModel, EndpointModel],
   });
 
   let validator: RefreshTokenExistsValidator;

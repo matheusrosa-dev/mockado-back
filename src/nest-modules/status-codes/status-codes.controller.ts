@@ -1,4 +1,4 @@
-import { ListStatusCodesUseCase } from "@app/status-code/list-status-codes/list-status-code.use-case";
+import { ListStatusCodesUseCase } from "@app/status-code/use-cases/list-status-codes/list-status-code.use-case";
 import { Controller, Get } from "@nestjs/common";
 
 @Controller("status-codes")

@@ -1,10 +1,11 @@
 import { setupTypeOrm } from "../../../../shared/testing/helpers";
 import { RefreshTokenModel } from "@infra/refresh-token/db/typeorm/refresh-token-typeorm.model";
 import { UserModel } from "../user-typeorm.model";
+import { EndpointModel } from "@infra/endpoint/db/typeorm/endpoint-typeorm.model";
 
 describe("User Model - Integration Tests", () => {
   const { dataSource } = setupTypeOrm({
-    entities: [UserModel, RefreshTokenModel],
+    entities: [UserModel, RefreshTokenModel, EndpointModel],
   });
 
   test("mapping props", () => {
@@ -81,7 +82,7 @@ describe("User Model - Integration Tests", () => {
     const metadata = dataSource.getMetadata(UserModel);
     const relations = metadata.relations;
 
-    expect(relations).toHaveLength(1);
+    expect(relations).toHaveLength(2);
 
     const refreshTokensRelation = relations.find(
       (relation) => relation.propertyName === "refreshTokens",
@@ -92,5 +93,13 @@ describe("User Model - Integration Tests", () => {
     expect(refreshTokensRelation?.inverseEntityMetadata.target).toBe(
       RefreshTokenModel,
     );
+
+    const endpointsRelation = relations.find(
+      (relation) => relation.propertyName === "endpoints",
+    );
+    expect(endpointsRelation).toMatchObject({
+      relationType: "one-to-many",
+    });
+    expect(endpointsRelation?.inverseEntityMetadata.target).toBe(EndpointModel);
   });
 });

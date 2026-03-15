@@ -1,40 +1,16 @@
 /** biome-ignore-all lint/suspicious/noExplicitAny: <It has to allow any in tests> */
 import { validateSync } from "class-validator";
-import { FindEndpointInput } from "../find-endpoint.input";
 import { Uuid } from "@domain/shared/value-objects/uuid.vo";
+import { ListEndpointsSummaryInput } from "../list-endpoints-summary.input";
 
 function validate(props: object) {
-  const input = new FindEndpointInput(props as any);
+  const input = new ListEndpointsSummaryInput(props as any);
   return validateSync(input);
 }
 
-describe("Find Endpoint Input - Unit Tests", () => {
-  it("should fail when endpointId is empty", () => {
-    const errors = validate({ endpointId: "", userId: new Uuid().id });
-
-    expect(errors).toHaveLength(1);
-    expect(errors[0].property).toBe("endpointId");
-    expect(Object.keys(errors[0].constraints as object)).toContain("isUuid");
-    expect(Object.keys(errors[0].constraints as object)).toContain(
-      "isNotEmpty",
-    );
-  });
-
-  it("should fail when endpointId is not a UUID", () => {
-    const errors = validate({
-      endpointId: "invalid-uuid",
-      userId: new Uuid().id,
-    });
-
-    expect(errors).toHaveLength(1);
-    expect(errors[0].property).toBe("endpointId");
-    expect(Object.keys(errors[0].constraints as object)).toContain("isUuid");
-  });
-
+describe("List Endpoints Summary Input - Unit Tests", () => {
   it("should fail when googleId and userId are empty", () => {
-    const errors = validate({
-      endpointId: new Uuid().id,
-    });
+    const errors = validate({});
 
     const googleIdError = errors.find(
       (error) => error.property === "googleId",
@@ -53,7 +29,6 @@ describe("Find Endpoint Input - Unit Tests", () => {
 
   it("should fail when userId is not a UUID", () => {
     const errors = validate({
-      endpointId: new Uuid().id,
       userId: "invalid-uuid",
     });
 
@@ -65,13 +40,11 @@ describe("Find Endpoint Input - Unit Tests", () => {
 
   it("should pass with valid props", () => {
     const errors1 = validate({
-      endpointId: new Uuid().id,
       userId: new Uuid().id,
     });
     expect(errors1).toHaveLength(0);
 
     const errors2 = validate({
-      endpointId: new Uuid().id,
       googleId: "valid-google-id",
     });
 

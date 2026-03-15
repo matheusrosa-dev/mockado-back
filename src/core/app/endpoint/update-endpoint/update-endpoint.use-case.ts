@@ -14,12 +14,16 @@ import { StatusCode } from "@domain/endpoint/value-objects/status-code.vo";
 export class UpdateEndpointUseCase
   implements IUseCase<UpdateEndpointInput, EndpointOutput>
 {
-  constructor(private readonly repository: IEndpointRepository) {}
+  constructor(private endpointRepository: IEndpointRepository) {}
 
   async execute(input: UpdateEndpointInput): Promise<EndpointOutput> {
     const endpointId = new Uuid(input.id);
 
-    const endpoint = await this.repository.findById(endpointId);
+    const endpoint = await this.endpointRepository.findByIdWithUserId({
+      endpointId,
+      ...(input.userId && { userId: new Uuid(input.userId) }),
+      ...(input.googleId && { googleId: input.googleId }),
+    });
 
     if (!endpoint) {
       throw new NotFoundError(endpointId.toString(), Endpoint);
@@ -61,7 +65,7 @@ export class UpdateEndpointUseCase
       throw new EntityValidationError(endpoint.notification.toJSON());
     }
 
-    await this.repository.update(endpoint);
+    await this.endpointRepository.update(endpoint);
 
     return EndpointOutputMapper.toOutput(endpoint);
   }

@@ -8,9 +8,7 @@ import bcrypt from "bcrypt";
 export class ReplaceRefreshTokenUseCase
   implements IUseCase<ReplaceRefreshTokenInput, ReplaceRefreshTokenOutput>
 {
-  constructor(
-    private readonly refreshTokenRepository: IRefreshTokenRepository,
-  ) {}
+  constructor(private refreshTokenRepository: IRefreshTokenRepository) {}
 
   async execute(
     input: ReplaceRefreshTokenInput,

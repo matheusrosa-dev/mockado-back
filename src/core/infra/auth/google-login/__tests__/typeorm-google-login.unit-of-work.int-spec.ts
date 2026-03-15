@@ -6,10 +6,11 @@ import { TypeOrmGoogleLoginUnitOfWork } from "../typeorm-google-login.unit-of-wo
 import { UserFactory } from "@domain/user/user.entity";
 import { UserTypeOrmRepository } from "@infra/user/db/typeorm/user-typeorm.repository";
 import { RefreshTokenTypeOrmRepository } from "@infra/refresh-token/db/typeorm/refresh-token-typeorm.repository";
+import { EndpointModel } from "@infra/endpoint/db/typeorm/endpoint-typeorm.model";
 
-describe("Type Orm Google Login Unit Of Work - Integration Tests", () => {
+describe("TypeOrm Google Login Unit Of Work - Integration Tests", () => {
   const { dataSource } = setupTypeOrm({
-    entities: [RefreshTokenModel, UserModel],
+    entities: [RefreshTokenModel, UserModel, EndpointModel],
   });
 
   let unitOfWork: TypeOrmGoogleLoginUnitOfWork;

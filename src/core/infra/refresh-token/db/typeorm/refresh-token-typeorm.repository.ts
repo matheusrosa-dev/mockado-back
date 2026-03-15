@@ -33,18 +33,18 @@ export class RefreshTokenTypeOrmRepository implements IRefreshTokenRepository {
     return models.map((model) => RefreshTokenModelMapper.toEntity(model));
   }
 
-  async update(): Promise<void> {
-    throw new Error("Method not implemented.");
-  }
-
   async delete(refreshTokenId: Uuid): Promise<void> {
     const { affected } = await this.repository.delete(
       refreshTokenId.toString(),
     );
 
     if (!affected) {
-      throw new NotFoundError(refreshTokenId.toString(), this.getEntity());
+      throw new NotFoundError(refreshTokenId.toString(), RefreshToken);
     }
+  }
+
+  async update(): Promise<void> {
+    throw new Error("Method not implemented.");
   }
 
   async findById(): Promise<RefreshToken | null> {
@@ -53,9 +53,5 @@ export class RefreshTokenTypeOrmRepository implements IRefreshTokenRepository {
 
   async findAll(): Promise<RefreshToken[]> {
     throw new Error("Method not implemented.");
-  }
-
-  getEntity() {
-    return RefreshToken;
   }
 }

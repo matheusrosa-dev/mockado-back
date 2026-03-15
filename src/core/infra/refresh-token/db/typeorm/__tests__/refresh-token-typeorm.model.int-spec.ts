@@ -1,10 +1,11 @@
 import { setupTypeOrm } from "../../../../shared/testing/helpers";
 import { UserModel } from "@infra/user/db/typeorm/user-typeorm.model";
 import { RefreshTokenModel } from "../refresh-token-typeorm.model";
+import { EndpointModel } from "@infra/endpoint/db/typeorm/endpoint-typeorm.model";
 
 describe("Refresh Token Model - Integration Tests", () => {
   const { dataSource } = setupTypeOrm({
-    entities: [UserModel, RefreshTokenModel],
+    entities: [UserModel, RefreshTokenModel, EndpointModel],
   });
 
   test("mapping props", () => {

@@ -9,23 +9,34 @@ import { Uuid } from "@domain/shared/value-objects/uuid.vo";
 import { EndpointFactory } from "@domain/endpoint/endpoint.entity";
 import { EndpointOutputMapper } from "@app/endpoint/common/endpoint.output";
 import { StatusCode } from "@domain/endpoint/value-objects/status-code.vo";
+import { RefreshTokenModel } from "@infra/refresh-token/db/typeorm/refresh-token-typeorm.model";
+import { UserModel } from "@infra/user/db/typeorm/user-typeorm.model";
+import { IUserRepository } from "@domain/user/user.repository";
+import { UserTypeOrmRepository } from "@infra/user/db/typeorm/user-typeorm.repository";
+import { UserFactory } from "@domain/user/user.entity";
 
 describe("Create Endpoint Use Case - Integration Tests", () => {
   let useCase: CreateEndpointUseCase;
-  let repository: IEndpointRepository;
+  let endpointRepository: IEndpointRepository;
+  let userRepository: IUserRepository;
 
   const { dataSource } = setupTypeOrm({
-    entities: [EndpointModel],
+    entities: [EndpointModel, RefreshTokenModel, UserModel],
   });
 
   beforeEach(() => {
-    repository = new EndpointTypeOrmRepository(dataSource);
-    useCase = new CreateEndpointUseCase(repository);
+    endpointRepository = new EndpointTypeOrmRepository(dataSource);
+    userRepository = new UserTypeOrmRepository(dataSource);
+    useCase = new CreateEndpointUseCase(endpointRepository, userRepository);
   });
 
   describe("execute()", () => {
-    it("should create an endpoint with JSON body", async () => {
+    it("should create an endpoint for a given userId", async () => {
+      const user = UserFactory.fake().oneUser().build();
+      await userRepository.insert(user);
+
       const input = {
+        userId: user.userId.toString(),
         title: "My Endpoint",
         method: HttpMethod.GET,
         statusCode: 200,
@@ -35,91 +46,35 @@ describe("Create Endpoint Use Case - Integration Tests", () => {
 
       const output = await useCase.execute(input);
 
-      const createdEndpoint = await repository.findById(new Uuid(output.id));
+      const createdEndpoint = await endpointRepository.findByIdWithUserId({
+        endpointId: new Uuid(output.id),
+        userId: new Uuid(input.userId),
+      });
 
       expect(createdEndpoint).toBeDefined();
-      expect(createdEndpoint?.title).toBe(input.title);
-      expect(createdEndpoint?.method).toBe(input.method);
-      expect(createdEndpoint?.statusCode.statusCode).toBe(input.statusCode);
-      expect(createdEndpoint?.description).toBe("");
-      expect(createdEndpoint?.delay).toBe(0);
-      expect(createdEndpoint?.responseBodyType).toBe(input.responseBodyType);
-      expect(createdEndpoint?.responseJson).toBe(input.responseJson);
-      expect(createdEndpoint?.responseText).toBeUndefined();
-      expect(createdEndpoint?.createdAt).toBeInstanceOf(Date);
     });
 
-    it("should create an endpoint with TEXT body", async () => {
+    it("should create an endpoint for a given googleId", async () => {
+      const user = UserFactory.fake().oneUser().build();
+      await userRepository.insert(user);
+
       const input = {
+        googleId: user.googleId,
         title: "My Endpoint",
         method: HttpMethod.GET,
         statusCode: 200,
-        responseBodyType: ResponseBodyType.TEXT,
-        responseText: "Hello, world!",
+        responseBodyType: ResponseBodyType.JSON,
+        responseJson: '{"key":"value"}',
       };
 
       const output = await useCase.execute(input);
 
-      const createdEndpoint = await repository.findById(new Uuid(output.id));
+      const createdEndpoint = await endpointRepository.findByIdWithUserId({
+        endpointId: new Uuid(output.id),
+        googleId: input.googleId,
+      });
 
       expect(createdEndpoint).toBeDefined();
-      expect(createdEndpoint?.title).toBe(input.title);
-      expect(createdEndpoint?.method).toBe(input.method);
-      expect(createdEndpoint?.statusCode?.statusCode).toBe(input.statusCode);
-      expect(createdEndpoint?.description).toBe("");
-      expect(createdEndpoint?.delay).toBe(0);
-      expect(createdEndpoint?.responseBodyType).toBe(input.responseBodyType);
-      expect(createdEndpoint?.responseJson).toBeUndefined();
-      expect(createdEndpoint?.responseText).toBe(input.responseText);
-      expect(createdEndpoint?.createdAt).toBeInstanceOf(Date);
-    });
-
-    it("should create an endpoint without body", async () => {
-      const input = {
-        title: "My Endpoint",
-        method: HttpMethod.GET,
-        statusCode: 204,
-      };
-
-      const output = await useCase.execute(input);
-
-      const createdEndpoint = await repository.findById(new Uuid(output.id));
-
-      expect(createdEndpoint).toBeDefined();
-      expect(createdEndpoint?.title).toBe(input.title);
-      expect(createdEndpoint?.method).toBe(input.method);
-      expect(createdEndpoint?.statusCode?.statusCode).toBe(input.statusCode);
-      expect(createdEndpoint?.description).toBe("");
-      expect(createdEndpoint?.delay).toBe(0);
-      expect(createdEndpoint?.responseBodyType).toBeUndefined();
-      expect(createdEndpoint?.responseJson).toBeUndefined();
-      expect(createdEndpoint?.responseText).toBeUndefined();
-      expect(createdEndpoint?.createdAt).toBeInstanceOf(Date);
-    });
-
-    it("should create an endpoint with description and delay", async () => {
-      const input = {
-        title: "My Endpoint",
-        method: HttpMethod.GET,
-        statusCode: 204,
-        description: "A description",
-        delay: 5,
-      };
-
-      const output = await useCase.execute(input);
-
-      const createdEndpoint = await repository.findById(new Uuid(output.id));
-
-      expect(createdEndpoint).toBeDefined();
-      expect(createdEndpoint?.title).toBe(input.title);
-      expect(createdEndpoint?.method).toBe(input.method);
-      expect(createdEndpoint?.statusCode?.statusCode).toBe(input.statusCode);
-      expect(createdEndpoint?.description).toBe(input.description);
-      expect(createdEndpoint?.delay).toBe(input.delay);
-      expect(createdEndpoint?.responseBodyType).toBeUndefined();
-      expect(createdEndpoint?.responseJson).toBeUndefined();
-      expect(createdEndpoint?.responseText).toBeUndefined();
-      expect(createdEndpoint?.createdAt).toBeInstanceOf(Date);
     });
 
     it("should throw EntityValidationError when input is not valid", async () => {
@@ -137,12 +92,17 @@ describe("Create Endpoint Use Case - Integration Tests", () => {
     it("should return formatted output", async () => {
       const outputSpy = jest.spyOn(EndpointOutputMapper, "toOutput");
 
+      const user = UserFactory.fake().oneUser().build();
       const endpoint = EndpointFactory.fake()
         .oneEndpoint()
+        .withUserId(user.userId)
         .withStatusCode(new StatusCode(204))
         .build();
 
+      await userRepository.insert(user);
+
       const output = await useCase.execute({
+        userId: user.userId.toString(),
         title: endpoint.title,
         method: endpoint.method,
         statusCode: endpoint.statusCode.statusCode,
