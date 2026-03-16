@@ -11,6 +11,7 @@ import {
 } from "@app/auth/services/google-auth.service";
 import { IHashService } from "@app/auth/services/hash.service";
 import { AuthenticationError } from "@domain/shared/errors/authentication.error";
+import { IRefreshTokenRepository } from "@domain/refresh-token/refresh-token.repository";
 
 export class GoogleLoginUseCase
   implements IUseCase<GoogleLoginInput, GoogleLoginOutput>
@@ -27,47 +28,13 @@ export class GoogleLoginUseCase
 
     return this.unitOfWork.runInTransaction(async (repositories) => {
       const { userRepository, refreshTokenRepository } = repositories;
-      let user = await userRepository.findByGoogleId(googleUser.googleId);
 
-      if (user) {
-        if (!user.isActive) {
-          throw new AuthenticationError("User account is inactive");
-        }
+      const user = await this.resolveUser(googleUser, userRepository);
 
-        await this.updateUserIfDataIsDifferent({
-          googleUser,
-          user,
-          userRepository,
-        });
-      }
-
-      if (!user) {
-        user = await this.createUser({
-          googleUser,
-          userRepository,
-        });
-      }
-
-      const generatedTokens = await this.authTokenService.generate({
-        userId: user.userId.toString(),
-        email: user.email,
-        name: user.name,
-      });
-
-      const refreshTokenHash = await this.hashService.hash(
-        generatedTokens.refreshToken,
+      const generatedTokens = await this.resolveTokens(
+        user,
+        refreshTokenRepository,
       );
-
-      const refreshToken = RefreshTokenFactory.create({
-        refreshTokenHash,
-        userId: user.userId,
-      });
-
-      if (refreshToken.notification.hasErrors()) {
-        throw new EntityValidationError(refreshToken.notification.toJSON());
-      }
-
-      await refreshTokenRepository.insert(refreshToken);
 
       return {
         accessToken: generatedTokens.accessToken,
@@ -79,6 +46,62 @@ export class GoogleLoginUseCase
         },
       };
     });
+  }
+
+  private async resolveTokens(
+    user: User,
+    refreshTokenRepository: IRefreshTokenRepository,
+  ) {
+    const generatedTokens = await this.authTokenService.generate({
+      userId: user.userId.toString(),
+      email: user.email,
+      name: user.name,
+    });
+
+    const refreshTokenHash = await this.hashService.hash(
+      generatedTokens.refreshToken,
+    );
+
+    const refreshToken = RefreshTokenFactory.create({
+      refreshTokenHash,
+      userId: user.userId,
+    });
+
+    if (refreshToken.notification.hasErrors()) {
+      throw new EntityValidationError(refreshToken.notification.toJSON());
+    }
+
+    await refreshTokenRepository.insert(refreshToken);
+
+    return generatedTokens;
+  }
+
+  private async resolveUser(
+    googleUser: GoogleUser,
+    userRepository: IUserRepository,
+  ) {
+    let user = await userRepository.findByGoogleId(googleUser.googleId);
+
+    if (user && !user.isActive) {
+      throw new AuthenticationError("User account is inactive");
+    }
+
+    if (user) {
+      await this.updateUserIfDataIsDifferent({
+        googleUser,
+        user,
+        userRepository,
+      });
+    }
+
+    if (!user) {
+      user = await this.createUser({
+        googleUser,
+        userRepository,
+      });
+    }
+
+    return user;
   }
 
   private async updateUserIfDataIsDifferent(props: {
