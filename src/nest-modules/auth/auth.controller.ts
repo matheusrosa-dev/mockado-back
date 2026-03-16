@@ -53,21 +53,26 @@ export class AuthController {
     @Res({ passthrough: true }) response: Response,
     @CurrentSession() session: ICurrentSession,
   ) {
-    const { accessToken, refreshToken, user } =
-      await this.replaceRefreshTokenUseCase.execute({
-        userId: session.userId,
-        refreshToken: session.refreshToken,
+    try {
+      const { accessToken, refreshToken, user } =
+        await this.replaceRefreshTokenUseCase.execute({
+          userId: session.userId,
+          refreshToken: session.refreshToken,
+        });
+
+      this.setAuthCookies({
+        response,
+        accessToken,
+        refreshToken,
       });
 
-    this.setAuthCookies({
-      response,
-      accessToken,
-      refreshToken,
-    });
-
-    return {
-      user,
-    };
+      return {
+        user,
+      };
+    } catch (e) {
+      this.removeAuthCookies(response);
+      throw e;
+    }
   }
 
   @Post("logout")

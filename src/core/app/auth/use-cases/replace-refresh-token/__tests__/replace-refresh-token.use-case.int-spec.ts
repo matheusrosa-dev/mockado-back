@@ -43,7 +43,7 @@ describe("Replace Refresh Token Use Case - Integration Tests", () => {
 
   describe("execute()", () => {
     it("should replace the refresh token successfully", async () => {
-      const user = UserFactory.fake().oneUser().build();
+      const user = UserFactory.fake().oneUser().withIsActive(true).build();
 
       const refreshTokenHash = await hashService.hash("old-refresh-token");
 
@@ -81,8 +81,20 @@ describe("Replace Refresh Token Use Case - Integration Tests", () => {
       });
     });
 
+    it("should throw an error if the user account is inactive", async () => {
+      const user = UserFactory.fake().oneUser().withIsActive(false).build();
+      await userRepository.insert(user);
+
+      await expect(
+        useCase.execute({
+          userId: user.userId.toString(),
+          refreshToken: "non-existent-refresh-token",
+        }),
+      ).rejects.toThrow(AuthenticationError);
+    });
+
     it("should throw an error if the refresh token to revoke does not exist", async () => {
-      const user = UserFactory.fake().oneUser().build();
+      const user = UserFactory.fake().oneUser().withIsActive(true).build();
       await userRepository.insert(user);
 
       await expect(

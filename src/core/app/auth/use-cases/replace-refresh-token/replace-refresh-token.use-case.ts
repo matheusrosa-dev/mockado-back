@@ -38,6 +38,10 @@ export class ReplaceRefreshTokenUseCase
         throw new AuthenticationError("Refresh token not found for the user");
       }
 
+      if (!refreshTokenExists.user.isActive) {
+        throw new AuthenticationError("User account is inactive");
+      }
+
       const newTokens = await this.authTokenService.generate({
         userId: refreshTokenExists.user.userId,
         email: refreshTokenExists.user.email,

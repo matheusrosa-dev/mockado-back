@@ -11,7 +11,7 @@ type RefreshTokenModelWithoutRelationsUser = Omit<
 export type FindManyByUserIdResponse = RefreshTokenModelWithoutRelationsUser & {
   user: Pick<
     InstanceType<typeof RefreshTokenModel>["user"],
-    "userId" | "name" | "email"
+    "userId" | "name" | "email" | "isActive"
   >;
 };
 

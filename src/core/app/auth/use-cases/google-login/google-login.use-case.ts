@@ -10,6 +10,7 @@ import {
   IGoogleAuthService,
 } from "@app/auth/services/google-auth.service";
 import { IHashService } from "@app/auth/services/hash.service";
+import { AuthenticationError } from "@domain/shared/errors/authentication.error";
 
 export class GoogleLoginUseCase
   implements IUseCase<GoogleLoginInput, GoogleLoginOutput>
@@ -29,6 +30,10 @@ export class GoogleLoginUseCase
       let user = await userRepository.findByGoogleId(googleUser.googleId);
 
       if (user) {
+        if (!user.isActive) {
+          throw new AuthenticationError("User account is inactive");
+        }
+
         await this.updateUserIfDataIsDifferent({
           googleUser,
           user,

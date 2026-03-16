@@ -61,6 +61,7 @@ describe("Refresh Token Exists Validator - Integration Tests", () => {
           userId: user.userId.toString(),
           name: user.name,
           email: user.email,
+          isActive: user.isActive,
         },
       });
       expect(validationError).toBeNull();

@@ -49,6 +49,7 @@ describe("Refresh Token TypeOrm Repository - Integration Tests", () => {
           userId: user.userId.toString(),
           name: user.name,
           email: user.email,
+          isActive: user.isActive,
         },
       });
     });
@@ -86,6 +87,7 @@ describe("Refresh Token TypeOrm Repository - Integration Tests", () => {
           userId: user.userId.toString(),
           name: user.name,
           email: user.email,
+          isActive: user.isActive,
         },
       });
     });
@@ -146,6 +148,7 @@ describe("Refresh Token TypeOrm Repository - Integration Tests", () => {
             userId: user.userId.toString(),
             name: user.name,
             email: user.email,
+            isActive: user.isActive,
           },
         });
       });

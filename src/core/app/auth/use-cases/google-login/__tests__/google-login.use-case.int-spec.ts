@@ -13,6 +13,7 @@ import { JwtTokenService } from "@infra/auth/services/jwt-token.service";
 import { IGoogleAuthService } from "@app/auth/services/google-auth.service";
 import { BcryptHashService } from "@infra/auth/services/bcrypt-hash.service";
 import { Uuid } from "@domain/shared/value-objects/uuid.vo";
+import { AuthenticationError } from "@domain/shared/errors/authentication.error";
 
 class FakeGoogleAuthService implements IGoogleAuthService {
   verifyToken() {
@@ -57,6 +58,7 @@ describe("Google Login Use Case - Integration Tests", () => {
     it("should log in an existing user and hash a refreshToken", async () => {
       const user = UserFactory.fake()
         .oneUser()
+        .withIsActive(true)
         .withGoogleId("1".repeat(21))
         .withEmail("fake@email.com")
         .withName("Fake User")
@@ -107,6 +109,24 @@ describe("Google Login Use Case - Integration Tests", () => {
 
       expect(storedTokens).toHaveLength(1);
       expect(typeof storedTokens[0].refreshTokenHash).toBe("string");
+    });
+
+    it("should throw an error if the user account is inactive", async () => {
+      const user = UserFactory.fake()
+        .oneUser()
+        .withIsActive(false)
+        .withGoogleId("1".repeat(21))
+        .withEmail("fake@email.com")
+        .withName("Fake User")
+        .build();
+
+      await userRepository.insert(user);
+
+      await expect(
+        useCase.execute({
+          token: "fake-token",
+        }),
+      ).rejects.toThrow(AuthenticationError);
     });
 
     it("should update user name and email if they differ from input", async () => {
