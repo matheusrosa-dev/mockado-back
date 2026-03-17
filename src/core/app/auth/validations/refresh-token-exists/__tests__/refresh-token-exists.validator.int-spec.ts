@@ -32,7 +32,7 @@ describe("Refresh Token Exists Validator - Integration Tests", () => {
   });
 
   describe("validate()", () => {
-    it("should return true for a valid refresh token", async () => {
+    it("should return result for a valid refresh token", async () => {
       const user = UserFactory.fake().oneUser().build();
       await userRepository.insert(user);
 
@@ -62,12 +62,13 @@ describe("Refresh Token Exists Validator - Integration Tests", () => {
           name: user.name,
           email: user.email,
           isActive: user.isActive,
+          apiKeyHash: null,
         },
       });
       expect(validationError).toBeNull();
     });
 
-    it("should return false for an invalid refresh token", async () => {
+    it("should return error for an invalid refresh token", async () => {
       const user = UserFactory.fake().oneUser().build();
       await userRepository.insert(user);
 
@@ -92,7 +93,7 @@ describe("Refresh Token Exists Validator - Integration Tests", () => {
       expect(foundRefreshToken).toBeNull();
     });
 
-    it("should return false if there are no refresh tokens for the userId", async () => {
+    it("should return error if there are no refresh tokens for the userId", async () => {
       const [foundRefreshToken, validationError] = (
         await validator.validate({
           userId: new Uuid(),
@@ -102,6 +103,45 @@ describe("Refresh Token Exists Validator - Integration Tests", () => {
 
       expect(validationError).toBeInstanceOf(NotFoundError);
       expect(foundRefreshToken).toBeNull();
+    });
+
+    it("should return apiKeyHash if the user has an api key hash stored", async () => {
+      const user = UserFactory.fake()
+        .oneUser()
+        .withApiKeyHash("a".repeat(64))
+        .build();
+      await userRepository.insert(user);
+
+      const refreshTokenHash = await hashService.hash("refresh-token-123");
+
+      const refreshTokenEntity = RefreshTokenFactory.create({
+        refreshTokenHash,
+        userId: user.userId,
+      });
+
+      await refreshTokenRepository.insert(refreshTokenEntity);
+
+      const [foundRefreshToken, validationError] = (
+        await validator.validate({
+          userId: refreshTokenEntity.userId,
+          refreshToken: "refresh-token-123",
+        })
+      ).asArray();
+
+      expect(foundRefreshToken).toEqual({
+        refreshTokenId: refreshTokenEntity.refreshTokenId.toString(),
+        userId: refreshTokenEntity.userId.toString(),
+        refreshTokenHash: refreshTokenEntity.refreshTokenHash,
+        createdAt: refreshTokenEntity.createdAt,
+        user: {
+          userId: user.userId.toString(),
+          name: user.name,
+          email: user.email,
+          isActive: user.isActive,
+          apiKeyHash: user.apiKeyHash,
+        },
+      });
+      expect(validationError).toBeNull();
     });
   });
 });

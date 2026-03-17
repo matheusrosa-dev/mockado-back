@@ -6,6 +6,7 @@ import { StatusCodesModule } from "./status-codes/status-codes.module";
 import { AuthModule } from "./auth/auth.module";
 import { APP_GUARD } from "@nestjs/core";
 import { AccessTokenGuard } from "./shared/guards/access-token.guard";
+import { MeModule } from "./me/me.module";
 
 @Module({
   imports: [
@@ -14,6 +15,7 @@ import { AccessTokenGuard } from "./shared/guards/access-token.guard";
     AuthModule,
     EndpointsModule,
     StatusCodesModule,
+    MeModule,
   ],
   providers: [
     {

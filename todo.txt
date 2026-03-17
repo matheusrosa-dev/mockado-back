@@ -1,0 +1,1 @@
+criar uma tabela propria para as api keys
