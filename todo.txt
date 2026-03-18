@@ -1,1 +1,5 @@
 criar uma tabela propria para as api keys
+adicionar opção para tornar rota publica ou deixar ela privada através de api key
+
+verificar cors quando estiver em prod
+remover a rota mock do cors

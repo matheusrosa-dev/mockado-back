@@ -1,4 +1,5 @@
 import { Module } from "@nestjs/common";
+import { ThrottlerModule } from "@nestjs/throttler";
 import { EndpointsModule } from "./endpoints/endpoints.module";
 import { DatabasesModule } from "./databases/databases.module";
 import { ConfigsModule } from "./configs/configs.module";
@@ -11,6 +12,14 @@ import { MockModule } from "./mock/mock.module";
 
 @Module({
   imports: [
+    ThrottlerModule.forRoot({
+      throttlers: [
+        {
+          ttl: 60000, // segundos em ms
+          limit: 100, // número de requisições permitidas por ttl
+        },
+      ],
+    }),
     ConfigsModule,
     DatabasesModule,
     AuthModule,

@@ -11,7 +11,6 @@ export function applyGlobalConfig(app: INestApplication) {
       "Content-Type",
       "Cookie",
       "Authorization",
-      // TODO: remover quando ngrok deixar de ser usado no desenvolvimento
       "ngrok-skip-browser-warning",
     ],
     credentials: true,

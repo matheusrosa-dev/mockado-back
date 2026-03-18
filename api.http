@@ -1,6 +1,6 @@
 @baseUrl = http://localhost:3333
 
 ### Mock endpoint
-GET {{baseUrl}}/mock/019cfcb4-c6ba-769e-92e4-0e7494bdd4a6
+PUT {{baseUrl}}/mock/019cfcb4-c6ba-769e-92e4-0e7494bdd4a6
 Content-Type: application/json
-x-api-key: 9159646766aae70b7f187c12b816d2cd89d8e512da251a41d46b809dfcfd2b6b
+x-api-key: bfffd7022bfa3b262b13cb1fb55622df8a0c985b184ba3a71437180c1dab7a17
