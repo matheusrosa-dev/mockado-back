@@ -47,6 +47,26 @@ export class EndpointTypeOrmRepository implements IEndpointRepository {
     return EndpointModelMapper.toEntity(model);
   }
 
+  async findByIdWithApiKeyHash(props: {
+    endpointId: Uuid;
+    apiKeyHash: string;
+  }) {
+    const model = await this.repository.findOne({
+      where: {
+        endpointId: props.endpointId.toString(),
+        user: {
+          apiKeyHash: props.apiKeyHash,
+        },
+      },
+    });
+
+    if (!model) {
+      return null;
+    }
+
+    return EndpointModelMapper.toEntity(model);
+  }
+
   async findSummaryByUserId(userId: Uuid) {
     const models = await this.repository.find({
       where: {

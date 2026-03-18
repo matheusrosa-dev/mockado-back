@@ -7,6 +7,7 @@ import { AuthModule } from "./auth/auth.module";
 import { APP_GUARD } from "@nestjs/core";
 import { AccessTokenGuard } from "./shared/guards/access-token.guard";
 import { MeModule } from "./me/me.module";
+import { MockModule } from "./mock/mock.module";
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { MeModule } from "./me/me.module";
     EndpointsModule,
     StatusCodesModule,
     MeModule,
+    MockModule,
   ],
   providers: [
     {

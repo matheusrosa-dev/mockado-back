@@ -12,4 +12,10 @@ export class CryptoApiKeyService implements IApiKeyService {
       apiKeyHash,
     };
   }
+
+  generateFromApiKey(apiKey: string) {
+    const apiKeyHash = createHash("sha256").update(apiKey).digest("hex");
+
+    return apiKeyHash;
+  }
 }

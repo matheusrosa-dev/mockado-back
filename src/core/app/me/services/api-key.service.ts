@@ -3,4 +3,6 @@ export interface IApiKeyService {
     apiKey: string;
     apiKeyHash: string;
   };
+
+  generateFromApiKey(apiKey: string): string;
 }

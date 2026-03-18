@@ -1,45 +1,6 @@
 @baseUrl = http://localhost:3333
 
-### Create endpoint
-# @name createEndpoint
-POST {{baseUrl}}/endpoints
+### Mock endpoint
+GET {{baseUrl}}/mock/019cfcb4-c6ba-769e-92e4-0e7494bdd4a6
 Content-Type: application/json
-
-{
-    "title": "Categoria criada",
-    "method": "GET",
-    "statusCode": 204
-}
-
-###
-@endpointId = {{createEndpoint.response.body.data.id}}
-
-### Update endpoint
-# @name updateEndpoint
-PATCH {{baseUrl}}/endpoints/{{endpointId}}
-Content-Type: application/json
-
-{
-    "title": "Categoria atualizada",
-    "method": "GET",
-    "statusCode": 200
-}
-
-
-### List endpoints summary
-GET {{baseUrl}}/endpoints/summary
-
-### Find endpoint by id
-GET {{baseUrl}}/endpoints/{{endpointId}}
-
-### Delete endpoint
-DELETE {{baseUrl}}/endpoints/{{endpointId}}
-
-
-### Login google
-POST {{baseUrl}}/auth/google/login
-Content-Type: application/json
-
-{
-    "googleToken": "google-token"
-}
+x-api-key: 9159646766aae70b7f187c12b816d2cd89d8e512da251a41d46b809dfcfd2b6b
