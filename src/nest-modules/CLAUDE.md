@@ -130,7 +130,7 @@ Aplicada via `applyGlobalConfig(app)` em `main.ts`:
 
 - Configurações tipadas por domínio (`api`, `database`, `auth`) via `registerAs()`
 - Validação de variáveis de ambiente com Joi no momento do bootstrap
-- Carregamento automático a partir de `envs/.env`
+- Carregamento automático a partir de `.env`
 - `ConfigsModule` configurado como global (`isGlobal: true`)
 
 Variáveis de ambiente obrigatórias: `API_PORT`, `DB_TYPE` (`sqlite`|`postgres`), `DB_DATABASE`, `DB_MIGRATIONS_AUTO_RUN`, `GOOGLE_CLIENT_ID`, `JWT_SECRET`, `JWT_REFRESH_SECRET`, `JWT_EXPIRATION_TIME`, `JWT_REFRESH_EXPIRATION_TIME`. Variáveis de PostgreSQL (`DB_HOST`, `DB_PORT`, `DB_USERNAME`, `DB_PASSWORD`) são obrigatórias apenas quando `DB_TYPE=postgres`.

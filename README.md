@@ -5,7 +5,7 @@ Este projeto usa o CLI do TypeORM via scripts do `package.json`.
 ### Pré-requisitos
 
 - Ter as dependências instaladas (`npm install`)
-- Ter o arquivo de ambiente em `envs/.env`
+- Ter o arquivo de ambiente na raiz do projeto (`.env`)
 
 ### Scripts disponíveis
 

@@ -13,7 +13,7 @@ import { join } from "node:path";
     ConfigModule.forRoot({
       load: [apiConfig, databaseConfig, authConfig],
       isGlobal: true,
-      envFilePath: [join(process.cwd(), "envs", `.env`)],
+      envFilePath: [join(process.cwd(), `.env`)],
       validationSchema,
     }),
   ],
