@@ -79,7 +79,6 @@ describe("Google Login Use Case - Integration Tests", () => {
           id: user.userId.toString(),
           email: user.email,
           name: user.name,
-          hasApiKey: false,
         },
         accessToken: expect.any(String),
         refreshToken: expect.any(String),
@@ -102,43 +101,6 @@ describe("Google Login Use Case - Integration Tests", () => {
         new Uuid(user.id),
       );
       expect(endpoints).toHaveLength(1);
-    });
-
-    it("should return hasApiKey as true if the user has an api key hash stored", async () => {
-      const user = UserFactory.fake()
-        .oneUser()
-        .withIsActive(true)
-        .withGoogleId("1".repeat(21))
-        .withEmail("fake@email.com")
-        .withName("Fake User")
-        .withApiKeyHash("a".repeat(64))
-        .build();
-
-      await userRepository.insert(user);
-
-      const result = await useCase.execute({
-        token: "fake-token",
-      });
-
-      expect(result.user.hasApiKey).toBe(true);
-    });
-
-    it("should return hasApiKey as false if the user does not have an api key hash stored", async () => {
-      const user = UserFactory.fake()
-        .oneUser()
-        .withIsActive(true)
-        .withGoogleId("1".repeat(21))
-        .withEmail("fake@email.com")
-        .withName("Fake User")
-        .build();
-
-      await userRepository.insert(user);
-
-      const result = await useCase.execute({
-        token: "fake-token",
-      });
-
-      expect(result.user.hasApiKey).toBe(false);
     });
 
     it("should not create a new endpoint if the user already exists", async () => {
@@ -172,7 +134,6 @@ describe("Google Login Use Case - Integration Tests", () => {
           id: expect.any(String),
           email: "fake@email.com",
           name: "Fake User",
-          hasApiKey: false,
         },
         accessToken: expect.any(String),
         refreshToken: expect.any(String),

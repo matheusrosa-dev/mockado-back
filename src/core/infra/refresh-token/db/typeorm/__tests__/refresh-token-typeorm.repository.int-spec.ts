@@ -50,7 +50,6 @@ describe("Refresh Token TypeOrm Repository - Integration Tests", () => {
           name: user.name,
           email: user.email,
           isActive: user.isActive,
-          apiKeyHash: user.apiKeyHash ?? null,
         },
       });
     });
@@ -89,7 +88,6 @@ describe("Refresh Token TypeOrm Repository - Integration Tests", () => {
           name: user.name,
           email: user.email,
           isActive: user.isActive,
-          apiKeyHash: user.apiKeyHash ?? null,
         },
       });
     });
@@ -151,7 +149,6 @@ describe("Refresh Token TypeOrm Repository - Integration Tests", () => {
             name: user.name,
             email: user.email,
             isActive: user.isActive,
-            apiKeyHash: user.apiKeyHash ?? null,
           },
         });
       });

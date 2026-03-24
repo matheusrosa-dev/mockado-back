@@ -6,7 +6,6 @@ import { MOCK_PROVIDERS } from "./mock.provider";
   controllers: [MockController],
   providers: [
     ...Object.values(MOCK_PROVIDERS.REPOSITORIES),
-    ...Object.values(MOCK_PROVIDERS.SERVICES),
     ...Object.values(MOCK_PROVIDERS.USE_CASES),
   ],
 })

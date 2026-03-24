@@ -11,7 +11,6 @@ describe("User Fake Builder - Unit Tests", () => {
         googleId: fakeUser.googleId,
         email: fakeUser.email,
         name: fakeUser.name,
-        apiKeyHash: fakeUser.apiKeyHash,
         isActive: fakeUser.isActive,
         createdAt: fakeUser.createdAt,
       });
@@ -28,7 +27,6 @@ describe("User Fake Builder - Unit Tests", () => {
         .withName("Custom Name")
         .withIsActive(false)
         .withCreatedAt(new Date("2024-01-01"))
-        .withApiKeyHash("a".repeat(64))
         .build();
 
       expect(fakeUser.toJSON()).toEqual({
@@ -36,7 +34,6 @@ describe("User Fake Builder - Unit Tests", () => {
         googleId: "123456789012345678901",
         email: "custom@email.com",
         name: "Custom Name",
-        apiKeyHash: "a".repeat(64),
         isActive: false,
         createdAt: new Date("2024-01-01"),
       });
@@ -51,7 +48,6 @@ describe("User Fake Builder - Unit Tests", () => {
         .withName(() => "Factory Name")
         .withIsActive(() => true)
         .withCreatedAt(() => new Date("2025-06-15"))
-        .withApiKeyHash(() => "a".repeat(64))
         .build();
 
       expect(fakeUser.toJSON()).toEqual({
@@ -59,7 +55,6 @@ describe("User Fake Builder - Unit Tests", () => {
         googleId: fakeUser.googleId,
         email: fakeUser.email,
         name: fakeUser.name,
-        apiKeyHash: fakeUser.apiKeyHash,
         isActive: fakeUser.isActive,
         createdAt: fakeUser.createdAt,
       });
@@ -78,7 +73,6 @@ describe("User Fake Builder - Unit Tests", () => {
           googleId: user.googleId,
           email: user.email,
           name: user.name,
-          apiKeyHash: user.apiKeyHash,
           isActive: user.isActive,
           createdAt: user.createdAt,
         });
@@ -95,7 +89,6 @@ describe("User Fake Builder - Unit Tests", () => {
         .withGoogleId("123456789012345678901")
         .withEmail("custom@email.com")
         .withName("Custom Name")
-        .withApiKeyHash("a".repeat(64))
         .withIsActive(false)
         .withCreatedAt(new Date("2024-01-01"))
         .build();
@@ -107,7 +100,6 @@ describe("User Fake Builder - Unit Tests", () => {
           googleId: "123456789012345678901",
           email: "custom@email.com",
           name: "Custom Name",
-          apiKeyHash: "a".repeat(64),
           isActive: false,
           createdAt: new Date("2024-01-01"),
         });
@@ -124,7 +116,6 @@ describe("User Fake Builder - Unit Tests", () => {
         .withName(() => "Factory Name")
         .withIsActive(() => true)
         .withCreatedAt(() => new Date("2025-06-15"))
-        .withApiKeyHash(() => "a".repeat(64))
         .build();
 
       expect(fakeUsers).toHaveLength(amount);
@@ -134,7 +125,6 @@ describe("User Fake Builder - Unit Tests", () => {
           googleId: user.googleId,
           email: user.email,
           name: user.name,
-          apiKeyHash: user.apiKeyHash,
           isActive: user.isActive,
           createdAt: user.createdAt,
         });

@@ -5,21 +5,15 @@ import { HttpMethod, ResponseBodyType } from "@domain/endpoint/endpoint.types";
 import { NotFoundError } from "@domain/shared/errors/not-found.error";
 import { Uuid } from "@domain/shared/value-objects/uuid.vo";
 
-import { IApiKeyService } from "@app/me/services/api-key.service";
-
 export class MockEndpointUseCase
   implements IUseCase<MockEndpointInput, MockEndpointOutput>
 {
-  constructor(
-    private endpointRepository: IEndpointRepository,
-    private apiKeyService: IApiKeyService,
-  ) {}
+  constructor(private endpointRepository: IEndpointRepository) {}
 
   async execute(input: MockEndpointInput): Promise<MockEndpointOutput> {
-    const endpoint = await this.endpointRepository.findByIdWithApiKeyHash({
-      endpointId: new Uuid(input.endpointId),
-      apiKeyHash: this.apiKeyService.generateFromApiKey(input.apiKey),
-    });
+    const endpoint = await this.endpointRepository.findById(
+      new Uuid(input.endpointId),
+    );
 
     if (!endpoint) {
       throw new NotFoundError(input.endpointId, Endpoint);
@@ -66,7 +60,6 @@ export class MockEndpointUseCase
 }
 
 type MockEndpointInput = {
-  apiKey: string;
   endpointId: string;
   method: HttpMethod;
 };

@@ -36,7 +36,6 @@ export class RefreshTokenTypeOrmRepository implements IRefreshTokenRepository {
           name: true,
           email: true,
           isActive: true,
-          apiKeyHash: true,
         },
       },
     });

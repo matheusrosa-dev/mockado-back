@@ -62,7 +62,6 @@ describe("Refresh Token Exists Validator - Integration Tests", () => {
           name: user.name,
           email: user.email,
           isActive: user.isActive,
-          apiKeyHash: null,
         },
       });
       expect(validationError).toBeNull();
@@ -103,45 +102,6 @@ describe("Refresh Token Exists Validator - Integration Tests", () => {
 
       expect(validationError).toBeInstanceOf(NotFoundError);
       expect(foundRefreshToken).toBeNull();
-    });
-
-    it("should return apiKeyHash if the user has an api key hash stored", async () => {
-      const user = UserFactory.fake()
-        .oneUser()
-        .withApiKeyHash("a".repeat(64))
-        .build();
-      await userRepository.insert(user);
-
-      const refreshTokenHash = await hashService.hash("refresh-token-123");
-
-      const refreshTokenEntity = RefreshTokenFactory.create({
-        refreshTokenHash,
-        userId: user.userId,
-      });
-
-      await refreshTokenRepository.insert(refreshTokenEntity);
-
-      const [foundRefreshToken, validationError] = (
-        await validator.validate({
-          userId: refreshTokenEntity.userId,
-          refreshToken: "refresh-token-123",
-        })
-      ).asArray();
-
-      expect(foundRefreshToken).toEqual({
-        refreshTokenId: refreshTokenEntity.refreshTokenId.toString(),
-        userId: refreshTokenEntity.userId.toString(),
-        refreshTokenHash: refreshTokenEntity.refreshTokenHash,
-        createdAt: refreshTokenEntity.createdAt,
-        user: {
-          userId: user.userId.toString(),
-          name: user.name,
-          email: user.email,
-          isActive: user.isActive,
-          apiKeyHash: user.apiKeyHash,
-        },
-      });
-      expect(validationError).toBeNull();
     });
   });
 });

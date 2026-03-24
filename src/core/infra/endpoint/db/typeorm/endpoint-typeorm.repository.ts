@@ -47,16 +47,10 @@ export class EndpointTypeOrmRepository implements IEndpointRepository {
     return EndpointModelMapper.toEntity(model);
   }
 
-  async findByIdWithApiKeyHash(props: {
-    endpointId: Uuid;
-    apiKeyHash: string;
-  }) {
+  async findById(endpointId: Uuid) {
     const model = await this.repository.findOne({
       where: {
-        endpointId: props.endpointId.toString(),
-        user: {
-          apiKeyHash: props.apiKeyHash,
-        },
+        endpointId: endpointId.toString(),
       },
     });
 
@@ -92,10 +86,6 @@ export class EndpointTypeOrmRepository implements IEndpointRepository {
   }
 
   findAll(): Promise<Endpoint[]> {
-    throw new Error("Method not implemented.");
-  }
-
-  findById(): Promise<Endpoint | null> {
     throw new Error("Method not implemented.");
   }
 }

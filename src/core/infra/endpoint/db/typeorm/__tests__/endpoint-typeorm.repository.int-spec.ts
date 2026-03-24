@@ -7,7 +7,6 @@ import { UserModel } from "@infra/user/db/typeorm/user-typeorm.model";
 import { RefreshTokenModel } from "@infra/refresh-token/db/typeorm/refresh-token-typeorm.model";
 import { UserFactory } from "@domain/user/user.entity";
 import { UserTypeOrmRepository } from "@infra/user/db/typeorm/user-typeorm.repository";
-import { CryptoApiKeyService } from "@infra/me/services/crypto-api-key.service";
 
 describe("Endpoint TypeOrm Repository - Integration Tests", () => {
   const { dataSource } = setupTypeOrm({
@@ -16,7 +15,6 @@ describe("Endpoint TypeOrm Repository - Integration Tests", () => {
 
   let endpointRepository: EndpointTypeOrmRepository;
   let userRepository: UserTypeOrmRepository;
-  const apiKeyService = new CryptoApiKeyService();
 
   beforeEach(() => {
     endpointRepository = new EndpointTypeOrmRepository(dataSource);
@@ -180,31 +178,8 @@ describe("Endpoint TypeOrm Repository - Integration Tests", () => {
     });
   });
 
-  describe("findByIdWithApiKeyHash()", () => {
+  describe("findById()", () => {
     it("should return null if no endpoint is found with the given endpointId", async () => {
-      const apiKey = apiKeyService.generate();
-
-      const user = UserFactory.fake()
-        .oneUser()
-        .withApiKeyHash(apiKey.apiKeyHash)
-        .build();
-      const endpoint = EndpointFactory.fake()
-        .oneEndpoint()
-        .withUserId(user.userId)
-        .build();
-
-      await userRepository.insert(user);
-      await endpointRepository.insert(endpoint);
-
-      const result = await endpointRepository.findByIdWithApiKeyHash({
-        endpointId: new Uuid(),
-        apiKeyHash: apiKey.apiKeyHash,
-      });
-
-      expect(result).toBeNull();
-    });
-
-    it("should return null if no endpoint is found with the given apiKeyHash", async () => {
       const user = UserFactory.fake().oneUser().build();
       const endpoint = EndpointFactory.fake()
         .oneEndpoint()
@@ -214,21 +189,13 @@ describe("Endpoint TypeOrm Repository - Integration Tests", () => {
       await userRepository.insert(user);
       await endpointRepository.insert(endpoint);
 
-      const result = await endpointRepository.findByIdWithApiKeyHash({
-        endpointId: endpoint.endpointId,
-        apiKeyHash: apiKeyService.generate().apiKeyHash,
-      });
+      const result = await endpointRepository.findById(new Uuid());
 
       expect(result).toBeNull();
     });
 
-    it("should return endpoint if found with the given endpointId and apiKeyHash", async () => {
-      const apiKey = apiKeyService.generate();
-
-      const user = UserFactory.fake()
-        .oneUser()
-        .withApiKeyHash(apiKey.apiKeyHash)
-        .build();
+    it("should return endpoint if found with the given endpointId", async () => {
+      const user = UserFactory.fake().oneUser().build();
       const endpoint = EndpointFactory.fake()
         .oneEndpoint()
         .withUserId(user.userId)
@@ -237,10 +204,7 @@ describe("Endpoint TypeOrm Repository - Integration Tests", () => {
       await userRepository.insert(user);
       await endpointRepository.insert(endpoint);
 
-      const result = await endpointRepository.findByIdWithApiKeyHash({
-        endpointId: endpoint.endpointId,
-        apiKeyHash: apiKey.apiKeyHash,
-      });
+      const result = await endpointRepository.findById(endpoint.endpointId);
 
       expect(result!.toJSON()).toEqual(endpoint.toJSON());
     });

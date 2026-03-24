@@ -12,7 +12,6 @@ export class UserModelMapper {
     model.email = entity.email;
     model.name = entity.name;
     model.isActive = entity.isActive;
-    model.apiKeyHash = entity?.apiKeyHash ?? null;
     model.createdAt = entity.createdAt;
 
     return model;
@@ -25,8 +24,6 @@ export class UserModelMapper {
       email: model.email,
       name: model.name,
       isActive: model.isActive,
-
-      ...(model?.apiKeyHash && { apiKeyHash: model.apiKeyHash }),
 
       createdAt: model.createdAt,
     });

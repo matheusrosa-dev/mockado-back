@@ -70,7 +70,6 @@ export class ReplaceRefreshTokenUseCase
           id: refreshTokenExists.user.userId,
           email: refreshTokenExists.user.email,
           name: refreshTokenExists.user.name,
-          hasApiKey: !!refreshTokenExists.user.apiKeyHash,
         },
       };
     });
@@ -89,6 +88,5 @@ type ReplaceRefreshTokenOutput = {
     id: string;
     name: string;
     email: string;
-    hasApiKey: boolean;
   };
 };

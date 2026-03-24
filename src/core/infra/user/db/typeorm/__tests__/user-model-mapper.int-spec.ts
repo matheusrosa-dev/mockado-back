@@ -13,7 +13,6 @@ describe("User Model Mapper - Integration Tests", () => {
       expect(userModel.googleId).toBe(user.googleId);
       expect(userModel.email).toBe(user.email);
       expect(userModel.name).toBe(user.name);
-      expect(userModel.apiKeyHash).toBeNull();
       expect(userModel.isActive).toBe(user.isActive);
       expect(userModel.createdAt).toEqual(user.createdAt);
     });

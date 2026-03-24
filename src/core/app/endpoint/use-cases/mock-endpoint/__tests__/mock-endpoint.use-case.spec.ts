@@ -12,14 +12,12 @@ import { EndpointFactory } from "@domain/endpoint/endpoint.entity";
 import { StatusCode } from "@domain/endpoint/value-objects/status-code.vo";
 import { NotFoundError } from "@domain/shared/errors/not-found.error";
 import { HttpMethod, ResponseBodyType } from "@domain/endpoint/endpoint.types";
-import { CryptoApiKeyService } from "@infra/me/services/crypto-api-key.service";
 import { Uuid } from "@domain/shared/value-objects/uuid.vo";
 
 describe("Mock Endpoint Use Case - Integration Tests", () => {
   let useCase: MockEndpointUseCase;
   let endpointRepository: IEndpointRepository;
   let userRepository: IUserRepository;
-  const apiKeyService = new CryptoApiKeyService();
 
   const { dataSource } = setupTypeOrm({
     entities: [EndpointModel, RefreshTokenModel, UserModel],
@@ -28,35 +26,11 @@ describe("Mock Endpoint Use Case - Integration Tests", () => {
   beforeEach(() => {
     endpointRepository = new EndpointTypeOrmRepository(dataSource);
     userRepository = new UserTypeOrmRepository(dataSource);
-    useCase = new MockEndpointUseCase(endpointRepository, apiKeyService);
+    useCase = new MockEndpointUseCase(endpointRepository);
   });
 
   describe("execute()", () => {
     it("should throw not found error if endpoint does not exist for the given endpointId", async () => {
-      const apiKey = apiKeyService.generate();
-
-      const user = UserFactory.fake()
-        .oneUser()
-        .withApiKeyHash(apiKey.apiKeyHash)
-        .build();
-      const endpoint = EndpointFactory.fake()
-        .oneEndpoint()
-        .withUserId(user.userId)
-        .build();
-
-      await userRepository.insert(user);
-      await endpointRepository.insert(endpoint);
-
-      await expect(
-        useCase.execute({
-          endpointId: new Uuid().toString(),
-          apiKey: apiKey.apiKey,
-          method: endpoint.method,
-        }),
-      ).rejects.toThrow(NotFoundError);
-    });
-
-    it("should throw not found error if endpoint does not exist for the given apiKeyHash", async () => {
       const user = UserFactory.fake().oneUser().build();
       const endpoint = EndpointFactory.fake()
         .oneEndpoint()
@@ -68,20 +42,14 @@ describe("Mock Endpoint Use Case - Integration Tests", () => {
 
       await expect(
         useCase.execute({
-          endpointId: endpoint.endpointId.toString(),
-          apiKey: apiKeyService.generate().apiKey,
+          endpointId: new Uuid().toString(),
           method: endpoint.method,
         }),
       ).rejects.toThrow(NotFoundError);
     });
 
     it("should throw not found error if endpoint does not exist for the given method", async () => {
-      const apiKey = apiKeyService.generate();
-
-      const user = UserFactory.fake()
-        .oneUser()
-        .withApiKeyHash(apiKey.apiKeyHash)
-        .build();
+      const user = UserFactory.fake().oneUser().build();
       const endpoint = EndpointFactory.fake()
         .oneEndpoint()
         .withMethod(HttpMethod.POST)
@@ -94,19 +62,13 @@ describe("Mock Endpoint Use Case - Integration Tests", () => {
       await expect(
         useCase.execute({
           endpointId: endpoint.endpointId.toString(),
-          apiKey: apiKey.apiKey,
           method: HttpMethod.GET,
         }),
       ).rejects.toThrow(NotFoundError);
     });
 
     it("should return undefined response for status code which does not have a body", async () => {
-      const apiKey = apiKeyService.generate();
-
-      const user = UserFactory.fake()
-        .oneUser()
-        .withApiKeyHash(apiKey.apiKeyHash)
-        .build();
+      const user = UserFactory.fake().oneUser().build();
       const endpoint = EndpointFactory.fake()
         .oneEndpoint()
         .withStatusCode(new StatusCode(204))
@@ -118,7 +80,6 @@ describe("Mock Endpoint Use Case - Integration Tests", () => {
 
       const result = await useCase.execute({
         endpointId: endpoint.endpointId.toString(),
-        apiKey: apiKey.apiKey,
         method: endpoint.method,
       });
 
@@ -130,12 +91,7 @@ describe("Mock Endpoint Use Case - Integration Tests", () => {
     });
 
     it("should return undefined response for empty ResponseBodyType", async () => {
-      const apiKey = apiKeyService.generate();
-
-      const user = UserFactory.fake()
-        .oneUser()
-        .withApiKeyHash(apiKey.apiKeyHash)
-        .build();
+      const user = UserFactory.fake().oneUser().build();
       const endpoint = EndpointFactory.fake()
         .oneEndpoint()
         .withStatusCode(new StatusCode(200))
@@ -148,7 +104,6 @@ describe("Mock Endpoint Use Case - Integration Tests", () => {
 
       const result = await useCase.execute({
         endpointId: endpoint.endpointId.toString(),
-        apiKey: apiKey.apiKey,
         method: endpoint.method,
       });
 
@@ -160,12 +115,7 @@ describe("Mock Endpoint Use Case - Integration Tests", () => {
     });
 
     it("should return null response for null ResponseBodyType", async () => {
-      const apiKey = apiKeyService.generate();
-
-      const user = UserFactory.fake()
-        .oneUser()
-        .withApiKeyHash(apiKey.apiKeyHash)
-        .build();
+      const user = UserFactory.fake().oneUser().build();
       const endpoint = EndpointFactory.fake()
         .oneEndpoint()
         .withStatusCode(new StatusCode(200))
@@ -178,7 +128,6 @@ describe("Mock Endpoint Use Case - Integration Tests", () => {
 
       const result = await useCase.execute({
         endpointId: endpoint.endpointId.toString(),
-        apiKey: apiKey.apiKey,
         method: endpoint.method,
       });
 
@@ -190,12 +139,7 @@ describe("Mock Endpoint Use Case - Integration Tests", () => {
     });
 
     it("should return string response for text ResponseBodyType", async () => {
-      const apiKey = apiKeyService.generate();
-
-      const user = UserFactory.fake()
-        .oneUser()
-        .withApiKeyHash(apiKey.apiKeyHash)
-        .build();
+      const user = UserFactory.fake().oneUser().build();
       const endpoint = EndpointFactory.fake()
         .oneEndpoint()
         .withStatusCode(new StatusCode(200))
@@ -209,7 +153,6 @@ describe("Mock Endpoint Use Case - Integration Tests", () => {
 
       const result = await useCase.execute({
         endpointId: endpoint.endpointId.toString(),
-        apiKey: apiKey.apiKey,
         method: endpoint.method,
       });
 
@@ -221,12 +164,7 @@ describe("Mock Endpoint Use Case - Integration Tests", () => {
     });
 
     it("should return json response for json ResponseBodyType", async () => {
-      const apiKey = apiKeyService.generate();
-
-      const user = UserFactory.fake()
-        .oneUser()
-        .withApiKeyHash(apiKey.apiKeyHash)
-        .build();
+      const user = UserFactory.fake().oneUser().build();
       const endpoint = EndpointFactory.fake()
         .oneEndpoint()
         .withStatusCode(new StatusCode(200))
@@ -240,7 +178,6 @@ describe("Mock Endpoint Use Case - Integration Tests", () => {
 
       const result = await useCase.execute({
         endpointId: endpoint.endpointId.toString(),
-        apiKey: apiKey.apiKey,
         method: endpoint.method,
       });
 

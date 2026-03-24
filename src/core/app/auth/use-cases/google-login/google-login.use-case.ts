@@ -55,7 +55,6 @@ export class GoogleLoginUseCase
           id: user.userId.toString(),
           name: user.name,
           email: user.email,
-          hasApiKey: !!user.apiKeyHash,
         },
       };
     });
@@ -192,6 +191,5 @@ type GoogleLoginOutput = {
     id: string;
     name: string;
     email: string;
-    hasApiKey: boolean;
   };
 };

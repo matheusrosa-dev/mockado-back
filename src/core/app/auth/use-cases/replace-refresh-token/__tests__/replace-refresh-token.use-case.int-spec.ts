@@ -77,7 +77,6 @@ describe("Replace Refresh Token Use Case - Integration Tests", () => {
           id: user.userId.toString(),
           email: user.email,
           name: user.name,
-          hasApiKey: !!user.apiKeyHash,
         },
       });
     });

@@ -16,7 +16,6 @@ describe("User Model - Integration Tests", () => {
     expect(columnNames).toStrictEqual([
       "userId",
       "googleId",
-      "apiKeyHash",
       "email",
       "name",
       "isActive",
@@ -55,23 +54,12 @@ describe("User Model - Integration Tests", () => {
     );
     expect(uniqueColumnNames).toContain("googleId");
     expect(uniqueColumnNames).toContain("email");
-    expect(uniqueColumnNames).toContain("apiKeyHash");
 
     const nameColumn = columns.find((column) => column.propertyName === "name");
     expect(nameColumn).toMatchObject({
       type: "varchar",
       length: "100",
       isNullable: false,
-    });
-
-    const apiKeyHashColumn = columns.find(
-      (column) => column.propertyName === "apiKeyHash",
-    );
-
-    expect(apiKeyHashColumn).toMatchObject({
-      type: "varchar",
-      length: "64",
-      isNullable: true,
     });
 
     const isActiveColumn = columns.find(

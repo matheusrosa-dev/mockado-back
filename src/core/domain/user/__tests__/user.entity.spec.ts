@@ -36,29 +36,6 @@ describe("User Entity - Unit Tests", () => {
     });
   });
 
-  describe("changeApiKeyHash()", () => {
-    it("should change the apiKeyHash and validate", () => {
-      const user = UserFactory.fake().oneUser().build();
-      const spyValidate = jest.spyOn(user, "validate");
-
-      user.changeApiKeyHash("a".repeat(64));
-
-      expect(spyValidate).toHaveBeenCalled();
-      expect(user.apiKeyHash).toBe("a".repeat(64));
-    });
-
-    it("should add error to notification when apiKeyHash is invalid", () => {
-      const user = UserFactory.fake().oneUser().build();
-
-      user.changeApiKeyHash("invalid-apiKeyHash");
-
-      expect(user.notification.hasErrors()).toBe(true);
-      expect(user.notification.errors.get("apiKeyHash")).toContain(
-        "apiKeyHash must be a 64-character hexadecimal string",
-      );
-    });
-  });
-
   describe("changeName()", () => {
     it("should change the name and validate", () => {
       const user = UserFactory.fake().oneUser().build();
@@ -149,7 +126,6 @@ describe("User Entity - Unit Tests", () => {
         googleId: user.googleId,
         email: user.email,
         name: user.name,
-        apiKeyHash: user.apiKeyHash,
         isActive: user.isActive,
         createdAt: user.createdAt,
       });
@@ -259,19 +235,6 @@ describe("User Entity - Unit Tests", () => {
       expect(user.notification.errors.size).toBe(1);
       expect(user.notification.errors.get("name")).toContain(
         "name should not be empty",
-      );
-    });
-
-    it("should add error when apiKeyHash is not a 64-character hexadecimal string", () => {
-      const user = UserFactory.fake()
-        .oneUser()
-        .withApiKeyHash("invalid-apiKeyHash")
-        .build();
-
-      expect(user.notification.hasErrors()).toBe(true);
-      expect(user.notification.errors.size).toBe(1);
-      expect(user.notification.errors.get("apiKeyHash")).toContain(
-        "apiKeyHash must be a 64-character hexadecimal string",
       );
     });
   });

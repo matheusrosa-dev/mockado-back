@@ -9,10 +9,7 @@ export interface IEndpointRepository extends IRepository<Endpoint> {
     userId: Uuid;
   }): Promise<Endpoint | null>;
 
-  findByIdWithApiKeyHash(props: {
-    endpointId: Uuid;
-    apiKeyHash: string;
-  }): Promise<Endpoint | null>;
+  findById(endpointId: Uuid): Promise<Endpoint | null>;
 
   findSummaryByUserId(userId: Uuid): Promise<
     Array<{
