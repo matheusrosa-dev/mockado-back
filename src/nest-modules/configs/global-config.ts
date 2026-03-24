@@ -6,7 +6,7 @@ import cookieParser from "cookie-parser";
 
 export function applyGlobalConfig(app: INestApplication) {
   app.enableCors({
-    origin: ["http://localhost:3000", "https://mockado-front.vercel.app"],
+    origin: ["http://localhost:3000", "https://mockado-omega.vercel.app"],
     allowedHeaders: ["Content-Type", "Cookie", "Authorization"],
     credentials: true,
   });
