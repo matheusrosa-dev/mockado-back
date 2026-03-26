@@ -100,14 +100,15 @@ export class AuthController {
 
     response.cookie("access_token", accessToken, {
       httpOnly: true,
-      sameSite: "none",
+      sameSite: "strict",
       secure: true,
       maxAge: authConfig.jwtExpirationTime * 1000,
+      path: "/",
     });
 
     response.cookie("refresh_token", refreshToken, {
       httpOnly: true,
-      sameSite: "none",
+      sameSite: "strict",
       secure: true,
       maxAge: authConfig.jwtRefreshExpirationTime * 1000,
       path: "/auth",
@@ -115,7 +116,7 @@ export class AuthController {
   }
 
   private removeAuthCookies(response: Response) {
-    response.clearCookie("access_token");
+    response.clearCookie("access_token", { path: "/" });
     response.clearCookie("refresh_token", { path: "/auth" });
   }
 }
