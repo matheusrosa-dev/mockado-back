@@ -108,7 +108,7 @@ export class AuthController {
 
     response.cookie("refresh_token", refreshToken, {
       httpOnly: true,
-      sameSite: "none",
+      sameSite: "strict",
       secure: true,
       maxAge: authConfig.jwtRefreshExpirationTime * 1000,
       path: "/auth/refresh",
