@@ -111,12 +111,12 @@ export class AuthController {
       sameSite: "strict",
       secure: true,
       maxAge: authConfig.jwtRefreshExpirationTime * 1000,
-      path: "/auth",
+      path: "/auth/refresh",
     });
   }
 
   private removeAuthCookies(response: Response) {
     response.clearCookie("access_token", { path: "/" });
-    response.clearCookie("refresh_token", { path: "/auth" });
+    response.clearCookie("refresh_token", { path: "/auth/refresh" });
   }
 }
