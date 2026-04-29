@@ -13,6 +13,7 @@ export class MockController {
   @Public()
   @UseGuards(ThrottlerGuard)
   @All(":endpointId")
+  @All(":endpointId/(.*)")
   async mockEndpoint(
     @Req() req: Request,
     @Res() res: Response,
