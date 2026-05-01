@@ -12,12 +12,10 @@ export class MockController {
 
   @Public()
   @UseGuards(ThrottlerGuard)
-  @All(":endpointId")
-  @All(":endpointId/(.*)")
+  @All([":endpointId", ":endpointId/*"])
   async mockEndpoint(
     @Req() req: Request,
     @Res() res: Response,
-
     @Param() params: MockEndpointDto,
   ) {
     res.setHeader("Access-Control-Allow-Origin", "*");
