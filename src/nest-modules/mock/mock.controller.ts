@@ -12,7 +12,7 @@ export class MockController {
 
   @Public()
   @UseGuards(ThrottlerGuard)
-  @All([":endpointId", ":endpointId/*"])
+  @All([":endpointId", ":endpointId/*path"])
   async mockEndpoint(
     @Req() req: Request,
     @Res() res: Response,
