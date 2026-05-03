@@ -15,7 +15,7 @@ import { MockModule } from "./mock/mock.module";
       throttlers: [
         {
           ttl: 60000, // segundos em ms
-          limit: 100, // número de requisições permitidas por ttl
+          limit: 500, // número de requisições permitidas por ttl
         },
       ],
     }),
